@@ -2,124 +2,68 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lufthansa Randomizer ✈️</title>
+  <title>Рандомайзер рейсов</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #f0f4f8, #d9e2ef);
+      background: #f0f4f8;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-    }
-
-    header {
-      background-color: #002366;
-      color: #fff;
-      padding: 15px 0;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 10px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    header img {
-      height: 50px;
-    }
-
-    h1 {
+      height: 100vh;
       margin: 0;
-      font-size: 1.5rem;
     }
-
-    .container {
-      margin-top: 50px;
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
+    h1 {
+      color: #003366;
     }
-
-    button {
-      padding: 12px 25px;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 10px;
-      background-color: #ffc72c;
-      color: #002366;
-      cursor: pointer;
-      transition: 0.3s;
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
     }
-
-    button:hover {
-      background-color: #ffb700;
-    }
-
-    .flight {
-      margin-top: 25px;
-      font-size: 1.3rem;
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
       font-weight: bold;
-      color: #002366;
-      min-height: 40px;
-      position: relative;
-    }
-
-    .plane {
-      display: inline-block;
-      margin-left: 10px;
-      animation: fly 1s ease forwards;
-    }
-
-    @keyframes fly {
-      0% { transform: translateX(-50px); opacity: 0; }
-      50% { transform: translateX(20px); opacity: 1; }
-      100% { transform: translateX(0); opacity: 1; }
+      color: #006600;
     }
   </style>
 </head>
 <body>
-
-<header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3d/Lufthansa_Logo_2018.svg" alt="Lufthansa">
-  <h1>Lufthansa Randomizer</h1>
-</header>
-
-<div class="container">
-  <button id="generate">Сгенерировать рейс ✈️</button>
-  <div class="flight" id="flight"></div>
-</div>
-
-<script>
-  // Список маршрутов
-  const flights = [
-    "FRA → JFK",
-    "MUC → LAX",
-    "HAM → DXB",
-    "TXL → SFO",
-    "CDG → FRA",
-    "FRA → SIN",
-    "MUC → HND",
-    "FRA → BKK",
-    "MUC → ORD",
-    "FRA → YYZ"
-  ];
-
-  const flightDiv = document.getElementById("flight");
-  const btn = document.getElementById("generate");
-
-  btn.addEventListener("click", () => {
-    const randomFlight = flights[Math.floor(Math.random() * flights.length)];
-    flightDiv.innerHTML = `${randomFlight} <span class="plane">✈️</span>`;
-  });
-</script>
-
+  <h1>🎫 Рандомайзер рейсов</h1>
+  
+  <label for="airline">Выберите авиакомпанию:</label>
+  <select id="airline">
+    <option value="Lufthansa">Lufthansa (ICAO: DLH)</option>
+    <option value="Aeroflot">Aeroflot (ICAO: AFL)</option>
+    <option value="Air France">Air France (ICAO: AFR)</option>
+    <option value="KLM">KLM (ICAO: KLM)</option>
+  </select>
+  
+  <button onclick="generateFlight()">Случайный рейс</button>
+  
+  <div id="result"></div>
+  
+  <script>
+    const airlines = {
+      "Lufthansa": { icao: "DLH", flights: ["DLH123", "DLH456", "DLH789", "DLH321"] },
+      "Aeroflot": { icao: "AFL", flights: ["AFL101", "AFL202", "AFL303", "AFL404"] },
+      "Air France": { icao: "AFR", flights: ["AFR11", "AFR22", "AFR33", "AFR44"] },
+      "KLM": { icao: "KLM", flights: ["KLM55", "KLM66", "KLM77", "KLM88"] }
+    };
+    
+    function generateFlight() {
+      const airlineSelect = document.getElementById("airline");
+      const selectedAirline = airlineSelect.value;
+      const data = airlines[selectedAirline];
+      
+      const randomIndex = Math.floor(Math.random() * data.flights.length);
+      const randomFlight = data.flights[randomIndex];
+      
+      document.getElementById("result").innerText = 
+        `Авиакомпания: ${selectedAirline} | ICAO: ${data.icao} | Рейс: ${randomFlight}`;
+    }
+  </script>
 </body>
 </html>
