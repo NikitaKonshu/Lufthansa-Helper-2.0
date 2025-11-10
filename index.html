@@ -3,91 +3,50 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Flag Picker</title>
+  <title>VK Мини‑приложение — Тест</title>
   <style>
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-    body {
-      background: #e9e9eb;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card {
-      background: #fff;
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(7,10,17,0.08);
-      text-align: center;
-      width: 320px;
-    }
-    header h1 { font-size: 18px; margin: 0 0 12px; }
-    .flag { height: 72px; display:block; margin: 0 auto 12px; }
-    button {
-      display: inline-block;
-      padding: 10px 14px;
-      border: 0;
-      border-radius: 8px;
-      background: #2a6df5;
-      color: #fff;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    button:active { transform: translateY(1px); }
-    #output {
-      margin-top: 12px;
-      font-weight: 600;
-      min-height: 1.2em;
-      color: #0f1724;
-    }
-    .player { display:inline-block; animation: slide 500ms ease both; }
-    @keyframes slide {
-      from { transform: translateY(8px) rotate(0deg); opacity: 0; }
-      to   { transform: translateY(0) rotate(0deg); opacity: 1; }
-    }
-    .note { margin-top: 10px; font-size: 13px; color: #5b6b79; }
+    /* Очень простой стиль — ничего внешнего */
+    html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Arial;background:#f5f7fa;color:#111}
+    .wrap{max-width:520px;margin:40px auto;padding:20px;background:#fff;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.06);text-align:center}
+    h1{font-size:18px;margin:0 0 12px}
+    p{margin:8px 0 14px}
+    button{padding:10px 14px;border:0;border-radius:8px;background:#2b6ef6;color:#fff;cursor:pointer}
+    #status{margin-top:12px;font-weight:600}
   </style>
 </head>
 <body>
-  <div class="card" role="application">
-    <header>
-      <h1>Flag Picker</h1>
-    </header>
-
-    <!-- Рекомендуется заменить src на локальную копию в репозитории: images/india.svg -->
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg" alt="Флаг Индии" class="flag" crossorigin="anonymous">
-
-    <button id="answerButton" aria-label="Получить случайный вариант">Ответ</button>
-    <div id="output" role="status" aria-live="polite"></div>
-
-    <p class="note">Подсказка: для теста используйте локальные изображения, если приложение запускается во фрейме</p>
+  <div class="wrap" role="application">
+    <h1>Мини‑приложение VK — тест</h1>
+    <p>Если это окно видно внутри VK, то интеграция работает</p>
+    <button id="ping">Нажми меня</button>
+    <div id="status" aria-live="polite"></div>
   </div>
 
   <script>
     "use strict";
     (function () {
-      const options = [
-        "IN - India",
-        "US - USA",
-        "FR - France",
-        "DE - Germany",
-        "JP - Japan",
-        "CN - China",
-        "BR - Brazil",
-        "RU - Russia",
-        "ZA - South Africa",
-        "NG - Nigeria"
-      ];
+      const btn = document.getElementById("ping");
+      const status = document.getElementById("status");
 
-      const output = document.getElementById("output");
-      const btn = document.getElementById("answerButton");
+      if (!btn || !status) return;
 
       btn.addEventListener("click", () => {
-        const i = Math.floor(Math.random() * options.length);
-        // вставляем текст внутри span с классом для анимации
-        output.innerHTML = `<span class="player">${options[i]}</span>`;
+        // Простая логика для проверки — никаких внешних API
+        const now = new Date();
+        status.textContent = "Ответ: приложение работает — " + now.toLocaleString();
       });
+
+      // Простая проверка: приложение запущено во фрейме?
+      try {
+        if (window.top !== window.self) {
+          // Всё нормально: приложение в iframe
+          console.log("Запущено внутри iframe.");
+        } else {
+          console.log("Не в iframe (локальный просмотр).");
+        }
+      } catch (e) {
+        console.log("Ошибка при проверке iframe:", e);
+      }
     })();
   </script>
 </body>
