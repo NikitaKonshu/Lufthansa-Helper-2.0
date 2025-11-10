@@ -1,69 +1,94 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Рандомайзер рейсов</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flag Picker</title>
   <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f4f8;
+      background: #e9e9eb;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
     }
-    h1 {
-      color: #003366;
+    .card {
+      background: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(7,10,17,0.08);
+      text-align: center;
+      width: 320px;
     }
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      font-size: 16px;
+    header h1 { font-size: 18px; margin: 0 0 12px; }
+    .flag { height: 72px; display:block; margin: 0 auto 12px; }
+    button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #2a6df5;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
     }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #006600;
+    button:active { transform: translateY(1px); }
+    #output {
+      margin-top: 12px;
+      font-weight: 600;
+      min-height: 1.2em;
+      color: #0f1724;
     }
+    .player { display:inline-block; animation: slide 500ms ease both; }
+    @keyframes slide {
+      from { transform: translateY(8px) rotate(0deg); opacity: 0; }
+      to   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    }
+    .note { margin-top: 10px; font-size: 13px; color: #5b6b79; }
   </style>
 </head>
 <body>
-  <h1>🎫 Рандомайзер рейсов</h1>
-  
-  <label for="airline">Выберите авиакомпанию:</label>
-  <select id="airline">
-    <option value="Lufthansa">Lufthansa (ICAO: DLH)</option>
-    <option value="Aeroflot">Aeroflot (ICAO: AFL)</option>
-    <option value="Air France">Air France (ICAO: AFR)</option>
-    <option value="KLM">KLM (ICAO: KLM)</option>
-  </select>
-  
-  <button onclick="generateFlight()">Случайный рейс</button>
-  
-  <div id="result"></div>
-  
+  <div class="card" role="application">
+    <header>
+      <h1>Flag Picker</h1>
+    </header>
+
+    <!-- Рекомендуется заменить src на локальную копию в репозитории: images/india.svg -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg" alt="Флаг Индии" class="flag" crossorigin="anonymous">
+
+    <button id="answerButton" aria-label="Получить случайный вариант">Ответ</button>
+    <div id="output" role="status" aria-live="polite"></div>
+
+    <p class="note">Подсказка: для теста используйте локальные изображения, если приложение запускается во фрейме</p>
+  </div>
+
   <script>
-    const airlines = {
-      "Lufthansa": { icao: "DLH", flights: ["DLH123", "DLH456", "DLH789", "DLH321"] },
-      "Aeroflot": { icao: "AFL", flights: ["AFL101", "AFL202", "AFL303", "AFL404"] },
-      "Air France": { icao: "AFR", flights: ["AFR11", "AFR22", "AFR33", "AFR44"] },
-      "KLM": { icao: "KLM", flights: ["KLM55", "KLM66", "KLM77", "KLM88"] }
-    };
-    
-    function generateFlight() {
-      const airlineSelect = document.getElementById("airline");
-      const selectedAirline = airlineSelect.value;
-      const data = airlines[selectedAirline];
-      
-      const randomIndex = Math.floor(Math.random() * data.flights.length);
-      const randomFlight = data.flights[randomIndex];
-      
-      document.getElementById("result").innerText = 
-        `Авиакомпания: ${selectedAirline} | ICAO: ${data.icao} | Рейс: ${randomFlight}`;
-    }
+    "use strict";
+    (function () {
+      const options = [
+        "IN - India",
+        "US - USA",
+        "FR - France",
+        "DE - Germany",
+        "JP - Japan",
+        "CN - China",
+        "BR - Brazil",
+        "RU - Russia",
+        "ZA - South Africa",
+        "NG - Nigeria"
+      ];
+
+      const output = document.getElementById("output");
+      const btn = document.getElementById("answerButton");
+
+      btn.addEventListener("click", () => {
+        const i = Math.floor(Math.random() * options.length);
+        // вставляем текст внутри span с классом для анимации
+        output.innerHTML = `<span class="player">${options[i]}</span>`;
+      });
+    })();
   </script>
 </body>
 </html>
