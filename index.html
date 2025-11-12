@@ -340,11 +340,12 @@ let lastReservation = null;
 
 /* Simple seed if empty */
 if(PILOTS.length === 0){
-  PILOTS = [
-    { id: uid('pilot'), name:'Loui Desulier', callSign:'FRENCH', rank:'Pilot', baseICAO:'EDDM', createdAt: nowMs(), verified:true },
-    { id: uid('pilot'), name:'Anna Müller', callSign:'AMUL', rank:'CPL', baseICAO:'EDDM', createdAt: nowMs(), verified:false }
-  ];
-  savePilots();
+PILOTS = [
+  { id: 'pilot_ivan', name:'Ivan Petrov', callSign:'IPET', rank:'ATPL', baseICAO:'EDDF', createdAt: Date.now(), verified:true },
+  { id: 'pilot_anna', name:'Anna Müller', callSign:'AMUL', rank:'CPL', baseICAO:'EDDM', createdAt: Date.now(), verified:false },
+  { id: 'pilot_loui', name:'Loui Desulier', callSign:'French', rank:'', baseICAO:'', createdAt: Date.now(), verified:true }
+];
+savePilots();
 }
 
 /* Render durations and airlines */
@@ -755,4 +756,5 @@ function saveAllLogs(){ saveJson(LS_PILOTLOG_KEY, PILOT_LOG); saveJson(LS_FLEETL
 </script>
 </body>
 </html>
+
 
