@@ -3,223 +3,346 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — tabs + assistant-trigger version</title>
+<title>Lufthansa Helper — elegant UI</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-1:#041528; --bg-2:#073044; --accent:#ffd54a; --accent-2:#ffb84d;
-  --muted:#98bcd6; --text:#eaf4ff; --card:#062b3a;
-  --ok:#bff2be; --radius:12px; --shadow:0 20px 60px rgba(2,8,20,0.55);
+  --bg-1:#051422; --bg-2:#072b3a; --card:#072634;
+  --glass: rgba(255,255,255,0.04);
+  --accent:#ffd54a; --accent-2:#ffb84d;
+  --muted:#98bcd6; --text:#eaf4ff;
+  --success:#c8f5c2; --danger:#ff8a77;
+  --radius:16px;
+  --shadow-soft: 0 6px 18px rgba(2,8,20,0.45);
+  --shadow-deep: 0 30px 90px rgba(2,8,20,0.65);
+  --glass-border: 1px solid rgba(255,255,255,0.03);
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:var(--text);padding:20px}
-.container{max-width:1200px;margin:0 auto}
-.header{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:linear-gradient(90deg,rgba(6,44,65,0.95),rgba(7,56,88,0.95));box-shadow:var(--shadow)}
-.brand{display:flex;gap:12px;align-items:center}
-.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,#063a59,#012938);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:900}
-.title{font-weight:800}
-.hright{display:flex;gap:10px;align-items:center}
-.version{background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:10px;font-weight:700;color:var(--muted)}
-.small-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;color:var(--text);cursor:pointer}
-.layout{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-top:16px}
-@media(max-width:980px){.layout{grid-template-columns:1fr}}
-.card{background:linear-gradient(180deg,#062b3a,#042e33);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;font-weight:700}
-.tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#04202a;transform:translateY(-2px)}
-.kv{font-size:13px;color:var(--muted)}
-.input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text)}
-.btn{padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
-.btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#04202a}
-.list{display:flex;flex-direction:column;gap:10px}
-.item{padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,0.02);cursor:default}
-.modal-back{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,8,20,0.6),rgba(2,8,20,0.9));z-index:9999}
-.modal{background:linear-gradient(180deg,#083044,#042b32);padding:18px;border-radius:12px;width:min(820px,96%);border:1px solid rgba(255,255,255,0.03)}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(800px 400px at 10% 10%, rgba(255,255,255,0.02), transparent),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:32px;
+  display:flex;justify-content:center;align-items:flex-start;
+}
+
+/* container */
+.wrap{width:100%;max-width:1200px}
+.header{
+  display:flex;justify-content:space-between;align-items:center;padding:18px;border-radius:20px;
+  background: linear-gradient(180deg, rgba(6,44,65,0.95), rgba(7,56,88,0.95));
+  box-shadow: var(--shadow-deep);
+  border: var(--glass-border);
+}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{
+  width:64px;height:64px;border-radius:14px;
+  background: linear-gradient(180deg,#05384b,#0b2b3a);
+  display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:900;font-size:20px;
+  box-shadow: 0 12px 30px rgba(2,8,20,0.6), inset 0 -6px 18px rgba(0,0,0,0.25);
+}
+.titleMain{margin:0;font-size:18px;font-weight:800}
 .small{font-size:13px;color:var(--muted)}
-.current{background:linear-gradient(180deg,#022f2a,#032930);padding:12px;border-radius:10px;margin-top:12px}
-.note{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* right controls */
+.right-controls{display:flex;align-items:center;gap:12px}
+.version{
+  padding:8px 12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
+  border:1px solid rgba(255,255,255,0.03);font-weight:700;color:var(--muted);box-shadow:var(--shadow-soft);
+}
+
+/* layout */
+.main{margin-top:18px;display:grid;grid-template-columns:1fr 420px;gap:16px}
+@media(max-width:980px){ .main{grid-template-columns:1fr} }
+
+.card{
+  padding:16px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.05));
+  border: var(--glass-border); box-shadow: 0 10px 40px rgba(2,8,20,0.45);
+}
+
+/* tabs */
+.nav-tabs{display:flex;gap:8px}
+.tab-btn{
+  padding:8px 14px;border-radius:12px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-weight:800;
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), background 220ms;
+  box-shadow: 0 6px 16px rgba(2,8,20,0.22);
+}
+.tab-btn.active{
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:#04202a; transform:translateY(-4px);
+  box-shadow: 0 20px 60px rgba(255,170,60,0.08);
+}
+
+/* controls */
+.row{display:flex;gap:10px;align-items:center}
+.input{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text)}
+.btn{padding:10px 12px;border-radius:12px;border:0;background:transparent;color:var(--text);cursor:pointer;font-weight:800}
+.btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#04202a;box-shadow:0 12px 40px rgba(255,160,40,0.08)}
+.btn-ghost{border:1px solid rgba(255,255,255,0.03);background:transparent;padding:8px 10px;border-radius:10px}
+
+/* lists/cards */
+.list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.item{
+  display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent);
+  border:1px solid rgba(255,255,255,0.02);
+  transition: transform 220ms, box-shadow 220ms;
+}
+.item:hover{transform:translateY(-8px);box-shadow:0 30px 80px rgba(2,8,20,0.45)}
+
+/* prominent About modal (after login) */
+#aboutCard{
+  width:min(860px,94%);border-radius:18px;padding:20px;background:linear-gradient(180deg,#0b3642,#062c36);
+  border:var(--glass-border);box-shadow:var(--shadow-deep);position:relative;
+}
+.about-head{display:flex;justify-content:space-between;align-items:center}
+.about-list{color:var(--muted);margin-top:12px}
+
+/* gate modal */
+.modal-back{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,8,20,0.6),rgba(2,8,20,0.88));z-index:9999}
+.modal{width:min(720px,94%);border-radius:16px;padding:18px;background:linear-gradient(180deg,#072a34,#04252b);border:var(--glass-border);box-shadow:var(--shadow-deep)}
+
+/* current flight */
+.current-flight{margin-top:14px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#083d37,#032f2b);border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(2,8,20,0.45)}
+.kv{font-size:13px;color:var(--muted)}
+.meta{font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
   <header class="header">
     <div class="brand">
       <div class="logo">LH</div>
       <div>
-        <div class="title">Lufthansa Helper</div>
-        <div class="small">Routes · Fleet · Generate</div>
+        <h1 class="titleMain">Lufthansa Helper</h1>
+        <div class="small">Routes · Fleet · Generate — demo</div>
       </div>
     </div>
-    <div class="hright">
+
+    <div class="right-controls">
       <div id="verLabel" class="version">v0</div>
-      <button id="assistantNotify" class="small-btn" title="Нажми после сообщения ассистенту">Сообщить ассистенту</button>
-      <button id="openAboutBtn" class="small-btn">О нас</button>
+      <button id="assistantNotify" class="tab-btn" title="Нажми после сообщения ассистенту">Сообщить ассистенту</button>
       <div id="sessionInfo" class="kv">Неавторизован</div>
     </div>
   </header>
 
-  <div class="layout">
+  <div class="main">
     <main>
+      <!-- top controls -->
       <div class="card">
-        <div class="tabs" id="tabsRow">
-          <div class="tab" data-tab="about" id="tab-about">О нас</div>
-          <div class="tab active" data-tab="generate" id="tab-generate">Генерация</div>
-          <div class="tab" data-tab="routes" id="tab-routes">Направления</div>
-          <div class="tab" data-tab="fleet" id="tab-fleet">Флот</div>
-          <div class="tab" data-tab="pilots" id="tab-pilots">Пилоты</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:18px;font-weight:900">Панель управления</div>
+            <div class="kv">Управление маршрутами, флотом и назначениями</div>
+          </div>
+          <div class="nav-tabs" id="tabsRow">
+            <button class="tab-btn" data-tab="about" id="tab-about">О нас</button>
+            <button class="tab-btn active" data-tab="generate" id="tab-generate">Генерация</button>
+            <button class="tab-btn" data-tab="routes" id="tab-routes">Направления</button>
+            <button class="tab-btn" data-tab="fleet" id="tab-fleet">Флот</button>
+            <button class="tab-btn" data-tab="pilots" id="tab-pilots">Пилоты</button>
+          </div>
         </div>
 
-        <section id="pane-about" style="display:none">
-          <h3>О нас</h3>
-          <p class="note">Lufthansa Helper — демонстрационная панель для управления рейсами. Доступны локальные сохранения, сохранение текущего рейса в браузере и очистка при смене аккаунта.</p>
-        </section>
+        <div id="pane-about" style="display:none;margin-top:12px">
+          <div id="aboutCard">
+            <div class="about-head">
+              <div>
+                <div style="font-weight:900;font-size:18px;color:var(--accent)">О нас</div>
+                <div class="kv" style="margin-top:6px">Lufthansa Helper — демонстрационная панель для распределения рейсов и контроля флота.</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="kv">Сборка</div>
+                <div id="verLabelInside" class="version">v0</div>
+                <button id="closeAboutBtn" class="btn btn-primary">Продолжить</button>
+              </div>
+            </div>
+            <div class="about-list">
+              <ul>
+                <li>Подробная карточка рейса с Flight ID, Aircraft, Pilot, ETA и обратным отсчётом</li>
+                <li>Сохранение текущего рейса в localStorage до отметки "долетел"</li>
+                <li>При входе под другим аккаунтом предыдущие локальные рейсы очищаются</li>
+                <li>Версия инкрементируется вручную кнопкой «Сообщить ассистенту» или при ключевых действиях</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-        <section id="pane-generate" style="display:block">
+        <div id="pane-generate" style="margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Генерация рейса</strong><div class="note">Только верифицированные пилоты</div></div>
-            <div id="signedUser" class="kv">—</div>
+            <div>
+              <div style="font-weight:900">Генерация рейса</div>
+              <div class="kv">Только верифицированные пилоты</div>
+            </div>
+            <div class="kv">Вошёл: <strong id="signedUser">—</strong></div>
           </div>
 
-          <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+          <div style="margin-top:14px;display:flex;gap:12px;align-items:center">
             <div id="airlines" style="display:flex;gap:8px;flex-wrap:wrap"></div>
             <select id="routeSort" class="input">
               <option value="none">Без сортировки</option>
               <option value="airline">По авиакомпании</option>
               <option value="duration">По времени в полёте</option>
             </select>
-            <button id="genBtn" class="btn btn-primary">Сгенерировать</button>
-            <button id="resetBtn" class="btn">Сброс</button>
+            <button id="genBtn" class="btn-primary">Сгенерировать</button>
+            <button id="resetBtn" class="btn-ghost">Сброс</button>
           </div>
 
-          <div id="resultArea" style="margin-top:12px;display:none"></div>
+          <div id="resultArea" style="margin-top:14px;display:none"></div>
           <div id="confirmedSection" style="margin-top:12px"></div>
           <div id="currentFlightWrap"></div>
-        </section>
+        </div>
 
-        <section id="pane-routes" style="display:none">
+        <div id="pane-routes" style="display:none;margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Направления</strong><div class="note">Кликабельные карточки, откройте подробности</div></div>
+            <div>
+              <div style="font-weight:900">Направления</div>
+              <div class="kv">Кликните на карточку для подробностей</div>
+            </div>
             <div style="display:flex;gap:8px">
-              <select id="filterAirline" class="input"><option value="all">Все</option></select>
-              <select id="filterHub" class="input"><option value="all">Хабы</option></select>
+              <select id="filterAirline" class="input"><option value="all">Все авиакомпании</option></select>
+              <select id="filterHub" class="input"><option value="all">Все хабы</option></select>
             </div>
           </div>
           <div id="routesList" class="list" style="margin-top:12px"></div>
-        </section>
+        </div>
 
-        <section id="pane-fleet" style="display:none">
+        <div id="pane-fleet" style="display:none;margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Флот</strong><div class="note">Статус самолётов</div></div>
+            <div><div style="font-weight:900">Флот</div><div class="kv">Статус самолётов</div></div>
             <div style="display:flex;gap:8px">
               <select id="filterFleetAirline" class="input"><option value="all">Все</option></select>
               <select id="filterFleetStatus" class="input"><option value="all">Все статусы</option><option value="idle">idle</option><option value="reserved">reserved</option><option value="inFlight">inFlight</option></select>
             </div>
           </div>
           <div id="fleetList" class="list" style="margin-top:12px"></div>
-        </section>
+        </div>
 
-        <section id="pane-pilots" style="display:none">
+        <div id="pane-pilots" style="display:none;margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Пилоты</strong></div>
-            <div><input id="pilotSearch" class="input" placeholder="Поиск"/></div>
+            <div style="font-weight:900">Пилоты</div>
+            <div><input id="pilotSearch" class="input" placeholder="Поиск по имени/позывному"></div>
           </div>
           <div id="pilotList" class="list" style="margin-top:12px"></div>
-        </section>
+        </div>
       </div>
     </main>
 
     <aside>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Журнал</strong><div class="note">Недавние события</div></div>
-          <div><button id="openGate" class="small-btn">Войти</button></div>
+          <div><strong>Журнал назначений</strong><div class="kv">События сохраняются в памяти</div></div>
+          <div><button id="openGate" class="tab-btn">Войти</button></div>
         </div>
+
         <div id="assignLog" class="list" style="margin-top:12px"></div>
 
-        <div style="margin-top:12px">
-          <div class="note">Webhook (опционально): при каждом сообщении ассистенту можешь вызвать URL чтобы автоматически инкрементировать версию. Пример запроса см. в комментариях к коду.</div>
-        </div>
+        <div style="margin-top:12px" class="kv">Webhook: при наличии сервера можно автоматизировать bumpVersion при каждом твоём сообщении ассистенту.</div>
       </div>
     </aside>
   </div>
 </div>
 
 <!-- Gate modal -->
-<div id="gate" class="modal-back" style="display:none">
+<div id="gateModal" class="modal-back" style="display:none">
   <div class="modal">
-    <h3>Вход</h3>
-    <div class="note">Вход: позывной + пароль или кодовое слово</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:900">Вход</div>
+        <div class="kv">Позывной + пароль или кодовое слово</div>
+      </div>
+      <div class="kv">Кодовое слово: <strong>quickaccess2025</strong></div>
+    </div>
     <div style="margin-top:12px;display:flex;gap:8px">
       <input id="loginCall" class="input" placeholder="Позывной"/>
       <input id="loginPass" class="input" placeholder="Пароль" type="password"/>
     </div>
-    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
-      <button id="btnLoginPilot" class="btn btn-primary">Войти</button>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button id="btnLoginPilot" class="btn-primary">Войти как пилот</button>
     </div>
   </div>
 </div>
 
 <!-- Route modal -->
 <div id="routeModal" class="modal-back" style="display:none">
-  <div class="modal">
-    <h3 id="routeTitle">Маршрут</h3>
-    <div id="routeBody" class="note" style="margin-top:8px"></div>
-    <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
-      <button id="routeUse" class="btn btn-primary">Сгенерировать этот маршрут</button>
-      <button id="routeClose" class="btn">Закрыть</button>
+  <div class="modal" id="routeModalCard">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div id="routeModalTitle" style="font-weight:900"></div><div class="kv" id="routeModalSub"></div></div>
+      <div class="kv" id="routeModalDur"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button id="routeUseBtn" class="btn-primary">Сгенерировать этот маршрут</button>
+      <button id="routeCloseBtn" class="btn-ghost">Закрыть</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ================= DATA ================= */
+/* ================= DATA/CONFIG ================= */
 const CODEWORD='quickaccess2025';
 const SESSION_KEY='demo_session_v2';
 const CURRENT_FLIGHT_PREFIX='current_flight:';
 const VERSION_KEY='lh_version_v1';
 
-const AIRLINES=[ {name:"Lufthansa",hubs:["EDDF","EDDM"]},{name:"Eurowings",hubs:["EDDF","EDDM"]},{name:"SunExpress",hubs:["EDDF","EDDM"]} ];
-const ROUTES=[
-  {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Oslo",toICAO:"ENGM",durationMinutes:120},
-  {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Amsterdam",toICAO:"EHAM",durationMinutes:70},
-  {airline:"SunExpress",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Antalya",toICAO:"LTAI",durationMinutes:180},
-  {airline:"Eurowings",fromCity:"Munich",fromICAO:"EDDM",toCity:"Zurich",toICAO:"LSZH",durationMinutes:60}
+const AIRLINES = [
+  { name: "Lufthansa", hubs: ["EDDF","EDDM"] },
+  { name: "Eurowings", hubs: ["EDDF","EDDM"] },
+  { name: "SunExpress", hubs: ["EDDF","EDDM"] }
 ];
-const FLEET=[
-  {id:'LH-A320-01',airline:'Lufthansa',type:'A320',seats:180,turnaround:40,status:'idle',locationICAO:'EDDF'},
-  {id:'EW-A320-01',airline:'Eurowings',type:'A320',seats:180,turnaround:40,status:'idle',locationICAO:'EDDM'},
-  {id:'SX-B737-01',airline:'SunExpress',type:'737-800',seats:189,turnaround:35,status:'idle',locationICAO:'EDDF'}
+const ROUTES = [
+  { airline: "Lufthansa", fromCity:"Frankfurt", fromICAO:"EDDF", toCity:"Oslo", toICAO:"ENGM", durationMinutes:120 },
+  { airline: "Lufthansa", fromCity:"Frankfurt", fromICAO:"EDDF", toCity:"Amsterdam", toICAO:"EHAM", durationMinutes:70 },
+  { airline: "SunExpress", fromCity:"Frankfurt", fromICAO:"EDDF", toCity:"Antalya", toICAO:"LTAI", durationMinutes:180 },
+  { airline: "Eurowings", fromCity:"Munich", fromICAO:"EDDM", toCity:"Zurich", toICAO:"LSZH", durationMinutes:60 }
+];
+const FLEET = [
+  { id:'LH-A320-01', airline:'Lufthansa', type:'A320', seats:180, turnaround:40, status:'idle', locationICAO:'EDDF' },
+  { id:'EW-A320-01', airline:'Eurowings', type:'A320', seats:180, turnaround:40, status:'idle', locationICAO:'EDDM' },
+  { id:'SX-B737-01', airline:'SunExpress', type:'737-800', seats:189, turnaround:35, status:'idle', locationICAO:'EDDF' }
+];
+let PILOTS = [
+  { id: 'pilot_loui', name: 'Loui Desulier', callSign: 'French', verified: true, password: 'louiSecret' },
+  { id: 'pilot_ivan', name:'Ivan Petrov', callSign:'IPET', verified:true },
+  { id: 'pilot_anna', name:'Anna Müller', callSign:'AMUL', verified:false }
 ];
 
-let PILOTS=[
-  {id:'pilot_loui',name:'Loui Desulier',callSign:'French',verified:true,password:'louiSecret'},
-  {id:'pilot_ivan',name:'Ivan Petrov',callSign:'IPET',verified:true},
-  {id:'pilot_anna',name:'Anna Müller',callSign:'AMUL',verified:false}
-];
-
-let FLEET_LOG=[];
-
-let SESSION=(function(){ try{ const s=sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null,isAdmin:false}; }catch(e){return {pilotId:null,isAdmin:false}; } })();
+let FLEET_LOG = [];
+let SESSION = (function(){ try{ const s=sessionStorage.getItem(SESSION_KEY); return s ? JSON.parse(s) : { pilotId:null, isAdmin:false }; }catch(e){ return { pilotId:null, isAdmin:false }; }})();
 
 /* ================= helpers ================= */
-function uid(p='id'){return p+'_'+Math.random().toString(36).slice(2,9);}
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function nowMs(){return Date.now();}
+function uid(pref='id'){ return pref + '_' + Math.random().toString(36).slice(2,9); }
+function nowMs(){ return Date.now(); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
-function getCFKey(pid){ return CURRENT_FLIGHT_PREFIX + (pid||'anon'); }
-
-/* version helpers */
-function readVersion(){ try{ let v=parseInt(localStorage.getItem(VERSION_KEY)||'0',10); if(isNaN(v)) v=0; return v; }catch(e){return 0;} }
+function getCurrentFlightKey(pilotId){ return CURRENT_FLIGHT_PREFIX + (pilotId||'anon'); }
+function readVersion(){ try{ let v=parseInt(localStorage.getItem(VERSION_KEY)||'0',10); if(isNaN(v)) v=0; return v;}catch(e){return 0;} }
 function bumpVersion(){ try{ let v=readVersion(); v++; localStorage.setItem(VERSION_KEY,String(v)); renderVersion(); return v;}catch(e){return null;} }
-function renderVersion(){ document.getElementById('verLabel').textContent = 'v' + readVersion(); }
+function renderVersion(){ const v=readVersion(); document.getElementById('verLabel').textContent='v'+v; const vi=document.getElementById('verLabelInside'); if(vi) vi.textContent='v'+v; }
 
 /* ================= UI refs ================= */
-const tabs = document.querySelectorAll('.tab');
-const panes = { about: document.getElementById('pane-about'), generate: document.getElementById('pane-generate'), routes: document.getElementById('pane-routes'), fleet: document.getElementById('pane-fleet'), pilots: document.getElementById('pane-pilots') };
+const tabs = document.querySelectorAll('.tab-btn');
+const panes = {
+  about: document.getElementById('pane-about'),
+  generate: document.getElementById('pane-generate'),
+  routes: document.getElementById('pane-routes'),
+  fleet: document.getElementById('pane-fleet'),
+  pilots: document.getElementById('pane-pilots')
+};
 
 const verLabel = document.getElementById('verLabel');
 const assistantNotify = document.getElementById('assistantNotify');
-const openAboutBtn = document.getElementById('openAboutBtn');
+const openGate = document.getElementById('openGate');
+const openGateBtn = document.getElementById('openGate');
+const gateModal = document.getElementById('gateModal');
+const loginCall = document.getElementById('loginCall');
+const loginPass = document.getElementById('loginPass');
+const btnLoginPilot = document.getElementById('btnLoginPilot');
 
 const airlinesWrap = document.getElementById('airlines');
 const routeSort = document.getElementById('routeSort');
@@ -241,57 +364,51 @@ const pilotList = document.getElementById('pilotList');
 const pilotSearch = document.getElementById('pilotSearch');
 
 const assignLog = document.getElementById('assignLog');
-const sessionInfo = document.getElementById('sessionInfo');
 const signedUser = document.getElementById('signedUser');
+const closeAboutBtn = document.getElementById('closeAboutBtn');
 
-const gateModal = document.getElementById('gate');
-const loginCall = document.getElementById('loginCall');
-const loginPass = document.getElementById('loginPass');
-const btnLoginPilot = document.getElementById('btnLoginPilot');
-const openGateBtn = document.getElementById('openGate');
-
-const routeModal = document.getElementById('routeModal');
-const routeTitle = document.getElementById('routeTitle');
-const routeBody = document.getElementById('routeBody');
-const routeClose = document.getElementById('routeClose');
-const routeUse = document.getElementById('routeUse');
-
-let chosenAirIndex = null, chosenDur = null, lastReservation = null;
-
-/* ================= render helpers ================= */
+/* ================= render functions ================= */
 function renderSessionInfo(){
   const p = PILOTS.find(x=>x.id===SESSION.pilotId);
   signedUser.textContent = p ? `${p.name} (${p.callSign})` : '—';
-  sessionInfo.textContent = SESSION.isAdmin ? 'Admin session' : (p ? `Вошёл как ${p.callSign}` : 'Неавторизован');
+  document.getElementById('sessionInfo').textContent = SESSION.isAdmin ? 'Admin session' : (p ? `Вошёл как ${p.callSign}` : 'Неавторизован');
 }
 
 function renderAirlines(){
-  airlinesWrap.innerHTML='';
+  airlinesWrap.innerHTML = '';
   const sorted = AIRLINES.slice().sort((a,b)=>a.name.localeCompare(b.name,'ru'));
   sorted.forEach(a=>{
-    const b=document.createElement('button'); b.className='small-btn'; b.textContent=a.name;
-    b.addEventListener('click', ()=> {
+    const btn = document.createElement('button'); btn.className='tab-btn'; btn.textContent=a.name;
+    btn.style.borderRadius='999px';
+    btn.addEventListener('click', ()=> {
       chosenAirIndex = AIRLINES.findIndex(x=>x.name===a.name);
-      Array.from(airlinesWrap.children).forEach(n=>n.classList.remove('active'));
-      b.classList.add('active');
+      Array.from(airlinesWrap.children).forEach(n=> n.classList.remove('active'));
+      btn.classList.add('active');
       bumpVersion();
     });
-    airlinesWrap.appendChild(b);
+    airlinesWrap.appendChild(btn);
   });
 }
 
+const DURATIONS = [
+  {label:"1–2ч",min:60,max:120},
+  {label:"3–4ч",min:180,max:240},
+  {label:"5–6ч",min:300,max:360},
+  {label:"7–8ч",min:420,max:480}
+];
+
 function renderRoutes(){
-  // filter + sort
-  routesList.innerHTML='';
-  const fa = filterAirline.value||'all'; const fh = filterHub.value||'all';
+  routesList.innerHTML = '';
+  const fa = filterAirline ? filterAirline.value : 'all';
+  const fh = filterHub ? filterHub.value : 'all';
   let list = ROUTES.filter(r=> { if(fa!=='all' && r.airline!==fa) return false; if(fh!=='all' && r.fromICAO!==fh && r.toICAO!==fh) return false; return true; });
   const sort = routeSort.value;
   if(sort==='airline') list.sort((a,b)=>a.airline.localeCompare(b.airline,'ru'));
   if(sort==='duration') list.sort((a,b)=>a.durationMinutes - b.durationMinutes);
   if(!list.length){ routesList.innerHTML='<div class="kv">Нет направлений</div>'; return; }
   list.forEach(r=>{
-    const el=document.createElement('div'); el.className='item';
-    el.innerHTML=`<div><strong>${esc(r.airline)}</strong><div class="small">${esc(r.fromICAO)} (${esc(r.fromCity)}) → ${esc(r.toICAO)} (${esc(r.toCity)})</div></div><div class="small"><strong>${r.durationMinutes} мин</strong></div>`;
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div><div style="font-weight:900">${esc(r.airline)}</div><div class="meta">${esc(r.fromICAO)} (${esc(r.fromCity)}) → ${esc(r.toICAO)} (${esc(r.toCity)})</div></div><div class="meta"><strong>${r.durationMinutes} мин</strong></div>`;
     el.addEventListener('click', ()=> openRouteModal(r));
     routesList.appendChild(el);
   });
@@ -299,117 +416,134 @@ function renderRoutes(){
 
 function renderFleet(){
   fleetList.innerHTML='';
-  const fa = filterFleetAirline.value||'all'; const fs = filterFleetStatus.value||'all';
+  const fa = filterFleetAirline ? filterFleetAirline.value : 'all';
+  const fs = filterFleetStatus ? filterFleetStatus.value : 'all';
   const list = FLEET.filter(a=> { if(fa!=='all' && a.airline!==fa) return false; if(fs!=='all' && a.status!==fs) return false; return true; });
   if(!list.length){ fleetList.innerHTML='<div class="kv">Нет самолётов</div>'; return; }
   list.forEach(a=>{
-    const el=document.createElement('div'); el.className='item';
-    el.innerHTML=`<div><strong>${esc(a.id)}</strong><div class="small">${esc(a.airline)} · ${esc(a.type)} · ${a.seats} кресел · ${esc(a.locationICAO)}</div></div><div class="small">${esc(a.status)}</div>`;
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div><strong>${esc(a.id)}</strong><div class="meta">${esc(a.airline)} · ${esc(a.type)} · ${a.seats} кресел · ${esc(a.locationICAO)}</div></div><div class="meta">${esc(a.status)}</div>`;
     fleetList.appendChild(el);
   });
 }
 
 function renderPilots(){
-  pilotList.innerHTML='';
-  const q=(pilotSearch.value||'').toLowerCase().trim();
+  pilotList.innerHTML = '';
+  const q = (pilotSearch && pilotSearch.value || '').toLowerCase().trim();
   const list = PILOTS.filter(p=> { if(!q) return true; return (p.name+' '+p.callSign).toLowerCase().includes(q); });
-  if(!list.length){ pilotList.innerHTML='<div class="kv">Пилотов нет</div>'; return; }
+  if(!list.length){ pilotList.innerHTML = '<div class="kv">Пилотов нет</div>'; return; }
   list.forEach(p=>{
-    const el=document.createElement('div'); el.className='item';
-    el.innerHTML=`<div><strong>${esc(p.name)}</strong><div class="small">${esc(p.callSign)} · ${p.verified? 'Verified':'Not verified'}</div></div>`;
-    const btn=document.createElement('button'); btn.className='small-btn'; btn.textContent='Войти';
-    btn.addEventListener('click', ()=> signInAsPilot(p.id));
-    el.appendChild(btn);
-    pilotList.appendChild(el);
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div><strong>${esc(p.name)}</strong><div class="meta">${esc(p.callSign)} · ${p.verified? 'Verified':'Not verified'}</div></div>`;
+    const b = document.createElement('button'); b.className='btn-ghost'; b.textContent='Войти';
+    b.addEventListener('click', ()=> signInAsPilot(p.id));
+    el.appendChild(b); pilotList.appendChild(el);
   });
 }
 
 function renderAssignLog(){
-  assignLog.innerHTML='';
-  if(!FLEET_LOG.length){ assignLog.innerHTML='<div class="kv">Пусто</div>'; return; }
+  assignLog.innerHTML = '';
+  if(!FLEET_LOG.length){ assignLog.innerHTML = '<div class="kv">Пусто</div>'; return; }
   FLEET_LOG.slice(-40).reverse().forEach(e=>{
-    const el=document.createElement('div'); el.className='item';
-    el.innerHTML=`<div class="small">${new Date(e.ts).toLocaleString()}</div><div class="small">${esc(e.event)} ${esc(e.aircraft||'')} ${esc(e.route||'')}</div>`;
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div class="meta">${new Date(e.ts).toLocaleString()}</div><div class="meta">${esc(e.event)} ${esc(e.aircraft||'')} ${esc(e.route||'')}</div>`;
     assignLog.appendChild(el);
   });
 }
 
-/* current flight persistence */
-function persistCurrentFlight(pilotId, obj){ try{ localStorage.setItem(getCFKey(pilotId), JSON.stringify(obj)); }catch(e){} }
-function loadCurrentFlight(pilotId){ try{ const v=localStorage.getItem(getCFKey(pilotId)); return v?JSON.parse(v):null; }catch(e){return null;} }
-function clearCurrentFlight(pilotId){ try{ localStorage.removeItem(getCFKey(pilotId)); }catch(e){} }
+/* ============== current flight persistence/UI ============== */
+function persistCurrentFlight(pilotId, obj){ try{ localStorage.setItem(getCurrentFlightKey(pilotId), JSON.stringify(obj)); }catch(e){} }
+function loadCurrentFlight(pilotId){ try{ const v=localStorage.getItem(getCurrentFlightKey(pilotId)); return v?JSON.parse(v):null; }catch(e){return null;} }
+function clearCurrentFlight(pilotId){ try{ localStorage.removeItem(getCurrentFlightKey(pilotId)); }catch(e){} }
 
-let cIntervals={};
+let countdowns = {};
 function renderCurrentFlight(){
   currentFlightWrap.innerHTML='';
   if(!SESSION.pilotId) return;
   const cur = loadCurrentFlight(SESSION.pilotId);
   if(!cur) return;
-  const el=document.createElement('div'); el.className='current';
-  const etaDate=new Date(cur.confirmedAt + (cur.etaMs||0));
-  const left=Math.max(0, Math.floor(((cur.confirmedAt + cur.etaMs) - Date.now())/1000));
+  const el = document.createElement('div'); el.className='current-flight';
+  const etaDate = new Date(cur.confirmedAt + (cur.etaMs||0));
+  const left = Math.max(0, Math.floor(((cur.confirmedAt + cur.etaMs) - Date.now())/1000));
   el.innerHTML = `
-    <div style="display:flex;justify-content:space-between"><div><strong>Текущий рейс</strong><div class="small">${esc(cur.airline)} ${esc(cur.route.fromICAO)}→${esc(cur.route.toICAO)}</div></div><div class="small">ETA: ${esc(etaDate.toLocaleString())}</div></div>
-    <div style="margin-top:8px" class="small">Flight ID: <strong>${esc(cur.flightId)}</strong></div>
-    <div class="small">Aircraft: <strong>${esc(cur.aircraftId)}</strong> · ${esc(cur.aircraftType)} · Seats: ${esc(cur.seats)} · Turnaround: ${esc(cur.turnaround||'—')}</div>
-    <div class="small">Pilot: <strong>${esc(cur.pilotName)} (${esc(cur.pilotCall)})</strong></div>
-    <div class="small" style="margin-top:8px">Reserved token: <span style="word-break:break-all">${esc(cur.reservedToken||'—')}</span></div>
-    <div class="small" style="margin-top:8px">Time left: <strong id="left_${esc(cur.flightId)}">${left}</strong> s</div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button id="mark_${esc(cur.flightId)}" class="btn btn-primary">Отметить долетел</button><button id="clear_${esc(cur.flightId)}" class="btn">Удалить</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-weight:900">Текущий рейс</div><div class="meta">${esc(cur.airline)} · ${esc(cur.route.fromICAO)}→${esc(cur.route.toICAO)}</div></div>
+      <div class="meta">ETA: ${esc(etaDate.toLocaleString())}</div>
+    </div>
+    <div style="margin-top:10px" class="meta">
+      <div>Flight ID: <strong>${esc(cur.flightId)}</strong></div>
+      <div>Aircraft: <strong>${esc(cur.aircraftId)}</strong> · Type: <strong>${esc(cur.aircraftType)}</strong> · Seats: <strong>${esc(cur.seats)}</strong> · Turnaround: <strong>${esc(cur.turnaround||'—')}</strong></div>
+      <div>Pilot: <strong>${esc(cur.pilotName)} (${esc(cur.pilotCall)})</strong></div>
+      <div style="margin-top:8px">Reserved token: <span style="word-break:break-all">${esc(cur.reservedToken||'—')}</span></div>
+      <div style="margin-top:8px">Time left: <strong id="left_${esc(cur.flightId)}">${left}</strong> s</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+      <button id="mark_${esc(cur.flightId)}" class="btn-primary">Отметить долетел</button>
+      <button id="clear_${esc(cur.flightId)}" class="btn-ghost">Удалить</button>
+    </div>
   `;
   currentFlightWrap.appendChild(el);
 
-  if(cIntervals[cur.flightId]) clearInterval(cIntervals[cur.flightId]);
-  cIntervals[cur.flightId]=setInterval(()=>{
+  if(countdowns[cur.flightId]) clearInterval(countdowns[cur.flightId]);
+  countdowns[cur.flightId] = setInterval(()=> {
     const nowc = loadCurrentFlight(SESSION.pilotId);
-    if(!nowc){ clearInterval(cIntervals[cur.flightId]); renderCurrentFlight(); return; }
-    const leftNow = Math.max(0, Math.floor(((nowc.confirmedAt + nowc.etaMs)-Date.now())/1000));
-    const elLeft = document.getElementById('left_'+nowc.flightId);
-    if(elLeft) elLeft.textContent = leftNow;
-    if(leftNow<=0){ clearInterval(cIntervals[cur.flightId]); renderCurrentFlight(); }
+    if(!nowc){ clearInterval(countdowns[cur.flightId]); renderCurrentFlight(); return; }
+    const leftNow = Math.max(0, Math.floor(((nowc.confirmedAt + nowc.etaMs) - Date.now())/1000));
+    const e = document.getElementById('left_'+nowc.flightId);
+    if(e) e.textContent = leftNow;
+    if(leftNow<=0){ clearInterval(countdowns[cur.flightId]); renderCurrentFlight(); }
   },1000);
 
   document.getElementById('mark_'+cur.flightId).addEventListener('click', ()=>{
-    if(!confirm('Отметить как долетел?')) return;
-    FLEET_LOG.push({ts:nowMs(),event:'pilot_arrived',aircraft:cur.aircraftId,route:`${cur.route.fromICAO}->${cur.route.toICAO}`,pilotId:cur.pilotId});
+    if(!confirm('Отметить рейс как завершённый?')) return;
+    FLEET_LOG.push({ ts: nowMs(), event: 'pilot_arrived', aircraft: cur.aircraftId, route: `${cur.route.fromICAO}->${cur.route.toICAO}`, pilotId: cur.pilotId });
     clearCurrentFlight(SESSION.pilotId);
     renderAssignLog(); renderCurrentFlight(); bumpVersion();
-    alert('Рейс отмечен как завершённый у вас в браузере');
+    alert('Рейс отмечен как завершённый.');
   });
   document.getElementById('clear_'+cur.flightId).addEventListener('click', ()=>{
-    if(!confirm('Удалить запись?')) return;
+    if(!confirm('Удалить текущую запись?')) return;
     clearCurrentFlight(SESSION.pilotId); renderCurrentFlight(); bumpVersion();
   });
 }
 
-/* =============== reservation / confirm =============== */
-function reserveAircraft(ac, ownerId, ttlMs=120000){
-  if(ac.status==='inFlight') return {ok:false,reason:'inflight'};
-  if(ac.status==='reserved') return {ok:false,reason:'already_reserved'};
-  ac.status='reserved'; ac.reservedBy=ownerId; ac.reservedToken = ownerId+':'+Date.now()+':'+Math.random().toString(36).slice(2,8); ac.reservedUntil = nowMs()+ttlMs;
-  FLEET_LOG.push({ts:nowMs(),event:'reserved',aircraft:ac.id});
+/* ============== reservation/confirm/generate ============== */
+function reserveAircraft(ac, ownerId, ttlMs = 120*1000){
+  if(ac.status === 'inFlight') return { ok:false, reason:'inflight' };
+  if(ac.status === 'reserved') return { ok:false, reason:'already_reserved' };
+  ac.status='reserved'; ac.reservedBy = ownerId;
+  ac.reservedToken = ownerId + ':' + Date.now() + ':' + Math.random().toString(36).slice(2,8);
+  ac.reservedUntil = nowMs() + ttlMs;
+  FLEET_LOG.push({ ts: nowMs(), event:'reserved', aircraft: ac.id });
   renderAssignLog(); renderFleet();
-  return {ok:true,token:ac.reservedToken};
+  return { ok:true, token: ac.reservedToken };
 }
 function cancelReservationByToken(token){
-  const ac = FLEET.find(a=>a.reservedToken===token); if(!ac) return false;
+  const ac = FLEET.find(a=>a.reservedToken === token);
+  if(!ac) return false;
   delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil; ac.status='idle';
-  FLEET_LOG.push({ts:nowMs(),event:'reservation_cancelled',aircraft:ac.id});
+  FLEET_LOG.push({ ts: nowMs(), event:'reservation_cancelled', aircraft: ac.id });
   renderAssignLog(); renderFleet(); return true;
 }
 function confirmReservation(token, route, pilotId){
-  const ac = FLEET.find(a=>a.reservedToken===token); if(!ac) return {ok:false,reason:'no_res'};
-  if(ac.reservedToken !== token) return {ok:false,reason:'token_mismatch'};
+  const ac = FLEET.find(a=>a.reservedToken === token);
+  if(!ac) return { ok:false, reason:'no_reservation' };
+  if(ac.reservedToken !== token) return { ok:false, reason:'token_mismatch' };
+
   if(!SESSION.isAdmin){
-    const eff = pilotId || SESSION.pilotId; if(!eff) return {ok:false,reason:'no_pilot'};
-    const p = PILOTS.find(x=>x.id===eff); if(!(p && p.verified)) return {ok:false,reason:'pilot_not_verified'};
+    const eff = pilotId || SESSION.pilotId;
+    if(!eff) return { ok:false, reason:'no_pilot_assigned' };
+    const p = PILOTS.find(x=>x.id===eff);
+    if(!(p && p.verified)) return { ok:false, reason:'pilot_not_verified' };
     pilotId = eff;
   }
-  const now = nowMs(); const durMs = (Number(route.durationMinutes)||120)*60*1000;
-  ac.status='inFlight'; ac.availableAt = now + durMs + (ac.turnaround||0)*60*1000; ac.nextLocation = route.toICAO;
+
+  const now = nowMs(); const durationMs = (Number(route.durationMinutes) || 120) * 60 * 1000;
+  ac.status='inFlight'; ac.availableAt = now + durationMs + (ac.turnaround||0)*60*1000; ac.nextLocation = route.toICAO;
   delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
-  FLEET_LOG.push({ts:now,event:'assign_confirmed',aircraft:ac.id,route:`${route.fromICAO}->${route.toICAO}`,durationMin:route.durationMinutes});
+  FLEET_LOG.push({ ts: now, event:'assign_confirmed', aircraft: ac.id, route: `${route.fromICAO}->${route.toICAO}`, durationMin: route.durationMinutes });
   renderAssignLog(); renderFleet();
+
   const pilot = PILOTS.find(p=>p.id===pilotId);
   const current = {
     flightId: uid('flt'),
@@ -420,158 +554,226 @@ function confirmReservation(token, route, pilotId){
     airline: ac.airline,
     route,
     pilotId,
-    pilotName: pilot?pilot.name:'',
-    pilotCall: pilot?pilot.callSign:'',
+    pilotName: pilot ? pilot.name : '',
+    pilotCall: pilot ? pilot.callSign : '',
     confirmedAt: now,
-    etaMs: durMs,
+    etaMs: durationMs,
     reservedToken: token
   };
   persistCurrentFlight(pilotId, current);
-  renderCurrentFlight(); bumpVersion();
-  return {ok:true,ac};
-}
-
-/* =============== generate =============== */
-function canCreate(){ if(SESSION.isAdmin) return true; if(!SESSION.pilotId) return false; const p=PILOTS.find(x=>x.id===SESSION.pilotId); return !!(p && p.verified); }
-
-function generateFlight(fromRoute=null){
-  if(!canCreate()){ alert('Только верифицированный пилот или админ.'); return; }
-  let pool = ROUTES.slice();
-  const sort = routeSort.value; if(sort==='airline') pool.sort((a,b)=>a.airline.localeCompare(b.airline,'ru')); if(sort==='duration') pool.sort((a,b)=>a.durationMinutes-b.durationMinutes);
-  if(fromRoute) pool=[fromRoute]; else {
-    if(chosenAirIndex!==null){ const ch=AIRLINES[chosenAirIndex].name; pool = pool.filter(r=>r.airline.toLowerCase()===ch.toLowerCase()); if(!pool.length) pool = ROUTES.slice(); }
-  }
-  const route = pool[Math.floor(Math.random()*pool.length)];
-  let candidates = FLEET.filter(ac=> (ac.locationICAO||'').toUpperCase()===(route.fromICAO||'').toUpperCase() && ac.status==='idle');
-  if(!candidates.length) { resultArea.style.display='block'; resultArea.innerHTML='<div class="kv">Нет idle самолётов</div>'; return; }
-  candidates.sort((a,b)=>Math.abs(a.seats-180)-Math.abs(b.seats-180)); const candidate=candidates[0];
-  const res = reserveAircraft(candidate, SESSION.pilotId || 'user_anonymous');
-  if(!res.ok){ alert('Не удалось зарезервировать: '+res.reason); return; }
-  lastReservation = {route,aircraftId:candidate.id,token:res.token,reservedAt:nowMs()};
-  renderReservationCard(lastReservation);
+  renderCurrentFlight();
+  renderConfirmedFlight(ac, route, pilotId);
   bumpVersion();
+  return { ok:true, aircraft: ac };
 }
 
-/* reservation card rendering */
 function renderReservationCard(gen){
   if(!gen){ resultArea.style.display='none'; resultArea.innerHTML=''; return; }
   const ac = FLEET.find(a=>a.id===gen.aircraftId);
   const route = gen.route;
   resultArea.style.display='block';
-  let pilotOpt = '<option value="">Не назначать</option>';
-  if(SESSION.isAdmin) PILOTS.forEach(p=>pilotOpt += `<option value="${p.id}">${esc(p.name)} (${esc(p.callSign)}) ${p.verified? '·V':''}</option>`);
-  else if(SESSION.pilotId){ const p=PILOTS.find(x=>x.id===SESSION.pilotId); if(p) pilotOpt += `<option value="${p.id}">${esc(p.name)} (${esc(p.callSign)})</option>`; }
+  let pilotOptions = '<option value="">Не назначать</option>';
+  if(SESSION.isAdmin) PILOTS.forEach(p => pilotOptions += `<option value="${p.id}">${esc(p.name)} (${esc(p.callSign)}) ${p.verified? '· Verified':''}</option>`);
+  else if(SESSION.pilotId){ const p=PILOTS.find(x=>x.id===SESSION.pilotId); if(p) pilotOptions += `<option value="${p.id}">${esc(p.name)} (${esc(p.callSign)})</option>`; }
   resultArea.innerHTML = `
     <div class="item" style="align-items:center">
       <div>
-        <div style="font-weight:800">${esc(ac.id)} · ${esc(ac.airline)} · ${esc(ac.type)}</div>
-        <div class="small">${esc(route.fromICAO)} → ${esc(route.toICAO)} · ${route.durationMinutes} мин</div>
-        <div class="small">Token: <span style="word-break:break-all">${esc(gen.token)}</span></div>
+        <div style="font-weight:900">${esc(ac.id)} · ${esc(ac.airline)} · ${esc(ac.type)}</div>
+        <div class="meta" style="margin-top:6px">${esc(route.fromICAO)} → ${esc(route.toICAO)} · ${route.durationMinutes} мин</div>
+        <div class="meta" style="margin-top:6px">Reserved token: <span style="word-break:break-all">${esc(gen.token)}</span></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-        <select id="selectPilot" class="input">${pilotOpt}</select>
-        <div style="display:flex;gap:8px"><button id="confirmBtn" class="btn btn-primary">Подтвердить</button><button id="cancelBtn" class="btn">Отменить</button></div>
+        <select id="selectPilot" class="input" style="min-width:220px">${pilotOptions}</select>
+        <div style="display:flex;gap:8px">
+          <button id="confirmReserveBtn" class="btn-primary">Подтвердить</button>
+          <button id="cancelReserveBtn" class="btn-ghost">Отменить</button>
+        </div>
       </div>
     </div>
   `;
-  document.getElementById('confirmBtn').addEventListener('click', ()=>{
-    const sel=document.getElementById('selectPilot').value||null;
-    const r = confirmReservation(gen.token, gen.route, sel);
-    if(!r.ok){ alert('Не удалось: '+r.reason); } else { lastReservation=null; renderReservationCard(null); }
+  document.getElementById('confirmReserveBtn').addEventListener('click', ()=>{
+    const sel=document.getElementById('selectPilot').value || null;
+    const res = confirmReservation(gen.token, gen.route, sel);
+    if(!res.ok){
+      if(res.reason === 'pilot_not_verified') alert('Пилот не верифицирован.');
+      else alert('Не удалось подтвердить: ' + res.reason);
+    } else { lastReservation = null; renderReservationCard(null); }
   });
-  document.getElementById('cancelBtn').addEventListener('click', ()=>{ cancelReservationByToken(gen.token); lastReservation=null; renderReservationCard(null); });
+  document.getElementById('cancelReserveBtn').addEventListener('click', ()=>{
+    cancelReservationByToken(gen.token); lastReservation=null; renderReservationCard(null);
+  });
 }
 
-/* =============== route modal =============== */
-let routeInModal=null;
-function openRouteModal(route){ routeInModal=route; routeTitle.textContent=`${route.airline} • ${route.fromICAO}→${route.toICAO}`; routeBody.innerHTML=`<div class="small">Duration: <strong>${route.durationMinutes} мин</strong></div><div class="note">Нажмите «Сгенерировать этот маршрут» чтобы использовать его.</div>`; routeModal.style.display='flex'; }
-routeClose.addEventListener('click', ()=>{ routeModal.style.display='none'; routeInModal=null; });
-routeUse.addEventListener('click', ()=>{ if(routeInModal) { generateFlight(routeInModal); routeModal.style.display='none'; routeInModal=null; } });
-
-/* =============== gate / auth / clear previous flights =============== */
-function wipePrev(prev){
-  if(!prev) return;
-  try{ clearCurrentFlight(prev); FLEET.forEach(a=>{ if(a.reservedBy===prev){ delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; a.status='idle'; FLEET_LOG.push({ts:nowMs(),event:'cleared_prev',aircraft:a.id,prev}); } }); renderFleet(); renderAssignLog(); }catch(e){console.warn(e);}
+function renderConfirmedFlight(ac, route, pilotId){
+  const pilot = PILOTS.find(p=>p.id===pilotId);
+  const flightMs = (Number(route.durationMinutes)||120) * 60 * 1000;
+  const eta = new Date(Date.now() + flightMs).toLocaleString();
+  const card = document.createElement('div'); card.className='item';
+  card.innerHTML = `
+    <div>
+      <div style="font-weight:900;color:var(--success)">Рейс подтверждён</div>
+      <div class="meta">${esc(ac.id)} · ${esc(ac.airline)} · ${esc(route.fromICAO)}→${esc(route.toICAO)}</div>
+      <div class="meta" style="margin-top:6px">Pilot: ${pilot ? esc(pilot.name) + ' (' + esc(pilot.callSign) + ')' : '—'}</div>
+      <div class="meta" style="margin-top:6px">ETA: ${esc(eta)}</div>
+    </div>
+  `;
+  confirmedSection.innerHTML=''; confirmedSection.appendChild(card);
 }
 
-openGateBtn.addEventListener('click', ()=>{ gateModal.style.display='flex'; });
+/* background expiry */
+setInterval(()=>{
+  const now = nowMs(); let changed=false;
+  FLEET.forEach(ac=>{
+    if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil <= now){
+      ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil;
+      FLEET_LOG.push({ ts: now, event:'reservation_expired', aircraft: ac.id }); changed=true;
+    }
+    if(ac.status==='inFlight' && ac.availableAt && ac.availableAt <= now){
+      ac.status='idle'; if(ac.nextLocation) ac.locationICAO = ac.nextLocation; delete ac.availableAt; delete ac.nextLocation;
+      FLEET_LOG.push({ ts: now, event:'available', aircraft: ac.id, location: ac.locationICAO }); changed=true;
+    }
+  });
+  if(changed){ renderAssignLog(); renderFleet(); renderPilots(); }
+}, 1200);
+
+/* ============== route modal ============== */
+let routeInModal = null;
+function openRouteModal(route){
+  routeInModal = route;
+  document.getElementById('routeModalTitle').textContent = `${route.airline} • ${route.fromICAO} → ${route.toICAO}`;
+  document.getElementById('routeModalSub').textContent = `${route.fromCity} → ${route.toCity}`;
+  document.getElementById('routeModalDur').textContent = `${route.durationMinutes} мин`;
+  document.getElementById('routeModal').style.display = 'flex';
+}
+document.getElementById('routeCloseBtn').addEventListener('click', ()=> { document.getElementById('routeModal').style.display='none'; routeInModal=null; });
+document.getElementById('routeUseBtn').addEventListener('click', ()=> { if(routeInModal){ generateFlight(routeInModal); document.getElementById('routeModal').style.display='none'; routeInModal=null; } });
+
+/* ============== auth / wipe previous ============== */
+function wipePreviousPilot(prevPilotId){
+  if(!prevPilotId) return;
+  try{
+    clearCurrentFlight(prevPilotId);
+    FLEET.forEach(ac=>{
+      if(ac.reservedBy === prevPilotId){ delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; ac.status='idle'; FLEET_LOG.push({ ts: nowMs(), event:'reservation_cleared_prev', aircraft: ac.id, prevPilot: prevPilotId }); }
+    });
+    renderFleet(); renderAssignLog();
+  }catch(e){ console.warn('wipe failed', e); }
+}
+
+document.getElementById('openGate').addEventListener('click', ()=> { gateModal.style.display='flex'; });
 btnLoginPilot.addEventListener('click', ()=>{
-  const cs=(loginCall.value||'').trim(), pass=(loginPass.value||'').trim();
+  const cs = (loginCall.value||'').trim(); const pass = (loginPass.value||'').trim();
   if(!cs){ alert('Введите позывной'); return; }
-  const p=PILOTS.find(x=> (x.callSign||'').toLowerCase()===cs.toLowerCase());
+  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
   if(!p){ alert('Пилот не найден'); return; }
-  const pp=p.password||'';
-  if(pass===CODEWORD || (pp && pass===pp)){
-    const prev=SESSION.pilotId;
-    SESSION.pilotId=p.id; SESSION.isAdmin=false; saveSession();
-    if(prev && prev!==p.id) wipePrev(prev);
-    renderSessionInfo(); renderPilots(); renderRoutes(); renderFleet(); renderAssignLog(); renderCurrentFlight();
+  const pp = p.password || '';
+  if(pass === CODEWORD || (pp && pass === pp)){
+    const prev = SESSION.pilotId;
+    SESSION.pilotId = p.id; SESSION.isAdmin = false; saveSession();
+    if(prev && prev !== p.id) wipePreviousPilot(prev);
+    renderSessionInfo(); renderPilots(); renderFleet(); renderRoutes(); renderAssignLog(); renderCurrentFlight();
     gateModal.style.display='none';
-    // show About tab first after login
     activateTab('about'); bumpVersion();
     return;
   }
   alert('Неверный пароль');
 });
 
-/* sign in from pilot list */
+/* sign in from pilots list */
 function signInAsPilot(pid){
-  const prev=SESSION.pilotId;
-  SESSION.pilotId=pid; SESSION.isAdmin=false; saveSession();
-  if(prev && prev!==pid) wipePrev(prev);
-  renderSessionInfo(); renderPilots(); renderRoutes(); renderFleet(); renderAssignLog(); renderCurrentFlight();
+  const prev = SESSION.pilotId;
+  SESSION.pilotId = pid; SESSION.isAdmin = false; saveSession();
+  if(prev && prev !== pid) wipePreviousPilot(prev);
+  renderSessionInfo(); renderPilots(); renderFleet(); renderRoutes(); renderAssignLog(); renderCurrentFlight();
   activateTab('about'); bumpVersion();
 }
 
-/* ================= tab switching ================= */
-function activateTab(name){
-  tabs.forEach(t=> t.classList.toggle('active', t.getAttribute('data-tab')===name));
-  for(const k in panes) panes[k].style.display = (k===name)?'block':'none';
-}
-tabs.forEach(t=> t.addEventListener('click', ()=> { const key=t.getAttribute('data-tab'); activateTab(key); bumpVersion(); }));
+/* ============== generate / helper ============== */
+let chosenAirIndex = null;
+let lastReservation = null;
 
-/* ================= assistant notify (manual trigger) and webhook example ================= */
-assistantNotify.addEventListener('click', ()=> { 
-  // Ручной триггер: нажми после того, как отправил сообщение ассистенту — версия увеличится.
+function canCreateFlight(){ if(SESSION.isAdmin) return true; if(!SESSION.pilotId) return false; const p = PILOTS.find(x=>x.id===SESSION.pilotId); return !!(p && p.verified); }
+
+function generateFlight(fromRoute = null){
+  if(!canCreateFlight()){ alert('Только верифицированный пилот или админ может создать рейс.'); return; }
+  let pool = ROUTES.slice();
+  const sortMode = routeSort.value;
+  if(sortMode === 'airline') pool.sort((a,b)=> a.airline.localeCompare(b.airline,'ru'));
+  if(sortMode === 'duration') pool.sort((a,b)=> a.durationMinutes - b.durationMinutes);
+
+  if(fromRoute){
+    pool = [fromRoute];
+  } else if(chosenAirIndex !== null){
+    const ch = AIRLINES[chosenAirIndex].name;
+    const filtered = pool.filter(r => r.airline.toLowerCase() === ch.toLowerCase());
+    if(filtered.length) pool = filtered;
+  }
+
+  if(pool.length === 0){ resultArea.style.display='block'; resultArea.innerHTML = `<div class="kv">Нет маршрутов</div>`; return; }
+  const route = pool[Math.floor(Math.random()*pool.length)];
+
+  let candidates = FLEET.filter(ac => (ac.locationICAO||'').toUpperCase() === (route.fromICAO||'').toUpperCase() && ac.status === 'idle');
+  if(candidates.length === 0){ resultArea.style.display='block'; resultArea.innerHTML = `<div class="kv">Нет idle самолётов в хабе ${esc(route.fromICAO)}</div>`; return; }
+  candidates.sort((a,b)=> Math.abs(a.seats - 180) - Math.abs(b.seats - 180));
+  const candidate = candidates[0];
+  const res = reserveAircraft(candidate, SESSION.pilotId || 'user_anonymous');
+  if(!res.ok){ alert('Не удалось зарезервировать: ' + res.reason); return; }
+  lastReservation = { route, aircraftId: candidate.id, token: res.token, reservedAt: nowMs() };
+  renderReservationCard(lastReservation);
   bumpVersion();
-  alert('Версия обновлена вручную (отправлено уведомление ассистенту)');
-});
+}
 
-/* Webhook / automatic integration (пример)
-   Если ты можешь сделать внешний вызов при каждом сообщении ассистенту, то пусть тот вызов сделает POST на этот URL:
-   https://<твoй-сервер>/lh-bump
-   А сервер в ответ выполнит простой fetch к странице (или вызовет API), чтобы увеличить версию на клиенте.
-   На чисто статическом GitHub Pages это невозможно без сервера; поэтому пример оставлен как подсказка.
-*/
+/* ============== route modal & helpers done above ============== */
 
-/* ================= misc bindings & init ================= */
-routeSort.addEventListener('change', ()=>{ renderRoutes(); bumpVersion(); });
-filterAirline.addEventListener('change', ()=>{ renderRoutes(); });
-filterHub.addEventListener('change', ()=>{ renderRoutes(); });
-filterFleetAirline.addEventListener('change', ()=>{ renderFleet(); });
-filterFleetStatus.addEventListener('change', ()=>{ renderFleet(); });
-pilotSearch.addEventListener('input', ()=>{ renderPilots(); });
+/* ============== tabs ============== */
+function activateTab(name){
+  tabs.forEach(t=> t.classList.toggle('active', t.dataset.tab === name));
+  for(const k in panes) panes[k].style.display = (k===name) ? 'block' : 'none';
+}
+tabs.forEach(t=> t.addEventListener('click', ()=> { activateTab(t.dataset.tab); bumpVersion(); }));
 
-document.getElementById('openAboutBtn').addEventListener('click', ()=>{ activateTab('about'); aboutModalHide(); bumpVersion(); });
+/* assistant notify */
+assistantNotify.addEventListener('click', ()=> { bumpVersion(); alert('Версия увеличена вручную'); });
 
-/* helper to hide any top-level about (we show About pane instead) */
-function aboutModalHide(){ const am=document.getElementById('pane-about'); if(am) { /* pane already visible */ }}
+/* route modal handlers defined above */
 
-/* version render initially */
-renderVersion();
+/* ============== init & bindings ============== */
+document.getElementById('routeSort').addEventListener('change', ()=> { renderRoutes(); bumpVersion(); });
+document.getElementById('filterAirline').addEventListener('change', ()=> renderRoutes());
+document.getElementById('filterHub').addEventListener('change', ()=> renderRoutes());
+document.getElementById('filterFleetAirline').addEventListener('change', ()=> renderFleet());
+document.getElementById('filterFleetStatus').addEventListener('change', ()=> renderFleet());
+document.getElementById('genBtn').addEventListener('click', ()=> { if(lastReservation && lastReservation.token){ if(!confirm('У вас есть активный резерв. Создать новый?')) return; cancelReservationByToken(lastReservation.token); lastReservation=null; renderReservationCard(null); } generateFlight(); });
+document.getElementById('resetBtn').addEventListener('click', ()=> { chosenAirIndex=null; lastReservation=null; resultArea.style.display='none'; resultArea.innerHTML=''; confirmedSection.innerHTML=''; bumpVersion(); });
 
-/* ================= init render ================= */
-function init(){
-  renderAirlines(); renderRoutes(); renderFleet(); renderPilots(); renderAssignLog(); renderSessionInfo(); renderCurrentFlight();
-  // show gate for login if not logged
-  if(!SESSION.pilotId && !SESSION.isAdmin){ gateModal.style.display='none'; /* gate opened by button; to require login on load, set to 'flex' */ }
-  // user requested: About should be first visible AFTER login; keep generate visible pre-login
+function initFilters(){
+  filterAirline.innerHTML = '<option value="all">Все авиакомпании</option>';
+  filterFleetAirline.innerHTML = '<option value="all">Все авиакомпании</option>';
+  AIRLINES.forEach(a=>{ const o=document.createElement('option'); o.value=a.name; o.textContent=a.name; filterAirline.appendChild(o); const o2=document.createElement('option'); o2.value=a.name; o2.textContent=a.name; filterFleetAirline.appendChild(o2); });
+  const hubs = Array.from(new Set(AIRLINES.flatMap(a=>a.hubs)));
+  filterHub.innerHTML = '<option value="all">Все хабы</option>';
+  hubs.forEach(h=>{ const o=document.createElement('option'); o.value=h; o.textContent=h; filterHub.appendChild(o); });
+}
+
+/* init */
+function initAll(){
+  renderVersion();
+  renderAirlines();
+  initFilters();
+  renderRoutes();
+  renderFleet();
+  renderPilots();
+  renderAssignLog();
+  renderSessionInfo();
+  renderCurrentFlight();
+
+  // show generate pane first; About will be shown after login
   activateTab('generate');
 }
-init();
+initAll();
 
-/* Expose debug */
-window._lh = {PILOTS,ROUTES,AIRLINES,FLEET,bumpVersion,readVersion,activateTab};
+/* expose debug */
+window._lh = { PILOTS, ROUTES, AIRLINES, FLEET, bumpVersion, readVersion, activateTab };
 </script>
 </body>
 </html>
