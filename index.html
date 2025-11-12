@@ -693,22 +693,83 @@ setInterval(()=>{
 }, 1500);
 
 /* ================= Gate (auth) ================= */
-rolePilotBtn.addEventListener('click', ()=>{ rolePilotBtn.classList.add('active'); roleAdminBtn.classList.remove('active'); loginPilotBlock.style.display='block'; loginAdminBlock.style.display='none'; });
-roleAdminBtn.addEventListener('click', ()=>{ roleAdminBtn.classList.add('active'); rolePilotBtn.classList.remove('active'); loginAdminBlock.style.display='block'; loginPilotBlock.style.display='none'; });
+/* ====== Robust Gate bindings (replaces previous fragile handlers) ====== */
+(function setupGateHandlers(){
+  try {
+    // safe refs (may be null if DOM changed)
+    const rolePilotBtn = document.getElementById('rolePilot');
+    const roleAdminBtn = document.getElementById('roleAdmin');
+    const loginPilotBlock = document.getElementById('loginPilot');
+    const loginAdminBlock = document.getElementById('loginAdmin');
+    const loginCall = document.getElementById('loginCall');
+    const loginPass = document.getElementById('loginPass');
+    const btnLoginPilot = document.getElementById('btnLoginPilot');
+    const btnLoginAdmin = document.getElementById('btnLoginAdmin');
+    const btnBackToPilot = document.getElementById('btnBackToPilot');
 
-btnLoginPilot.addEventListener('click', ()=>{
-  const cs = (loginCall.value||'').trim(); const pass = (loginPass.value||'').trim();
-  if(!cs){ alert('Введите позывной'); return; }
-  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
-  if(!p){ alert('Пилот не найден. Регистрация отключена.'); return; }
-  const pilotPassword = p.password || '';
-  if(pass === CODEWORD || (pilotPassword && pass === pilotPassword)){
-    SESSION.pilotId = p.id; SESSION.isAdmin = false; saveSession(); renderSessionInfo(); renderPilots(); renderFleet(); renderRoutes(); renderCurrentFlight();
-    gate.style.display = 'none';
-    return;
+    function safeAdd(el, ev, fn){
+      if(!el) return console.warn('Gate: missing element for', ev);
+      el.addEventListener(ev, fn);
+    }
+
+    safeAdd(rolePilotBtn, 'click', ()=> {
+      rolePilotBtn.classList && rolePilotBtn.classList.add('active');
+      roleAdminBtn && roleAdminBtn.classList.remove('active');
+      if(loginPilotBlock) loginPilotBlock.style.display = 'block';
+      if(loginAdminBlock) loginAdminBlock.style.display = 'none';
+    });
+
+    safeAdd(roleAdminBtn, 'click', ()=> {
+      roleAdminBtn.classList && roleAdminBtn.classList.add('active');
+      rolePilotBtn && rolePilotBtn.classList.remove('active');
+      if(loginAdminBlock) loginAdminBlock.style.display = 'block';
+      if(loginPilotBlock) loginPilotBlock.style.display = 'none';
+    });
+
+    safeAdd(btnLoginPilot, 'click', ()=>{
+      try{
+        const cs = (loginCall && loginCall.value || '').trim();
+        const pass = (loginPass && loginPass.value || '').trim();
+        if(!cs){ alert('Введите позывной'); return; }
+        const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
+        if(!p){ alert('Пилот не найден. Регистрация отключена.'); return; }
+        const pilotPassword = p.password || '';
+        if(pass === CODEWORD || (pilotPassword && pass === pilotPassword)){
+          SESSION.pilotId = p.id; SESSION.isAdmin = false; saveSession(); renderSessionInfo(); renderPilots(); renderFleet(); renderRoutes(); renderCurrentFlight();
+          gate.style.display = 'none';
+          return;
+        }
+        alert('Неверный пароль или кодовое слово');
+      }catch(err){
+        console.error('Gate pilot login handler error', err);
+        alert('Ошибка при входе. Откройте консоль для деталей.');
+      }
+    });
+
+    safeAdd(btnLoginAdmin, 'click', ()=>{
+      try{
+        const user = (document.getElementById('adminUser') && document.getElementById('adminUser').value || '').trim();
+        const pass = (document.getElementById('adminPass') && document.getElementById('adminPass').value || '').trim();
+        if(user === 'admin' && pass === 'admin123'){
+          SESSION.pilotId = null; SESSION.isAdmin = true; saveSession(); renderSessionInfo(); renderPilots(); renderFleet(); renderRoutes();
+          gate.style.display = 'none';
+        } else alert('Неверные учётные данные');
+      }catch(err){
+        console.error('Gate admin login handler error', err);
+        alert('Ошибка при входе админа. Откройте консоль для деталей.');
+      }
+    });
+
+    safeAdd(btnBackToPilot, 'click', ()=> { rolePilotBtn && rolePilotBtn.click(); });
+
+    // ensure gate visible on load (your requirement) but do not lock UI by throwing errors
+    gate.style.display = 'flex';
+  } catch(e){
+    console.error('setupGateHandlers fatal', e);
+    // keep gate visible so user can still attempt manual actions
+    try { gate.style.display = 'flex'; }catch(_){}
   }
-  alert('Неверный пароль или кодовое слово');
-});
+})();
 
 btnLoginAdmin.addEventListener('click', ()=>{
   const user = (document.getElementById('adminUser').value||'').trim(); const pass = (document.getElementById('adminPass').value||'').trim();
@@ -752,3 +813,4 @@ window._demo = { PILOTS, ROUTES, AIRLINES, FLEET, CODEWORD, renderCurrentFlight 
 </script>
 </body>
 </html>
+
