@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — restored logic + Liquid Glass UI</title>
+<title>Lufthansa Helper — Liquid Glass (no result page, auto pilot)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -64,11 +64,18 @@ body{
 /* Header right */
 .header-right{display:flex;gap:10px;align-items:center}
 .ver{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);font-weight:700;color:var(--muted)}
-.small-btn{
-  padding:8px 12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-  border:1px solid rgba(255,255,255,0.04); color:var(--text); cursor:pointer; font-weight:700;
-  box-shadow: 0 8px 24px rgba(2,8,20,0.25);
+.btn{
+  padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  color:var(--text);cursor:pointer;font-weight:800;transition:all 220ms;
+  backdrop-filter: var(--blur); box-shadow: 0 12px 36px rgba(2,8,20,0.45);
 }
+.btn:hover{ transform:translateY(-3px); box-shadow: 0 24px 64px rgba(2,8,20,0.6); background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
+.btn-primary{
+  background: linear-gradient(180deg,var(--accent),var(--accent-2)); color:#04202a; border:none; box-shadow:0 16px 48px rgba(255,160,40,0.12);
+}
+.btn-pill{ padding:8px 12px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,0.03); color:var(--muted); cursor:pointer; }
+.btn-pill.active{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#04202a; box-shadow:0 20px 60px rgba(255,170,60,0.08); transform:translateY(-4px) }
 
 /* Layout */
 .layout{margin-top:16px;display:grid;grid-template-columns:1fr 360px;gap:16px}
@@ -84,20 +91,6 @@ body{
   box-shadow:0 6px 20px rgba(2,8,20,0.06);
 }
 .tab-btn.active{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#04202a;transform:translateY(-4px);box-shadow:0 20px 60px rgba(255,160,40,0.08)}
-
-/* Buttons (liquid glass) */
-.btn{
-  padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-  color:var(--text);cursor:pointer;font-weight:800;transition:all 220ms;
-  backdrop-filter: var(--blur); box-shadow: 0 12px 36px rgba(2,8,20,0.45);
-}
-.btn:hover{ transform:translateY(-3px); box-shadow: 0 24px 64px rgba(2,8,20,0.6); background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
-.btn-primary{
-  background: linear-gradient(180deg,var(--accent),var(--accent-2)); color:#04202a; border:none; box-shadow:0 16px 48px rgba(255,160,40,0.12);
-}
-.btn-pill{ padding:8px 12px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,0.03); color:var(--muted); cursor:pointer; }
-.btn-pill.active{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#04202a; box-shadow:0 20px 60px rgba(255,170,60,0.08); transform:translateY(-4px) }
 
 /* Generator layout */
 .generator{margin-top:14px;display:grid;grid-template-columns:1fr 420px;gap:18px}
@@ -153,32 +146,33 @@ body{
 </head>
 <body>
 <div class="container">
+  <!-- Header -->
   <header class="header glass">
     <div class="brand">
       <div class="logo">LH</div>
       <div>
-        <h1 class="title">Lufthansa Helper</h1>
-        <div class="subtitle">Генератор рейсов — Liquid Glass</div>
+        <div class="title">Lufthansa Helper</div>
+        <div class="subtitle">Liquid Glass — автоматический пилот</div>
       </div>
     </div>
 
     <div class="header-right">
       <div id="verLabel" class="ver">v0</div>
-      <button id="assistantNotify" class="small-btn">Bump</button>
-      <button id="openGateBtn" class="small-btn">Войти</button>
+      <button id="assistantNotify" class="btn">Bump</button>
+      <button id="openGateBtn" class="btn">Войти</button>
       <div id="sessionInfo" class="kv">Неавторизован</div>
     </div>
   </header>
 
+  <!-- Layout -->
   <div class="layout">
     <main>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-weight:900;font-size:18px">Генерация рейсов</div>
-            <div class="kv">Клик по авиакомпании фильтрует маршруты; при генерации пилот назначается автоматически</div>
+            <div class="kv">Клик по авиакомпании фильтрует маршруты; пилот назначается автоматически по вошедшему аккаунту</div>
           </div>
-
           <div class="nav-tabs">
             <button class="tab-btn active" data-tab="generate">Генерация</button>
             <button class="tab-btn" data-tab="routes">Направления</button>
@@ -190,20 +184,26 @@ body{
           <div class="left-panel">
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
               <div id="airlines" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+
               <div id="durations" style="display:flex;gap:8px;align-items:center">
                 <button class="btn-pill" data-i="0">1–2ч</button>
                 <button class="btn-pill" data-i="1">3–4ч</button>
                 <button class="btn-pill" data-i="2">5–6ч</button>
                 <button class="btn-pill" data-i="3">7–8ч</button>
               </div>
+
               <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-                <div id="pilotSelectBtn" class="btn" style="display:flex;align-items:center;gap:10px;min-width:220px;justify-content:space-between"><span class="kv">Пилот</span><strong id="pilotSelected">—</strong></div>
+                <!-- informational pilot badge (no manual selection) -->
+                <div id="pilotBadge" class="btn" style="min-width:220px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="kv">Пилот</span><strong id="pilotName">—</strong>
+                </div>
+
                 <button id="genBtn" class="btn-primary">Сгенерировать</button>
                 <button id="resetBtn" class="btn">Сброс</button>
               </div>
             </div>
 
-            <div id="routesGrid" class="route-grid"></div>
+            <div id="routesGrid" class="route-grid" style="margin-top:12px"></div>
           </div>
 
           <div class="right-panel">
@@ -218,6 +218,7 @@ body{
         </div>
       </div>
 
+      <!-- routes pane -->
       <div id="pane-routes" class="card" style="display:none;margin-top:16px">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><strong>Направления</strong><div class="kv">Отображаются маршруты по выбранным фильтрам</div></div>
@@ -229,6 +230,7 @@ body{
         <div id="routesList" class="kv" style="margin-top:12px"></div>
       </div>
 
+      <!-- fleet pane -->
       <div id="pane-fleet" class="card" style="display:none;margin-top:16px">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><strong>Флот</strong><div class="kv">Состояние самолётов</div></div>
@@ -248,14 +250,14 @@ body{
           <div class="kv">Demo</div>
         </div>
 
-        <div style="margin-top:12px"><input id="pilotSearch" class="btn" placeholder="Поиск"/></div>
+        <div style="margin-top:12px"><input id="pilotSearch" class="btn" placeholder="Поиск по имени/позывному" /></div>
         <div id="pilotList" class="pilot-list"></div>
       </div>
 
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><strong>Журнал</strong><div class="kv">События</div></div>
-          <div><button id="showGate" class="small-btn">Открыть вход</button></div>
+          <div><button id="showGate" class="btn">Открыть вход</button></div>
         </div>
         <div id="assignLog" class="assign-log" style="margin-top:12px"></div>
       </div>
@@ -264,13 +266,13 @@ body{
 </div>
 
 <!-- Gate modal -->
-<div id="gateModal" class="modal-back" style="display:flex">
+<div id="gateModal" class="modal-back" style="display:none">
   <div class="modal">
     <h3>Вход</h3>
     <div class="kv" style="margin-top:8px">Позывной + пароль или кодовое слово</div>
     <div style="margin-top:12px;display:flex;gap:8px">
-      <input id="loginCall" class="btn" placeholder="Позывной (call sign)"/>
-      <input id="loginPass" class="btn" placeholder="Пароль или кодовое слово" type="password"/>
+      <input id="loginCall" class="btn" placeholder="Позывной (call sign)" />
+      <input id="loginPass" class="btn" placeholder="Пароль или кодовое слово" type="password" />
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
       <button id="btnLoginPilot" class="btn-primary">Войти</button>
@@ -299,9 +301,9 @@ body{
 <script>
 /* ================= DATA & STATE ================= */
 const CODEWORD='quickaccess2025';
-const SESSION_KEY='demo_session_liquid_v1';
+const SESSION_KEY='demo_session_liquid_auto_pilot_v1';
 const CURRENT_FLIGHT_PREFIX='current_flight:';
-const VERSION_KEY='lh_version_liquid_v1';
+const VERSION_KEY='lh_version_liquid_auto_v1';
 
 const AIRLINES=[
   {name:"Lufthansa",hubs:["EDDF","EDDM"]},
@@ -358,8 +360,8 @@ const routesGrid=document.getElementById('routesGrid');
 const confirmedSection=document.getElementById('confirmedSection');
 const currentFlightWrap=document.getElementById('currentFlightWrap');
 
-const pilotSelectBtn=document.getElementById('pilotSelectBtn');
-const pilotSelected=document.getElementById('pilotSelected');
+const pilotBadge=document.getElementById('pilotBadge');
+const pilotNameEl=document.getElementById('pilotName');
 
 const pilotList=document.getElementById('pilotList');
 const pilotSearch=document.getElementById('pilotSearch');
@@ -487,7 +489,10 @@ function renderAssignLog(){
 let intervals={};
 function renderCurrentFlight(){
   currentFlightWrap.innerHTML='';
-  if(!SESSION.pilotId) return;
+  if(!SESSION.pilotId) { pilotNameEl.textContent = '—'; return; }
+  const pilot = PILOTS.find(p=>p.id===SESSION.pilotId);
+  pilotNameEl.textContent = pilot ? `${pilot.name} (${pilot.callSign})` : '—';
+
   const cur=loadCurrentFlight(SESSION.pilotId);
   if(!cur) return;
   const el=document.createElement('div'); el.className='current-flight';
@@ -575,35 +580,29 @@ function confirmReservation(token,route,pilotId){
   return {ok:true,ac,current};
 }
 
-/* choose pilot */
+/* choose pilot: ONLY current logged-in user */
 function choosePilotForAssignment(){
-  const selData = pilotSelected.dataset && pilotSelected.dataset.pilotId;
-  if(selData){
-    const p=PILOTS.find(x=>x.id===selData); if(p) return p;
-  }
   if(SESSION.pilotId){
     const p=PILOTS.find(x=>x.id===SESSION.pilotId); if(p) return p;
   }
-  const p = PILOTS.find(x=>x.verified); if(p) return p;
   return null;
 }
 
 /* generate */
 function generateFlight(fromRoute=null){
   const chosenPilot = choosePilotForAssignment();
-  if(!chosenPilot){ alert('Не найден верифицированный пилот для назначения. Выберите пилота или войдите.'); return; }
+  if(!chosenPilot){ alert('Пожалуйста, войдите в аккаунт — пилот назначается автоматически из вошедшего пользователя.'); return; }
 
   let pool = ROUTES.slice();
   if(fromRoute) pool=[fromRoute];
   else {
     const activePill = Array.from(airlinesWrap.children).find(c=>c.classList.contains('active'));
-    if(activePill) pool = pool.filter(r=>r.airline === activePill.textContent);
+    if(activePill) pool = pool.filter(r=> r.airline === activePill.textContent);
     if(chosenDur !== null){
       const range = DURATIONS[chosenDur];
       pool = pool.filter(r=> r.durationMinutes >= range.min && r.durationMinutes <= range.max);
     }
   }
-
   if(!pool.length){ alert('Нет маршрутов по выбранным фильтрам'); return; }
 
   const route = pool[Math.floor(Math.random()*pool.length)];
@@ -642,17 +641,17 @@ document.getElementById('routeCloseBtn').addEventListener('click', ()=> routeMod
 
 /* expiry loop */
 setInterval(()=>{
-  const now = nowMs(); let changed=false;
+  const now=nowMs(); let changed=false;
   FLEET.forEach(ac=>{
-    if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil <= now){
+    if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil<=now){
       ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.push({ts:now,event:'reservation_expired',aircraft:ac.id}); changed=true;
     }
-    if(ac.status==='inFlight' && ac.availableAt && ac.availableAt <= now){
-      ac.status='idle'; if(ac.nextLocation) ac.locationICAO = ac.nextLocation; delete ac.availableAt; delete ac.nextLocation; FLEET_LOG.push({ts:now,event:'available',aircraft:ac.id,location:ac.locationICAO}); changed=true;
+    if(ac.status==='inFlight' && ac.availableAt && ac.availableAt<=now){
+      ac.status='idle'; if(ac.nextLocation) ac.locationICAO=ac.nextLocation; delete ac.availableAt; delete ac.nextLocation; FLEET_LOG.push({ts:now,event:'available',aircraft:ac.id,location:ac.locationICAO}); changed=true;
     }
   });
   if(changed){ renderAssignLog(); renderFleet(); renderPilots(); }
-},1200);
+},1500);
 
 /* AUTH / GATE */
 document.getElementById('btnCloseGate').addEventListener('click', ()=> { gateModal.style.display='none'; });
@@ -666,13 +665,13 @@ document.getElementById('btnLoginPilot').addEventListener('click', ()=>{
   if(pass===CODEWORD || (pp && pass===pp)){
     const prev=SESSION.pilotId;
     SESSION.pilotId=p.id; SESSION.isAdmin=false; saveSession();
-    if(prev && prev!==p.id) { clearCurrentFlight(prev); FLEET.forEach(a=>{ if(a.reservedBy===prev){ delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; a.status='idle'; FLEET_LOG.push({ts:nowMs(),event:'cleared_prev',aircraft:a.id,prev}); } }); }
+    if(prev && prev!==p.id){ clearCurrentFlight(prev); FLEET.forEach(a=>{ if(a.reservedBy===prev){ delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; a.status='idle'; FLEET_LOG.push({ts:nowMs(),event:'cleared_prev',aircraft:a.id,prev}); } }); }
     renderAll();
     gateModal.style.display='none';
     bumpVersion();
     return;
   }
-  alert('Неверный пароль');
+  alert('Неверный пароль или кодовое слово');
 });
 
 /* sign in from pilot list */
@@ -683,40 +682,18 @@ function signInAsPilot(pid){
   renderAll(); bumpVersion();
 }
 
-/* pilot popup */
-let pilotPopupOpen=false;
-function openPilotPopup(){
-  if(pilotPopupOpen){ closePilotPopup(); return; }
-  pilotPopupOpen=true;
-  const popup=document.createElement('div'); popup.className='modal'; popup.style.position='absolute'; popup.style.right='40px'; popup.style.top='82px'; popup.style.width='320px';
-  popup.innerHTML='<h3 style="margin:0;color:var(--accent)">Выберите пилота</h3><div style="margin-top:10px"></div>';
-  const list=document.createElement('div'); list.style.display='flex'; list.style.flexDirection='column'; list.style.gap='8px';
-  PILOTS.forEach(p=>{
-    const it=document.createElement('button'); it.className='btn'; it.style.textAlign='left'; it.textContent=`${p.name} (${p.callSign}) ${p.verified? '· V':''}`;
-    it.addEventListener('click', ()=> { pilotSelected.textContent=`${p.name} (${p.callSign})`; pilotSelected.dataset.pilotId=p.id; closePilotPopup(); bumpVersion(); });
-    list.appendChild(it);
-  });
-  popup.querySelector('div').appendChild(list);
-  document.body.appendChild(popup); popup.id='pilotPopup';
-  document.addEventListener('click', outsidePilotClick);
-}
-function closePilotPopup(){ const n=document.getElementById('pilotPopup'); if(n) n.remove(); pilotPopupOpen=false; document.removeEventListener('click', outsidePilotClick); }
-function outsidePilotClick(e){ if(!document.getElementById('pilotSelectBtn').contains(e.target) && !document.getElementById('pilotPopup')) { closePilotPopup(); } else if(!document.getElementById('pilotPopup')) return; else if(!document.getElementById('pilotPopup').contains(e.target) && !document.getElementById('pilotSelectBtn').contains(e.target)) closePilotPopup(); }
-
 /* UI events */
 document.querySelectorAll('#durations .btn-pill').forEach(btn=> btn.addEventListener('click', ()=>{
   const idx=Number(btn.dataset.i);
   chosenDur = (chosenDur===idx) ? null : idx;
   renderDurationsUI(); renderRoutesGrid(); bumpVersion();
 }));
-pilotSelectBtn.addEventListener('click', (e)=> { e.stopPropagation(); openPilotPopup(); });
-document.addEventListener('click', ()=> { if(pilotPopupOpen) closePilotPopup(); });
-
 document.getElementById('genBtn').addEventListener('click', ()=> generateFlight());
-document.getElementById('resetBtn').addEventListener('click', ()=> { chosenDur=null; pilotSelected.textContent='—'; delete pilotSelected.dataset.pilotId; Array.from(airlinesWrap.children).forEach(n=>n.classList.remove('active')); renderDurationsUI(); renderRoutesGrid(); confirmedSection.classList.add('hidden'); confirmedSection.innerHTML=''; bumpVersion(); });
-
-document.getElementById('openGateBtn').addEventListener('click', ()=> gateModal.style.display='flex');
+document.getElementById('resetBtn').addEventListener('click', ()=> { chosenDur=null; pilotNameEl.textContent='—'; delete pilotNameEl.dataset.pilotId; Array.from(airlinesWrap.children).forEach(n=>n.classList.remove('active')); renderDurationsUI(); renderRoutesGrid(); confirmedSection.classList.add('hidden'); confirmedSection.innerHTML=''; bumpVersion(); });
+document.getElementById('openGateBtn').addEventListener('click', ()=> { gateModal.style.display='flex'; });
 document.getElementById('showGate') && document.getElementById('showGate').addEventListener('click', ()=> gateModal.style.display='flex');
+assistantNotify.addEventListener('click', ()=> { bumpVersion(); alert('Версия bumped'); });
+pilotSearch.addEventListener('input', ()=> renderPilots());
 
 /* filters for panes */
 function renderFilterOptions(){
@@ -732,7 +709,7 @@ function renderFilterOptions(){
   filterFleetStatus.addEventListener('change', ()=> renderFleet());
 }
 
-/* init */
+/* init render */
 function renderAll(){
   renderVersion();
   renderAirlines();
@@ -744,7 +721,7 @@ function renderAll(){
   renderAssignLog();
   renderCurrentFlight();
   renderFilterOptions();
-  document.getElementById('sessionInfo').textContent = SESSION.isAdmin ? 'Admin session' : (SESSION.pilotId ? ('Вошёл как '+(PILOTS.find(p=>p.id===SESSION.pilotId)||{}).callSign) : 'Неавторизован');
+  document.getElementById('sessionInfo').textContent = SESSION.isAdmin ? 'Admin' : (SESSION.pilotId ? ('Вошёл') : 'Неавторизован');
 }
 renderAll();
 
