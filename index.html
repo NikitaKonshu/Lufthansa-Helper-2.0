@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — restored full + LED</title>
+<title>Lufthansa Helper — LED усиление</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -56,30 +56,41 @@ body{
   overflow:visible;
 }
 
-/* LED backdrop: blurred, colored glow behind the pill */
+/* LED backdrop: усиленный blur и яркость */
 .pill .led {
   position:absolute;
   left:50%; top:50%;
-  width:140%; height:72%;
-  transform:translate(-50%,-50%) scale(0.96);
+  width:160%; height:88%;
+  transform:translate(-50%,-50%) scale(0.98);
   border-radius:999px;
   z-index:0;
   pointer-events:none;
-  filter: blur(18px) saturate(120%);
-  opacity:0.08;
-  transition: opacity 200ms ease, transform 200ms ease;
+  filter: blur(30px) saturate(160%);
+  opacity:0.14; /* увеличена начальная яркость */
+  transition: opacity 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  will-change: opacity, transform;
 }
 
-/* inner subtle rim (sharper) */
+/* sharper rim with stronger glow */
 .pill .led-rim{
   position:absolute; inset:0; border-radius:999px; z-index:0; pointer-events:none;
-  box-shadow: 0 0 40px rgba(255,255,255,0.02) inset;
-  mix-blend-mode: screen; opacity:0.06;
+  box-shadow: 0 0 60px rgba(255,255,255,0.03) inset;
+  mix-blend-mode: screen; opacity:0.12; /* увеличена */
+  transition: opacity 200ms ease;
 }
 
-/* active/enhanced glow */
-.pill.active .led{ opacity:0.26; transform:translate(-50%,-50%) scale(1); }
-.pill:hover .led{ opacity:0.18; transform:translate(-50%,-50%) scale(1.02); }
+/* active/enhanced glow and pulsing */
+@keyframes ledPulse {
+  0% { opacity: 0.30; transform: translate(-50%,-50%) scale(1); box-shadow: 0 24px 120px rgba(0,0,0,0.0); }
+  50% { opacity: 0.46; transform: translate(-50%,-50%) scale(1.04); }
+  100% { opacity: 0.30; transform: translate(-50%,-50%) scale(1); }
+}
+.pill.active .led{ opacity:0.36; transform:translate(-50%,-50%) scale(1.02); animation: ledPulse 2400ms ease-in-out infinite; }
+.pill.active .led-rim{ opacity:0.34; }
+
+/* hover: stronger temporary glow */
+.pill:hover .led{ opacity:0.28; transform:translate(-50%,-50%) scale(1.06); }
+.pill:hover .led-rim{ opacity:0.22; }
 
 /* ensure label sits above glow */
 .pill .pill-label{ position:relative; z-index:2; display:inline-flex;align-items:center;gap:8px }
@@ -97,7 +108,7 @@ body{
 @keyframes pulseConfirm{ 0%{ box-shadow: 0 28px 100px rgba(255,160,40,0.10); transform:translateY(0) } 50%{ box-shadow: 0 34px 120px rgba(255,160,40,0.16); transform:translateY(-2px) } 100%{ box-shadow: 0 28px 100px rgba(255,160,40,0.10); transform:translateY(0) } }
 
 /* Arrived button */
-.btn-arrived{ display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; background: linear-gradient(90deg,#7ee7a9,#3bd27f); color:#042022; border:0; box-shadow:0 10px 40px rgba(20,150,80,0.12); }
+.btn-arrived{ display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; background: linear-gradient(90deg,#7ee7a9,#3bd27f); color:#042022; border:0; box-shadow:0 12px 46px rgba(20,150,80,0.18); }
 
 /* Panels layout */
 .layout{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-top:14px}
@@ -138,7 +149,7 @@ body{
       <div class="logo">LH</div>
       <div>
         <div class="title">Lufthansa Helper</div>
-        <div class="subtitle small">Full restore + LED highlights</div>
+        <div class="subtitle small">LED усиление — ярче и пульс</div>
       </div>
     </div>
 
@@ -155,7 +166,7 @@ body{
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-weight:900">Генерация рейсов</div>
-            <div class="kv">Старая логика восстановлена — теперь с LED подсветкой пилл и кнопкой «Прилетел».</div>
+            <div class="kv">Старый функционал восстановлен; подсветка усилена</div>
           </div>
         </div>
 
@@ -166,7 +177,7 @@ body{
           <div class="liquid-underline" id="liquidUnderline" style="left:0;width:0"></div>
         </div>
 
-        <!-- Generator controls / filters (visible только на вкладке Generate) -->
+        <!-- Generator controls -->
         <div id="generatorControls" style="display:flex;align-items:center;gap:12px;margin-top:6px" class="filter-row">
           <div style="display:flex;align-items:center;gap:8px">
             <div style="font-weight:800;margin-right:6px">Авиакомпании</div>
@@ -204,7 +215,7 @@ body{
         <!-- Confirmed result -->
         <div id="confirmedSection" class="confirmed hidden" style="display:none"></div>
 
-        <!-- Panels -->
+        <!-- Panels: Routes & Fleet -->
         <div id="panelRoutes" class="panel hidden" style="margin-top:14px;display:none">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
             <div style="font-weight:800">Направления</div>
@@ -299,7 +310,7 @@ body{
 <script>
 /* ================= DATA & STATE (широкая, расширяемая) ================= */
 const CODEWORD='quickaccess2025';
-const SESSION_KEY='lh_full_restore_led_v1';
+const SESSION_KEY='lh_full_restore_led_v2';
 const CURRENT_FLIGHT_PREFIX='current_flight:';
 
 /* Brand colors and hubs */
@@ -429,7 +440,7 @@ function readableTextColor(hex){
   return lum > 160 ? '#062323' : '#ffffff';
 }
 
-/* render airline pills with LED glow */
+/* render airline pills with much stronger LED glow */
 function renderAirlinePills(){
   airlinesWrap.innerHTML='';
   AIRLINES.forEach(a=>{
@@ -439,14 +450,15 @@ function renderAirlinePills(){
 
     const led = document.createElement('div');
     led.className = 'led';
-    led.style.background = `radial-gradient(60% 60% at 50% 40%, ${a.color}88 0%, ${a.color}44 10%, transparent 40%), ${a.color}22`;
-    led.style.opacity = '0.06';
+    // stronger radial gradient and more saturated center
+    led.style.background = `radial-gradient(60% 60% at 50% 40%, ${a.color}CC 0%, ${a.color}99 8%, ${a.color}55 22%, transparent 46%), ${a.color}33`;
+    led.style.opacity = '0.14'; // base increased in CSS already
     btn.appendChild(led);
 
     const rim = document.createElement('div');
     rim.className = 'led-rim';
-    rim.style.boxShadow = `0 0 28px ${a.color}55, 0 0 80px ${a.color}33`;
-    rim.style.opacity = '0.06';
+    rim.style.boxShadow = `0 0 60px ${a.color}AA, 0 0 140px ${a.color}66`;
+    rim.style.opacity = '0.12';
     btn.appendChild(rim);
 
     const label = document.createElement('span');
@@ -463,14 +475,14 @@ function renderAirlinePills(){
         const chLed = n.querySelector('.led');
         const chRim = n.querySelector('.led-rim');
         const lab = n.querySelector('.pill-label');
-        if(chLed) chLed.style.opacity = '0.06';
-        if(chRim) chRim.style.opacity = '0.06';
+        if(chLed){ chLed.style.opacity = '0.12'; chLed.style.transform='translate(-50%,-50%) scale(0.98)'; }
+        if(chRim) chRim.style.opacity = '0.10';
         if(lab) lab.style.color = '#ffffff';
       });
       if(!wasActive){
         btn.classList.add('active');
-        led.style.opacity = '0.26';
-        rim.style.opacity = '0.24';
+        led.style.opacity = '0.46'; // much brighter when active
+        rim.style.opacity = '0.44';
         label.style.color = readableTextColor(a.color);
         if(filterAirline) filterAirline.value = a.name;
       } else {
@@ -480,12 +492,12 @@ function renderAirlinePills(){
     });
 
     btn.addEventListener('mouseenter', ()=> {
-      if(!btn.classList.contains('active')){ led.style.opacity = '0.14'; rim.style.opacity = '0.12'; }
+      if(!btn.classList.contains('active')){ led.style.opacity = '0.28'; rim.style.opacity = '0.24'; }
       btn.style.transform = 'translateY(-3px)';
-      btn.style.boxShadow = `0 18px 60px ${a.color}22`;
+      btn.style.boxShadow = `0 28px 120px ${a.color}33`;
     });
     btn.addEventListener('mouseleave', ()=> {
-      if(!btn.classList.contains('active')){ led.style.opacity = '0.06'; rim.style.opacity = '0.06'; }
+      if(!btn.classList.contains('active')){ led.style.opacity = '0.12'; rim.style.opacity = '0.10'; }
       btn.style.transform = '';
       btn.style.boxShadow = '';
     });
@@ -560,7 +572,6 @@ function renderFleetList(){
     const btnArr = el.querySelector('.btn-mark-arrived');
     if(btnArr){
       btnArr.addEventListener('click', ()=> {
-        // попытка найти текущий рейс для самолёта по локальному хранилищу
         const pilotKeys = Object.keys(localStorage).filter(k=>k.startsWith(CURRENT_FLIGHT_PREFIX));
         let route = {fromICAO:'',toICAO:a.locationICAO,durationMinutes:0};
         let pilotId = null;
@@ -668,7 +679,7 @@ function releaseReservationByToken(token){
   return found;
 }
 
-/* choose pilot automatically from session */
+/* choose pilot */
 function choosePilotForAssignment(){
   if(SESSION.pilotId){
     const p=PILOTS.find(x=>x.id===SESSION.pilotId); if(p) return p;
@@ -944,7 +955,7 @@ function switchTab(name){
   if(name !== 'generate'){
     confirmModal && (confirmModal.style.display = 'none');
     gateModal && (gateModal.style.display = 'none');
-    pendingBlock && (pendingBlock.style.display = PENDING_RESERVATION ? 'block' : 'none'); // keep pending visible if exists
+    pendingBlock && (pendingBlock.style.display = PENDING_RESERVATION ? 'block' : 'none');
   }
 
   const target = name==='generate' ? tabGenerate : (name==='routes' ? tabRoutes : tabFleet);
