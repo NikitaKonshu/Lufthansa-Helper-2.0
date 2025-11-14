@@ -1,872 +1,486 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Lufthansa Helper — Жидкое стекло</title>
-  <!-- Google Fonts: Inter -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
-  <style>
-    /* === Базовые переменные и сброс === */
-    :root {
-      --glass-blur: 16px;
-      --glass-bg: rgba(255,255,255,0.18);
-      --glass-bg-strong: rgba(255,255,255,0.28);
-      --glass-border: rgba(255,255,255,0.35);
-      --glass-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
-      --brand-lh: #0056a3;
-      --brand-su: #21468b;
-      --brand-s7: #b5d900;
-      --brand-tk: #e30a17;
-      --brand-af: #002157;
-      --brand-ba: #075aaa;
-      --brand-qr: #8c1546;
-      --yellow: #ffe066;
-      --yellow-glow: #ffe066cc;
-      --text-main: #1a2330;
-      --text-contrast: #fff;
-      --text-muted: #4a5568;
-      --modal-bg: rgba(255,255,255,0.65);
-      --modal-shadow: 0 8px 32px 0 rgba(31,38,135,0.22);
-      --transition: 0.28s cubic-bezier(.4,0,.2,1);
-      --ripple-color: rgba(255,255,255,0.35);
-    }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
-      min-height: 100vh;
-      color: var(--text-main);
-      box-sizing: border-box;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    *, *::before, *::after {
-      box-sizing: inherit;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lufthansa Helper — auth, pilots, tabs, liquid glass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-top:#031127; --bg-bot:#072b3a;
+  --muted:#9fc0d8; --text:#eaf4ff; --accent:#ffd54a;
+  font-family:Inter,system-ui,Arial,sans-serif; font-size:15px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  margin:0;padding:18px;
+  background:linear-gradient(180deg,var(--bg-top),var(--bg-bot));
+  color:var(--text); -webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;align-items:flex-start;min-width:0;
+}
+.container{width:100%;max-width:1200px}
 
-    /* === Эффект жидкого стекла (общий класс) === */
-    .glass {
-      background: linear-gradient(135deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.12) 100%), var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 18px;
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
-      position: relative;
-      overflow: hidden;
-      transition: box-shadow var(--transition), border-color var(--transition), background var(--transition);
-    }
-    /* Fallback для браузеров без backdrop-filter */
-    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-      .glass {
-        background: rgba(255,255,255,0.92);
-      }
-    }
+/* hero / heavy liquid glass */
+.hero{
+  border-radius:16px;padding:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(2,8,18,0.06));
+  border:1px solid rgba(255,255,255,0.045);
+  box-shadow: 0 30px 100px rgba(2,8,18,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(16px) saturate(120%);
+}
 
-    /* === Фон с плавными градиентами и бликами === */
-    body::before {
-      content: "";
-      position: fixed;
-      z-index: 0;
-      inset: 0;
-      background:
-        radial-gradient(circle at 20% 30%, #b5d90033 0%, transparent 70%),
-        radial-gradient(circle at 80% 70%, #0056a333 0%, transparent 70%),
-        linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
-      pointer-events: none;
-      opacity: 0.85;
-    }
+/* header */
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(180deg,#083a3f,#042a2e);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent);font-size:18px}
+.title{font-weight:800}
+.subtitle{font-size:13px;color:var(--muted)}
 
-    /* === Адаптивная сетка === */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 32px 16px 48px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
-    @media (max-width: 900px) {
-      .container {
-        padding: 18px 4vw 32px 4vw;
-      }
-    }
+/* tabs */
+.tabs{display:flex;gap:10px;margin-top:12px;position:relative;flex-wrap:wrap}
+.tab{padding:9px 14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));cursor:pointer;font-weight:800;color:var(--text);transition:transform .12s,box-shadow .12s}
+.tab.active{ transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,0.45) }
+.liquid-underline{ position:absolute; height:8px; bottom:-10px; border-radius:8px; background: linear-gradient(90deg,#ffd54a,#ffb84d); transition:left 220ms,width 220ms,opacity 220ms; box-shadow:0 10px 30px rgba(255,160,60,0.12); }
 
-    /* === Заголовок и панель выбранной авиакомпании === */
-    .header-panel {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      margin-bottom: 8px;
-    }
-    .app-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--brand-lh);
-      text-shadow: 0 2px 12px #0056a344;
-      margin: 0 0 0 2px;
-    }
-    .selected-airline-panel {
-      min-width: 0;
-      flex: 1 1 0;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 22px 10px 10px;
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--text-main);
-      border-radius: 16px;
-      margin-left: 0;
-      background: linear-gradient(90deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 100%);
-      box-shadow: 0 2px 16px 0 rgba(31,38,135,0.09);
-      border-left: 6px solid var(--brand-lh);
-      position: relative;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      min-height: 56px;
-    }
-    .selected-airline-panel .airline-logo {
-      font-size: 2.1rem;
-      margin-right: 6px;
-      filter: drop-shadow(0 2px 8px #0056a355);
-    }
-    .selected-airline-panel .airline-name {
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: 0.2px;
-      margin-right: 10px;
-    }
-    .selected-airline-panel .selected-label {
-      background: linear-gradient(90deg, #ffe066 0%, #fffbe6 100%);
-      color: #b8860b;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border-radius: 12px;
-      padding: 2px 12px;
-      margin-left: 8px;
-      box-shadow: 0 0 8px 2px #ffe06655;
-      border: 1px solid #ffe06688;
-      display: inline-block;
-      vertical-align: middle;
-      user-select: none;
-      pointer-events: none;
-      text-shadow: 0 1px 2px #fffbe6cc;
-    }
-    .selected-airline-panel[data-color] {
-      border-left: 6px solid var(--brand-lh);
-      box-shadow: 0 2px 18px 0 var(--brand-lh)33;
-    }
-    /* Цветовая динамика для выбранной авиакомпании */
-    .selected-airline-panel[data-color="lh"] { border-left-color: var(--brand-lh); box-shadow: 0 2px 18px 0 var(--brand-lh)33; }
-    .selected-airline-panel[data-color="su"] { border-left-color: var(--brand-su); box-shadow: 0 2px 18px 0 var(--brand-su)33; }
-    .selected-airline-panel[data-color="s7"] { border-left-color: var(--brand-s7); box-shadow: 0 2px 18px 0 var(--brand-s7)33; }
-    .selected-airline-panel[data-color="tk"] { border-left-color: var(--brand-tk); box-shadow: 0 2px 18px 0 var(--brand-tk)33; }
-    .selected-airline-panel[data-color="af"] { border-left-color: var(--brand-af); box-shadow: 0 2px 18px 0 var(--brand-af)33; }
-    .selected-airline-panel[data-color="ba"] { border-left-color: var(--brand-ba); box-shadow: 0 2px 18px 0 var(--brand-ba)33; }
-    .selected-airline-panel[data-color="qr"] { border-left-color: var(--brand-qr); box-shadow: 0 2px 18px 0 var(--brand-qr)33; }
+/* controls */
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:220px}
+.durations{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-weight:800;cursor:pointer;color:var(--text);transition:transform .12s,box-shadow .12s}
+.pill.small{padding:6px 10px;font-size:13px}
+.pill.active{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,0.45)}
 
-    /* === Список авиакомпаний === */
-    .airlines-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
-      margin-bottom: 8px;
-    }
-    .airline-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px 16px 0;
-      cursor: pointer;
-      background: linear-gradient(120deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.10) 100%);
-      border-radius: 16px;
-      border: 1.5px solid var(--glass-border);
-      box-shadow: 0 2px 14px 0 rgba(31,38,135,0.09);
-      position: relative;
-      min-height: 64px;
-      transition: box-shadow var(--transition), border-color var(--transition), background var(--transition);
-      overflow: hidden;
-      user-select: none;
-    }
-    .airline-card::before {
-      content: "";
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 6px;
-      border-radius: 16px 0 0 16px;
-      background: var(--brand-lh);
-      transition: background var(--transition);
-      z-index: 1;
-    }
-    .airline-card .airline-logo {
-      font-size: 2rem;
-      margin-left: 14px;
-      filter: drop-shadow(0 2px 8px #0056a355);
-      z-index: 2;
-    }
-    .airline-card .airline-name {
-      font-weight: 600;
-      font-size: 1.08rem;
-      letter-spacing: 0.1px;
-      z-index: 2;
-    }
-    .airline-card .selected-label {
-      background: linear-gradient(90deg, #ffe066 0%, #fffbe6 100%);
-      color: #b8860b;
-      font-size: 0.92rem;
-      font-weight: 600;
-      border-radius: 12px;
-      padding: 2px 10px;
-      margin-left: 8px;
-      box-shadow: 0 0 8px 2px #ffe06655;
-      border: 1px solid #ffe06688;
-      display: inline-block;
-      vertical-align: middle;
-      user-select: none;
-      pointer-events: none;
-      text-shadow: 0 1px 2px #fffbe6cc;
-      z-index: 2;
-    }
-    .airline-card.selected {
-      box-shadow: 0 0 24px 0 var(--brand-lh)55, 0 2px 18px 0 var(--brand-lh)33;
-      border-color: var(--brand-lh);
-      background: linear-gradient(120deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.18) 100%);
-      z-index: 2;
-    }
-    .airline-card.selected::before {
-      background: var(--brand-lh);
-      box-shadow: 0 0 24px 4px var(--brand-lh)77;
-    }
-    /* Цветовая динамика для карточек */
-    .airline-card[data-color="lh"]::before, .airline-card[data-color="lh"].selected::before { background: var(--brand-lh); }
-    .airline-card[data-color="su"]::before, .airline-card[data-color="su"].selected::before { background: var(--brand-su); }
-    .airline-card[data-color="s7"]::before, .airline-card[data-color="s7"].selected::before { background: var(--brand-s7); }
-    .airline-card[data-color="tk"]::before, .airline-card[data-color="tk"].selected::before { background: var(--brand-tk); }
-    .airline-card[data-color="af"]::before, .airline-card[data-color="af"].selected::before { background: var(--brand-af); }
-    .airline-card[data-color="ba"]::before, .airline-card[data-color="ba"].selected::before { background: var(--brand-ba); }
-    .airline-card[data-color="qr"]::before, .airline-card[data-color="qr"].selected::before { background: var(--brand-qr); }
-    .airline-card[data-color="lh"].selected, .selected-airline-panel[data-color="lh"] { box-shadow: 0 0 24px 0 var(--brand-lh)55, 0 2px 18px 0 var(--brand-lh)33; border-color: var(--brand-lh);}
-    .airline-card[data-color="su"].selected, .selected-airline-panel[data-color="su"] { box-shadow: 0 0 24px 0 var(--brand-su)55, 0 2px 18px 0 var(--brand-su)33; border-color: var(--brand-su);}
-    .airline-card[data-color="s7"].selected, .selected-airline-panel[data-color="s7"] { box-shadow: 0 0 24px 0 var(--brand-s7)55, 0 2px 18px 0 var(--brand-s7)33; border-color: var(--brand-s7);}
-    .airline-card[data-color="tk"].selected, .selected-airline-panel[data-color="tk"] { box-shadow: 0 0 24px 0 var(--brand-tk)55, 0 2px 18px 0 var(--brand-tk)33; border-color: var(--brand-tk);}
-    .airline-card[data-color="af"].selected, .selected-airline-panel[data-color="af"] { box-shadow: 0 0 24px 0 var(--brand-af)55, 0 2px 18px 0 var(--brand-af)33; border-color: var(--brand-af);}
-    .airline-card[data-color="ba"].selected, .selected-airline-panel[data-color="ba"] { box-shadow: 0 0 24px 0 var(--brand-ba)55, 0 2px 18px 0 var(--brand-ba)33; border-color: var(--brand-ba);}
-    .airline-card[data-color="qr"].selected, .selected-airline-panel[data-color="qr"] { box-shadow: 0 0 24px 0 var(--brand-qr)55, 0 2px 18px 0 var(--brand-qr)33; border-color: var(--brand-qr);}
+/* airline grid */
+.airline-grid{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:10px;
+  align-items:start;
+  width:100%;
+  min-width:0;
+  max-height:420px;
+  overflow:auto;
+  padding:12px;
+  border-radius:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
 
-    .airline-card:focus-visible {
-      outline: 2px solid #ffe066;
-      outline-offset: 2px;
-    }
-    .airline-card:hover:not(.selected) {
-      box-shadow: 0 0 18px 0 #ffe06655;
-      border-color: #ffe066;
-    }
+/* airline card */
+.airline{
+  position:relative;
+  display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden;transition:transform .12s,box-shadow .12s;
+}
+.airline:hover{ transform:translateY(-6px); box-shadow:0 28px 60px rgba(0,0,0,0.5) }
+.airline .dot{ width:14px;height:14px;border-radius:50%;flex:0 0 14px;border:2px solid rgba(255,255,255,0.06) }
+.airline .meta{min-width:0}
+.airline .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.airline .code{font-size:12px;color:var(--muted)}
+.airline .glow{ position:absolute; left:50%; top:50%; width:220%; height:88%; transform:translate(-50%,-50%) scale(0.98); border-radius:16px; z-index:0; pointer-events:none; filter: blur(30px) saturate(150%); opacity:0; transition:opacity .16s, transform .16s; mix-blend-mode:screen; }
+.airline:hover .glow{ opacity:0.26; transform:translate(-50%,-50%) scale(1.04); }
+.airline.active .glow{ opacity:0.48; transform:translate(-50%,-50%) scale(1.02); }
+.airline > *{ position:relative; z-index:2 }
 
-    /* === Панель маршрутов === */
-    .routes-panel {
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    .routes-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-    }
-    .route-card {
-      background: linear-gradient(120deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.10) 100%);
-      border-radius: 14px;
-      border: 1.5px solid var(--glass-border);
-      box-shadow: 0 2px 14px 0 rgba(31,38,135,0.09);
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      cursor: pointer;
-      position: relative;
-      min-height: 74px;
-      transition: box-shadow var(--transition), border-color var(--transition), background var(--transition);
-      user-select: none;
-    }
-    .route-card.selected {
-      box-shadow: 0 0 18px 0 #ffe06699;
-      border-color: #ffe066;
-      background: linear-gradient(120deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.18) 100%);
-    }
-    .route-card:focus-visible {
-      outline: 2px solid #ffe066;
-      outline-offset: 2px;
-    }
-    .route-main {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.08rem;
-      font-weight: 600;
-    }
-    .route-airports {
-      color: var(--text-muted);
-      font-size: 0.97rem;
-      font-weight: 500;
-      margin-left: 2px;
-    }
-    .route-time {
-      margin-left: auto;
-      font-size: 1.08rem;
-      font-weight: 600;
-      color: #b8860b;
-      letter-spacing: 0.2px;
-    }
-    .route-airlines {
-      display: flex;
-      gap: 8px;
-      margin-top: 2px;
-      font-size: 1.05rem;
-    }
-    .route-airlines .airline-logo {
-      font-size: 1.2rem;
-      filter: drop-shadow(0 1px 4px #0056a344);
-    }
+/* layout main */
+.layout{display:grid;grid-template-columns:1fr 380px;gap:14px;margin-top:14px;min-width:0}
+@media(max-width:1000px){ .layout{grid-template-columns:1fr} }
 
-    /* === Временные интервалы (liquid glass) === */
-    .times-panel {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .times-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      margin-top: 2px;
-    }
-    .time-slot {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 92px;
-      min-height: 54px;
-      padding: 0 18px;
-      font-size: 1.22rem;
-      font-weight: 700;
-      color: #222;
-      background: linear-gradient(120deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.10) 100%);
-      border-radius: 18px;
-      border: 2.5px solid transparent;
-      box-shadow: 0 2px 18px 0 rgba(255,224,102,0.07), 0 1px 8px 0 rgba(31,38,135,0.08);
-      cursor: pointer;
-      transition: box-shadow var(--transition), border-color var(--transition), background var(--transition), color var(--transition);
-      user-select: none;
-      z-index: 1;
-      overflow: hidden;
-      text-shadow: 0 2px 8px #fffbe6cc;
-    }
-    .time-slot.selected {
-      border-color: #ffe066;
-      box-shadow: 0 0 24px 0 #ffe066cc, 0 2px 18px 0 #ffe06655;
-      background: linear-gradient(90deg, #fffbe6 0%, #ffe066 100%);
-      color: #b8860b;
-      text-shadow: 0 2px 8px #ffe066cc;
-    }
-    .time-slot:focus-visible {
-      outline: 2px solid #ffe066;
-      outline-offset: 2px;
-    }
-    .time-slot:hover:not(.selected) {
-      box-shadow: 0 0 18px 0 #ffe06655;
-      border-color: #ffe066;
-    }
+/* panels */
+.panel{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(10px);min-width:0}
+.route-list, .fleet-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;min-width:0}
+.route-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0}
+.kv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    /* === Стеклянные кнопки с эффектом переливания === */
-    .glass-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 120px;
-      min-height: 48px;
-      padding: 0 28px;
-      font-size: 1.13rem;
-      font-weight: 600;
-      color: var(--text-main);
-      background: linear-gradient(120deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.18) 100%);
-      border-radius: 16px;
-      border: 1.5px solid var(--glass-border);
-      box-shadow: 0 2px 14px 0 rgba(31,38,135,0.09);
-      cursor: pointer;
-      overflow: hidden;
-      transition: box-shadow var(--transition), border-color var(--transition), background var(--transition), color var(--transition);
-      margin-right: 12px;
-      margin-top: 8px;
-      outline: none;
-      z-index: 1;
-      user-select: none;
-    }
-    .glass-btn:last-child { margin-right: 0; }
-    .glass-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      filter: grayscale(0.2);
-    }
-    .glass-btn::before {
-      content: "";
-      position: absolute;
-      left: -60%;
-      top: 0;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 100%);
-      filter: blur(8px);
-      opacity: 0.7;
-      transition: left 0.6s cubic-bezier(.4,0,.2,1);
-      z-index: 0;
-      pointer-events: none;
-    }
-    .glass-btn:hover::before, .glass-btn:focus-visible::before {
-      left: 100%;
-      transition: left 0.6s cubic-bezier(.4,0,.2,1);
-    }
-    .glass-btn:hover, .glass-btn:focus-visible {
-      box-shadow: 0 0 18px 0 #ffe06655;
-      border-color: #ffe066;
-      color: #b8860b;
-      background: linear-gradient(120deg, #fffbe6 0%, #ffe066 100%);
-    }
-    .glass-btn.ripple::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: ripple 0.6s linear;
-      background: var(--ripple-color);
-      z-index: 2;
-    }
-    @keyframes ripple {
-      0% { opacity: 0.5; transform: scale(0); }
-      100% { opacity: 0; transform: scale(2.5); }
-    }
-
-    /* === Кнопки подтверждения брони === */
-    .confirm-btn {
-      background: linear-gradient(90deg, #fffbe6 0%, #ffe066 100%);
-      color: #b8860b;
-      border: 1.5px solid #ffe066;
-      box-shadow: 0 0 18px 0 #ffe06655;
-      font-weight: 700;
-      margin-top: 12px;
-      margin-right: 0;
-    }
-    .confirm-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      filter: grayscale(0.2);
-    }
-
-    /* === Кнопки "Войти" и "Сброс" === */
-    .auth-panel {
-      display: flex;
-      gap: 18px;
-      margin-bottom: 10px;
-    }
-
-    /* === Модальное окно для подтверждения рейса === */
-    .modal {
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0; right: 0; bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(31,38,135,0.13);
-      animation: modalFadeIn 0.28s cubic-bezier(.4,0,.2,1);
-    }
-    @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .modal-content {
-      min-width: 320px;
-      max-width: 98vw;
-      background: var(--modal-bg);
-      border-radius: 20px;
-      box-shadow: var(--modal-shadow);
-      padding: 32px 28px 24px 28px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-      border: 1.5px solid var(--glass-border);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      animation: modalPopIn 0.32s cubic-bezier(.4,0,.2,1);
-    }
-    @keyframes modalPopIn {
-      from { transform: scale(0.92); opacity: 0.7; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .modal-close {
-      position: absolute;
-      top: 14px;
-      right: 18px;
-      font-size: 1.6rem;
-      color: #b8860b;
-      background: none;
-      border: none;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity var(--transition);
-      z-index: 2;
-    }
-    .modal-close:hover { opacity: 1; }
-
-    /* === Адаптивность === */
-    @media (max-width: 700px) {
-      .airlines-list, .routes-list {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .header-panel {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .selected-airline-panel {
-        min-width: 0;
-        width: 100%;
-        font-size: 1rem;
-        padding: 8px 10px 8px 8px;
-      }
-      .modal-content {
-        padding: 18px 8vw 18px 8vw;
-      }
-    }
-    @media (max-width: 480px) {
-      .container { padding: 8px 2vw 18px 2vw; }
-      .modal-content { padding: 12px 2vw 12px 2vw; }
-      .glass-btn, .confirm-btn { min-width: 90px; font-size: 1rem; padding: 0 10px; }
-      .time-slot { min-width: 60px; font-size: 1rem; padding: 0 8px; }
-    }
-  </style>
+/* modals */
+.modal-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999}
+.modal{width:420px;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);backdrop-filter:blur(8px)}
+.input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+.row{display:flex;gap:8px;align-items:center;margin-top:10px}
+.small{font-size:13px}
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- === Заголовок и панель выбранной авиакомпании === -->
-    <div class="header-panel">
-      <div class="app-title">Lufthansa Helper</div>
-      <div class="selected-airline-panel glass" id="selectedAirlinePanel" data-color="lh" aria-live="polite">
-        <span class="airline-logo" id="selectedAirlineLogo">✈️</span>
-        <span class="airline-name" id="selectedAirlineName">Lufthansa</span>
-        <span class="selected-label" id="selectedAirlineLabel">Выбран</span>
+<div class="container">
+  <div class="hero">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">LH</div>
+        <div>
+          <div class="title">Lufthansa Helper</div>
+          <div class="subtitle">auth · pilots · tabs · liquid glass</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <div id="sessionBadge" class="kv">Неавторизован</div>
+        <button id="openGateBtn" class="pill small">Войти</button>
+        <button id="logoutBtn" class="pill small" style="display:none">Выйти</button>
       </div>
     </div>
 
-    <!-- === Панель авторизации === -->
-    <div class="auth-panel">
-      <button class="glass-btn" id="loginBtn" type="button">Войти</button>
-      <button class="glass-btn" id="resetBtn" type="button">Сброс</button>
+    <div class="tabs" id="tabsRow" style="margin-top:12px">
+      <div id="tabGenerate" class="tab active">Генерация</div>
+      <div id="tabRoutes" class="tab">Направления</div>
+      <div id="tabFleet" class="tab">Флот</div>
+      <div id="liquidUnderline" class="liquid-underline" style="opacity:0"></div>
     </div>
 
-    <!-- === Список авиакомпаний === -->
-    <div>
-      <h2 style="font-size:1.18rem;font-weight:600;margin-bottom:10px;">Выберите авиакомпанию</h2>
-      <div class="airlines-list" id="airlinesList"></div>
+    <div class="controls">
+      <input id="airSearch" class="search" placeholder="Поиск авиакомпании или кода" />
+      <div style="display:flex;align-items:center;gap:8px">
+        <strong class="kv">Время</strong>
+        <div id="durations" class="durations"></div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button id="clearBtn" class="pill small">Сброс</button>
+        <button id="genBtn" class="pill">Сгенерировать</button>
+      </div>
     </div>
 
-    <!-- === Панель маршрутов === -->
-    <div class="routes-panel">
-      <h2 style="font-size:1.13rem;font-weight:600;margin-bottom:8px;">Доступные маршруты</h2>
-      <div class="routes-list" id="routesList"></div>
-    </div>
+    <div id="airGrid" class="airline-grid" aria-live="polite"></div>
 
-    <!-- === Панель временных интервалов === -->
-    <div class="times-panel" id="timesPanel" style="display:none;">
-      <h2 style="font-size:1.13rem;font-weight:600;margin-bottom:8px;">Выберите время рейса</h2>
-      <div class="times-list" id="timesList"></div>
-      <button class="glass-btn confirm-btn" id="confirmBtn" type="button" disabled>Подтвердить бронь</button>
+    <div class="layout">
+      <main>
+        <section id="panelGenerate" class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:900">Генерация</div>
+            <div class="kv">Нажмите Сгенерировать чтобы создать рейс</div>
+          </div>
+          <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и время</div>
+        </section>
+
+        <section id="panelRoutes" class="panel" style="display:none;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:900">Направления</div>
+            <div class="kv">Список маршрутов по фильтрам</div>
+          </div>
+          <div id="routesList" class="route-list"></div>
+        </section>
+
+        <section id="panelFleet" class="panel" style="display:none;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:900">Флот</div>
+            <div class="kv">Список самолётов</div>
+          </div>
+          <div id="fleetList" class="fleet-list"></div>
+        </section>
+      </main>
+
+      <aside>
+        <div class="panel" style="padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:900">Пилоты</div>
+            <div class="kv">Demo</div>
+          </div>
+          <div style="margin-top:8px">
+            <input id="pilotSearch" class="input" placeholder="Поиск пилота" />
+          </div>
+          <div id="pilotList" style="margin-top:8px"></div>
+        </div>
+
+        <div class="panel" style="margin-top:12px;padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:900">Журнал</div>
+            <div><button id="openGate2" class="pill small">Вход</button></div>
+          </div>
+          <div id="log" class="kv" style="margin-top:8px;max-height:300px;overflow:auto">Пусто</div>
+        </div>
+      </aside>
     </div>
   </div>
+</div>
 
-  <!-- === Модальное окно подтверждения рейса === -->
-  <div class="modal" id="modal" style="display:none;">
-    <div class="modal-content glass" id="modalContent">
-      <button class="modal-close" id="modalCloseBtn" aria-label="Закрыть">&times;</button>
-      <div id="modalDetails"></div>
+<!-- Login modal -->
+<div id="gateModal" class="modal-back" style="display:none;align-items:center;justify-content:center">
+  <div class="modal">
+    <div style="font-weight:900">Вход</div>
+    <div class="small kv" style="margin-top:8px">Введите позывной и пароль или используйте кодовое слово <strong>quickaccess2025</strong></div>
+    <div class="row">
+      <input id="loginCall" class="input" placeholder="Позывной (callSign)" />
+    </div>
+    <div class="row">
+      <input id="loginPass" class="input" placeholder="Пароль (или кодовое слово)" type="password" />
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button id="btnLogin" class="pill">Войти</button>
+      <button id="btnCloseModal" class="pill small">Закрыть</button>
     </div>
   </div>
+</div>
 
-  <script>
-    // === Демонстрационные данные авиакомпаний, маршрутов, пилотов и самолётов ===
-    const airlines = [
-      { code: 'lh', name: 'Lufthansa', color: 'lh', logo: '✈️' },
-      { code: 'su', name: 'Аэрофлот', color: 'su', logo: '🇷🇺' },
-      { code: 's7', name: 'S7 Airlines', color: 's7', logo: '🟢' },
-      { code: 'tk', name: 'Turkish Airlines', color: 'tk', logo: '🦃' },
-      { code: 'af', name: 'Air France', color: 'af', logo: '🇫🇷' },
-      { code: 'ba', name: 'British Airways', color: 'ba', logo: '🇬🇧' },
-      { code: 'qr', name: 'Qatar Airways', color: 'qr', logo: '🛫' },
-    ];
-    const routes = [
-      { from: 'FRA', to: 'MUC', fromName: 'Франкфурт', toName: 'Мюнхен', time: '1:00', airlines: ['lh', 's7', 'su'] },
-      { from: 'SVO', to: 'IST', fromName: 'Москва', toName: 'Стамбул', time: '3:00', airlines: ['su', 'tk'] },
-      { from: 'DME', to: 'CDG', fromName: 'Москва', toName: 'Париж', time: '3:30', airlines: ['su', 'af'] },
-      { from: 'DME', to: 'LHR', fromName: 'Москва', toName: 'Лондон', time: '4:00', airlines: ['su', 'ba'] },
-      { from: 'MUC', to: 'DOH', fromName: 'Мюнхен', toName: 'Доха', time: '5:30', airlines: ['lh', 'qr'] },
-    ];
-    const pilots = [
-      { name: 'Иван Петров', rank: 'КВС', exp: 15 },
-      { name: 'Мария Иванова', rank: 'Второй пилот', exp: 8 },
-      { name: 'Алексей Смирнов', rank: 'КВС', exp: 12 },
-      { name: 'Джон Смит', rank: 'Второй пилот', exp: 10 },
-    ];
-    const aircrafts = [
-      { type: 'Airbus A320', reg: 'VP-BAX', seats: 180 },
-      { type: 'Boeing 737-800', reg: 'D-ABCD', seats: 189 },
-      { type: 'Airbus A350-900', reg: 'D-AIXA', seats: 293 },
-      { type: 'Boeing 777-300ER', reg: 'VQ-BQH', seats: 396 },
-    ];
-    const timeSlots = [
-      '06:00', '08:30', '10:00', '12:15', '14:45', '17:00', '19:30', '22:00'
-    ];
+<!-- Confirm modal -->
+<div id="confirmModal" class="modal-back" style="display:none;align-items:center;justify-content:center">
+  <div class="modal">
+    <div style="font-weight:900">Подтвердить бронь</div>
+    <div id="confirmDetails" class="kv" style="margin-top:8px"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button id="confirmCancel" class="pill small">Отменить</button>
+      <button id="confirmAccept" class="pill">Подтвердить</button>
+    </div>
+  </div>
+</div>
 
-    // === Состояние выбора ===
-    let selectedAirline = airlines[0];
-    let selectedRoute = null;
-    let selectedTime = null;
+<script>
+/* ================== DATA ================== */
+const CODEWORD='quickaccess2025';
+const SESSION_KEY='lh_helper_session_v1';
+const CURRENT_FLIGHT_PREFIX='current_flight:';
 
-    // === DOM-элементы ===
-    const airlinesList = document.getElementById('airlinesList');
-    const routesList = document.getElementById('routesList');
-    const timesPanel = document.getElementById('timesPanel');
-    const timesList = document.getElementById('timesList');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const selectedAirlinePanel = document.getElementById('selectedAirlinePanel');
-    const selectedAirlineLogo = document.getElementById('selectedAirlineLogo');
-    const selectedAirlineName = document.getElementById('selectedAirlineName');
-    const selectedAirlineLabel = document.getElementById('selectedAirlineLabel');
-    const loginBtn = document.getElementById('loginBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const modal = document.getElementById('modal');
-    const modalContent = document.getElementById('modalContent');
-    const modalDetails = document.getElementById('modalDetails');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
+const DURATIONS = [
+  {label:"1–2ч",min:60,max:120},
+  {label:"2–3ч",min:120,max:180},
+  {label:"3–4ч",min:180,max:240},
+  {label:"5–6ч",min:300,max:360},
+  {label:"6–7ч",min:360,max:420},
+  {label:"7–8ч",min:420,max:480},
+  {label:"8–9ч",min:480,max:540},
+  {label:"9–10ч",min:540,max:600},
+  {label:"10+ч",min:600,max:99999}
+];
 
-    // === Рендер авиакомпаний ===
-    function renderAirlines() {
-      airlinesList.innerHTML = '';
-      airlines.forEach(airline => {
-        const card = document.createElement('div');
-        card.className = 'airline-card glass' + (selectedAirline.code === airline.code ? ' selected' : '');
-        card.tabIndex = 0;
-        card.setAttribute('data-color', airline.color);
-        card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `Выбрать авиакомпанию ${airline.name}`);
-        card.innerHTML = `
-          <span class="airline-logo">${airline.logo}</span>
-          <span class="airline-name">${airline.name}</span>
-          ${selectedAirline.code === airline.code ? '<span class="selected-label">Выбран</span>' : ''}
-        `;
-        card.addEventListener('click', () => selectAirline(airline));
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectAirline(airline); } });
-        airlinesList.appendChild(card);
-      });
-    }
+/* Airlines list with explicit colors (unique) */
+const AIRLINES = [
+  {name:"Lufthansa",code:"LH",color:"#1E6FFF"},
+  {name:"Swiss International Air Lines",code:"LX",color:"#D81E5B"},
+  {name:"Austrian Airlines",code:"OS",color:"#DA291C"},
+  {name:"AirBaltic",code:"BT",color:"#00A99D"},
+  {name:"Brussels Airlines",code:"SN",color:"#003399"},
+  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
+  {name:"Discover Airlines",code:"DH",color:"#F07F2A"},
+  {name:"Edelweiss Air",code:"WK",color:"#FF7BAC"},
+  {name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},
+  {name:"Lufthansa CityLine",code:"CL",color:"#2D6DE6"},
+  {name:"Lufthansa Technik",code:"LT",color:"#2D6DE6"},
+  {name:"Air Dolomiti",code:"EN",color:"#00A1DE"},
+  {name:"Lufthansa Private Jet",code:"PJ",color:"#0a5fb0"},
+  {name:"ITA Airways",code:"AZ",color:"#0067B1"},
+  {name:"Widerøe",code:"WF",color:"#00A651"},
+  {name:"Norwegian Airlines",code:"DY",color:"#BA0C2F"},
+  {name:"Finnair",code:"AY",color:"#003366"},
+  {name:"SAS Scandinavian Airlines",code:"SK",color:"#003A63"},
+  {name:"Condor",code:"DE",color:"#FFD200"},
+  {name:"AeroLogic",code:"3S",color:"#8A8D8F"},
+  {name:"SunExpress",code:"SX",color:"#FF8A3D"}
+];
 
-    // === Рендер маршрутов ===
-    function renderRoutes() {
-      routesList.innerHTML = '';
-      const filteredRoutes = routes.filter(route => route.airlines.includes(selectedAirline.code));
-      if (filteredRoutes.length === 0) {
-        routesList.innerHTML = '<div style="color:#b8860b;font-size:1.05rem;padding:18px;">Нет маршрутов для выбранной авиакомпании.</div>';
-        return;
-      }
-      filteredRoutes.forEach(route => {
-        const card = document.createElement('div');
-        card.className = 'route-card glass' + (selectedRoute === route ? ' selected' : '');
-        card.tabIndex = 0;
-        card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `Выбрать маршрут ${route.from}–${route.to}`);
-        card.innerHTML = `
-          <div class="route-main">
-            <span>${route.from} <span class="route-airports">(${route.fromName})</span></span>
-            <span style="margin:0 8px;">→</span>
-            <span>${route.to} <span class="route-airports">(${route.toName})</span></span>
-            <span class="route-time">${route.time}</span>
-          </div>
-          <div class="route-airlines">
-            ${route.airlines.map(code => {
-              const a = airlines.find(a => a.code === code);
-              return `<span class="airline-logo" title="${a.name}">${a.logo}</span>`;
-            }).join('')}
-          </div>
-        `;
-        card.addEventListener('click', () => selectRoute(route));
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectRoute(route); } });
-        routesList.appendChild(card);
-      });
-    }
+/* Demo routes and fleet (small) */
+const ROUTES = [
+  {airline:"Lufthansa",fromICAO:"EDDF",toICAO:"ENGM",fromCity:"Frankfurt",toCity:"Oslo",durationMinutes:120},
+  {airline:"Swiss International Air Lines",fromICAO:"EDDF",toICAO:"LSZH",fromCity:"Frankfurt",toCity:"Zurich",durationMinutes:60},
+  {airline:"SunExpress",fromICAO:"EDDF",toICAO:"LTAI",fromCity:"Frankfurt",toCity:"Antalya",durationMinutes:180},
+  {airline:"Condor",fromICAO:"EDDF",toICAO:"KJFK",fromCity:"Frankfurt",toCity:"New York",durationMinutes:480}
+];
 
-    // === Рендер временных интервалов ===
-    function renderTimes() {
-      timesList.innerHTML = '';
-      timeSlots.forEach(time => {
-        const slot = document.createElement('div');
-        slot.className = 'time-slot glass' + (selectedTime === time ? ' selected' : '');
-        slot.tabIndex = 0;
-        slot.setAttribute('role', 'button');
-        slot.setAttribute('aria-label', `Выбрать время ${time}`);
-        slot.textContent = time;
-        slot.addEventListener('click', () => selectTime(time));
-        slot.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectTime(time); } });
-        timesList.appendChild(slot);
-      });
-    }
+let FLEET = [
+  {id:"LH-A320-01",airline:"Lufthansa",type:"A320",seats:180,locationICAO:"EDDF",status:"idle",maxFlightMinutes:240,fuelMinutes:400},
+  {id:"LX-A320-01",airline:"Swiss International Air Lines",type:"A320",seats:180,locationICAO:"EDDF",status:"idle",maxFlightMinutes:300,fuelMinutes:420},
+  {id:"DE-B767-01",airline:"Condor",type:"B767",seats:250,locationICAO:"EDDF",status:"idle",maxFlightMinutes:720,fuelMinutes:800}
+];
 
-    // === Выбор авиакомпании ===
-    function selectAirline(airline) {
-      if (selectedAirline.code === airline.code) return;
-      selectedAirline = airline;
-      selectedRoute = null;
-      selectedTime = null;
-      updateSelectedAirlinePanel();
-      renderAirlines();
-      renderRoutes();
-      timesPanel.style.display = 'none';
-      confirmBtn.disabled = true;
-    }
+/* state */
+let chosenAirline = null; // airline name
+let chosenDuration = null; // index into DURATIONS
+let searchQuery = '';
 
-    // === Выбор маршрута ===
-    function selectRoute(route) {
-      if (selectedRoute === route) return;
-      selectedRoute = route;
-      selectedTime = null;
-      renderRoutes();
-      renderTimes();
-      timesPanel.style.display = 'flex';
-      confirmBtn.disabled = true;
-    }
+/* ========= DOM refs ========= */
+const airGrid = document.getElementById('airGrid');
+const durWrap = document.getElementById('durations');
+const airSearch = document.getElementById('airSearch');
+const routesWrap = document.getElementById('routes');
+const fleetWrap = document.getElementById('fleet');
+const logEl = document.getElementById('log');
 
-    // === Выбор времени ===
-    function selectTime(time) {
-      selectedTime = time;
-      renderTimes();
-      confirmBtn.disabled = false;
-    }
+/* ========= Render helpers ========= */
+function renderDurations(){
+  durWrap.innerHTML = '';
+  DURATIONS.forEach((d,i)=>{
+    const b = document.createElement('button');
+    b.className = 'pill small';
+    b.textContent = d.label;
+    b.dataset.idx = i;
+    if(chosenDuration === i) b.classList.add('active');
+    b.addEventListener('click', ()=>{
+      if(chosenDuration === i) chosenDuration = null; else chosenDuration = i;
+      updateActiveState();
+      renderAllLists();
+    });
+    durWrap.appendChild(b);
+  });
+}
 
-    // === Обновление панели выбранной авиакомпании ===
-    function updateSelectedAirlinePanel() {
-      selectedAirlinePanel.setAttribute('data-color', selectedAirline.color);
-      selectedAirlineLogo.textContent = selectedAirline.logo;
-      selectedAirlineName.textContent = selectedAirline.name;
-      selectedAirlineLabel.style.display = 'inline-block';
-    }
+function matchesSearch(a){
+  if(!searchQuery) return true;
+  const q = searchQuery.toLowerCase();
+  return a.name.toLowerCase().includes(q) || (a.code && a.code.toLowerCase().includes(q));
+}
 
-    // === Кнопка подтверждения брони ===
-    confirmBtn.addEventListener('click', () => {
-      if (!selectedAirline || !selectedRoute || !selectedTime) return;
-      showModal();
+function renderAirGrid(){
+  airGrid.innerHTML = '';
+  const filtered = AIRLINES.filter(matchesSearch);
+  filtered.forEach(a=>{
+    const card = document.createElement('div');
+    card.className = 'airline';
+    // set glow color on pseudo via inline CSS custom property
+    card.style.setProperty('--led-color', a.color);
+    // we set ::before background by applying background via style attribute on element's style (used below)
+    // create dot and labels
+    const dot = document.createElement('div'); dot.className='dot'; dot.style.background = a.color;
+    const meta = document.createElement('div'); meta.className='meta';
+    const name = document.createElement('div'); name.className='name'; name.textContent = a.name;
+    const code = document.createElement('div'); code.className='code'; code.textContent = a.code || '';
+    meta.appendChild(name); meta.appendChild(code);
+    card.appendChild(dot); card.appendChild(meta);
+
+    // apply LED glow color via inline style on ::before using CSS custom property by injecting a style rule into element
+    // browsers don't allow setting pseudo-element styles directly; create an inner style tag unique for this card
+    const glow = `radial-gradient(60% 60% at 50% 40%, ${a.color}cc 0%, ${a.color}88 8%, transparent 46%)`;
+    card.style.backgroundImage = 'linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))';
+    // Workaround: set box-shadow as soft glow using color when hovered/active
+    card.addEventListener('mouseenter', ()=> card.style.boxShadow = `0 8px 36px ${hexToRgba(a.color,0.22)}, inset 0 1px 0 rgba(255,255,255,0.02)`);
+    card.addEventListener('mouseleave', ()=> card.style.boxShadow = `0 6px 18px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.02)`);
+    // clicking selects airline
+    card.addEventListener('click', ()=>{
+      if(chosenAirline === a.name) chosenAirline = null; else chosenAirline = a.name;
+      updateActiveState();
+      renderAllLists();
     });
 
-    // === Кнопки "Войти" и "Сброс" ===
-    loginBtn.addEventListener('click', e => {
-      rippleEffect(e, loginBtn);
-      loginBtn.textContent = 'Вход выполнен';
-      setTimeout(() => { loginBtn.textContent = 'Войти'; }, 1200);
-    });
-    resetBtn.addEventListener('click', e => {
-      rippleEffect(e, resetBtn);
-      selectedAirline = airlines[0];
-      selectedRoute = null;
-      selectedTime = null;
-      updateSelectedAirlinePanel();
-      renderAirlines();
-      renderRoutes();
-      timesPanel.style.display = 'none';
-      confirmBtn.disabled = true;
-    });
+    // mark active
+    if(chosenAirline === a.name) card.classList.add('active'); else card.classList.remove('active');
 
-    // === Ripple-анимация для стеклянных кнопок ===
-    function rippleEffect(e, btn) {
-      const rect = btn.getBoundingClientRect();
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple';
-      ripple.style.left = (e.clientX - rect.left) + 'px';
-      ripple.style.top = (e.clientY - rect.top) + 'px';
-      ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
-      btn.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
-    }
-    document.querySelectorAll('.glass-btn').forEach(btn => {
-      btn.addEventListener('click', e => rippleEffect(e, btn));
-    });
+    // set inline before-like glow by using filter on a child overlay instead of pseudo
+    const overlay = document.createElement('div');
+    overlay.style.position = 'absolute';
+    overlay.style.left = '50%';
+    overlay.style.top = '50%';
+    overlay.style.transform = 'translate(-50%,-50%) scale(0.98)';
+    overlay.style.width = '220%';
+    overlay.style.height = '86%';
+    overlay.style.borderRadius = '16px';
+    overlay.style.zIndex = '0';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.opacity = (chosenAirline===a.name) ? '0.42' : '0';
+    overlay.style.filter = 'blur(28px) saturate(140%)';
+    overlay.style.mixBlendMode = 'screen';
+    overlay.style.background = glow;
+    overlay.dataset.overlay = '1';
+    card.appendChild(overlay);
 
-    // === Модальное окно подтверждения рейса ===
-    function showModal() {
-      // Генерация случайного пилота и самолёта
-      const pilot = pilots[Math.floor(Math.random() * pilots.length)];
-      const aircraft = aircrafts[Math.floor(Math.random() * aircrafts.length)];
-      // Генерация номера рейса
-      const flightNum = (selectedAirline.code.toUpperCase()) + (100 + Math.floor(Math.random() * 900));
-      // Формирование деталей рейса
-      modalDetails.innerHTML = `
-        <div style="font-size:1.25rem;font-weight:700;margin-bottom:8px;">
-          ${selectedAirline.logo} ${selectedAirline.name}
-        </div>
-        <div style="font-size:1.08rem;font-weight:600;margin-bottom:6px;">
-          Рейс: <span style="color:#b8860b;">${flightNum}</span>
-        </div>
-        <div style="font-size:1.05rem;margin-bottom:4px;">
-          Маршрут: <b>${selectedRoute.from} (${selectedRoute.fromName}) → ${selectedRoute.to} (${selectedRoute.toName})</b>
-        </div>
-        <div style="font-size:1.05rem;margin-bottom:4px;">
-          Время вылета: <b>${selectedTime}</b> &nbsp; | &nbsp; В пути: <b>${selectedRoute.time}</b>
-        </div>
-        <div style="font-size:1.05rem;margin-bottom:4px;">
-          Экипаж: <b>${pilot.rank} ${pilot.name}</b> &nbsp; | &nbsp; Самолёт: <b>${aircraft.type} (${aircraft.reg})</b>
-        </div>
-        <div style="font-size:1.05rem;margin-bottom:10px;">
-          Вместимость: <b>${aircraft.seats} мест</b>
-        </div>
-        <div style="font-size:1.02rem;color:#4a5568;">
-          Бронирование успешно! Желаем отличного рейса.
-        </div>
-      `;
-      modal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    modalCloseBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-    function closeModal() {
-      modal.style.display = 'none';
-      document.body.style.overflow = '';
-    }
+    // ensure contents above overlay
+    dot.style.zIndex = 2; meta.style.zIndex = 2;
 
-    // === Инициализация интерфейса ===
-    function init() {
-      renderAirlines();
-      renderRoutes();
-      updateSelectedAirlinePanel();
-      timesPanel.style.display = 'none';
-      confirmBtn.disabled = true;
-    }
-    init();
+    airGrid.appendChild(card);
+  });
+  // ensure grid never overflows horizontally (CSS handles it). If many items, grid will wrap or scroll vertically.
+}
 
-    // === Доступность: клавиша Esc закрывает модальное окно ===
-    document.addEventListener('keydown', e => {
-      if (modal.style.display === 'flex' && (e.key === 'Escape' || e.key === 'Esc')) {
-        closeModal();
-      }
-    });
-  </script>
+function renderRoutes(){
+  routesWrap.innerHTML = '';
+  const list = ROUTES.filter(r=>{
+    if(chosenAirline && r.airline !== chosenAirline) return false;
+    if(chosenDuration !== null){
+      const d = DURATIONS[chosenDuration];
+      if(!(r.durationMinutes >= d.min && r.durationMinutes <= d.max)) return false;
+    }
+    return true;
+  });
+  if(!list.length){ routesWrap.innerHTML = '<div class="kv">Нет направлений</div>'; return; }
+  list.forEach(r=>{
+    const row = document.createElement('div'); row.className='route-item';
+    row.innerHTML = `<div style="min-width:0"><div style="font-weight:800">${escapeHtml(r.fromICAO)} → ${escapeHtml(r.toICAO)}</div><div class="kv">${escapeHtml(r.fromCity)} → ${escapeHtml(r.toCity)} · ${escapeHtml(r.airline)}</div></div><div class="kv">${r.durationMinutes} мин</div>`;
+    routesWrap.appendChild(row);
+  });
+}
+
+function renderFleet(){
+  fleetWrap.innerHTML = '';
+  const filtered = FLEET.filter(a=>{
+    if(chosenAirline && a.airline !== chosenAirline) return false;
+    if(chosenDuration !== null){
+      const d = DURATIONS[chosenDuration];
+      if(a.maxFlightMinutes < d.min) return false;
+    }
+    return true;
+  });
+  if(!filtered.length){ fleetWrap.innerHTML = '<div class="kv">Нет самолётов</div>'; return; }
+  filtered.forEach(a=>{
+    const div = document.createElement('div'); div.className='route-item';
+    const percent = Math.min(100, Math.round((a.fuelMinutes / Math.max(a.maxFlightMinutes,300)) * 100));
+    div.innerHTML = `<div style="min-width:0"><div style="font-weight:800">${escapeHtml(a.id)}</div><div class="kv">${escapeHtml(a.airline)} · ${escapeHtml(a.type)} · ${escapeHtml(a.locationICAO)}</div></div><div class="kv">${percent}% · ${a.fuelMinutes} мин</div>`;
+    fleetWrap.appendChild(div);
+  });
+}
+
+/* ========= Utility ========= */
+function updateActiveState(){
+  // update grid active classes and overlays
+  Array.from(airGrid.children).forEach(card=>{
+    const name = card.querySelector('.name')?.textContent;
+    const overlay = card.querySelector('[data-overlay]');
+    if(name === chosenAirline){
+      card.classList.add('active');
+      if(overlay) overlay.style.opacity = '0.42';
+    } else {
+      card.classList.remove('active');
+      if(overlay) overlay.style.opacity = '0';
+    }
+  });
+  // update durations active look
+  Array.from(durWrap.children).forEach(btn=>{
+    const idx = Number(btn.dataset.idx);
+    btn.classList.toggle('active', chosenDuration === idx);
+  });
+}
+
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function hexToRgba(hex,alpha){
+  const h = hex.replace('#','');
+  const bigint = parseInt(h.length===3? h.split('').map(ch=>ch+ch).join('') : h,16);
+  const r = (bigint >> 16) & 255; const g = (bigint >> 8) & 255; const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/* ========= Interaction wiring ========= */
+airSearch.addEventListener('input', e=>{ searchQuery = e.target.value.trim(); renderAirGrid(); });
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  searchQuery = ''; airSearch.value=''; chosenAirline = null; chosenDuration = null; renderAllLists(); updateActiveState();
+});
+document.getElementById('generateBtn').addEventListener('click', ()=> {
+  log('Generate pressed — demo action');
+});
+
+document.getElementById('tabRoutes').addEventListener('click', ()=> {
+  document.getElementById('tabRoutes').classList.add('active');
+  document.getElementById('tabGenerate').classList.remove('active');
+  document.getElementById('tabFleet').classList.remove('active');
+});
+document.getElementById('tabFleet').addEventListener('click', ()=> {
+  document.getElementById('tabFleet').classList.add('active');
+  document.getElementById('tabGenerate').classList.remove('active');
+  document.getElementById('tabRoutes').classList.remove('active');
+});
+document.getElementById('tabGenerate').addEventListener('click', ()=> {
+  document.getElementById('tabGenerate').classList.add('active');
+  document.getElementById('tabRoutes').classList.remove('active');
+  document.getElementById('tabFleet').classList.remove('active');
+});
+
+/* logging helper */
+function log(msg){ const line = document.createElement('div'); line.className='kv'; line.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; logEl.prepend(line); }
+
+/* ========= Initial render ========= */
+function renderAllLists(){
+  renderAirGrid();
+  renderDurations();
+  renderRoutes();
+  renderFleet();
+}
+renderAllLists();
+</script>
 </body>
 </html>
