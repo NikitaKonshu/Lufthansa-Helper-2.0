@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — forced auth on every load</title>
+<title>Lufthansa Helper — welcome splash + app</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -12,22 +12,27 @@
   --accent-yellow:#ffd54a;
   font-family:Inter,system-ui,Arial,sans-serif;
   font-size:15px;
+  --glass-bg: rgba(255,255,255,0.03);
 }
 
 /* reset */
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{
-  margin:0;padding:18px;
+  margin:0;padding:0;
   background:linear-gradient(180deg,var(--bg-top),var(--bg-bot));
   color:var(--text); -webkit-font-smoothing:antialiased;
-  display:flex;justify-content:center;align-items:flex-start;min-width:0;
+  min-height:100vh; font-family:Inter,system-ui,Arial,sans-serif;
 }
 
-/* container + liquid glass hero */
+/* container for app */
+.app-root{ display:flex; justify-content:center; align-items:flex-start; padding:18px; min-height:100vh; }
+
+/* hero main app card (liquid glass) */
 .container{width:100%;max-width:1280px}
 .hero{
   border-radius:16px;padding:16px;
+  margin-top:28px;
   background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(2,8,18,0.06));
   border:1px solid rgba(255,255,255,0.05);
   box-shadow: 0 36px 120px rgba(2,8,18,0.7), inset 0 2px 0 rgba(255,255,255,0.02);
@@ -35,13 +40,8 @@ body{
   transition: filter .28s ease, opacity .22s ease;
 }
 
-/* blocked state when modal open: stronger blur */
-.app-blocked .hero{
-  filter: blur(8px) saturate(.9) brightness(.9);
-  pointer-events: none;
-  user-select: none;
-  opacity:0.98;
-}
+/* blocked state when modal / splash open */
+.app-blocked .hero{ filter: blur(8px) saturate(.9) brightness(.9); pointer-events:none; user-select:none; opacity:0.98; }
 
 /* header */
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -61,7 +61,7 @@ body{
 .search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:240px}
 .durations{display:flex;gap:8px;flex-wrap:wrap}
 
-/* time pills — made readable, volumetric, yellow highlight */
+/* time pills — readable */
 .time-pill{
   --h:46px;
   display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
@@ -72,7 +72,7 @@ body{
   color:#111; font-weight:800; cursor:pointer; transition:transform .14s, box-shadow .14s, filter .12s;
 }
 .time-pill .label{ font-weight:900; color:#1b1b1b; font-size:15px; }
-.time-pill .hint{ font-size:12px; color:rgba(0,0,0,0.5); margin-top:0; }
+.time-pill .hint{ font-size:12px; color:rgba(0,0,0,0.5); }
 .time-pill:hover{ transform:translateY(-6px); box-shadow: 0 22px 48px rgba(0,0,0,0.38); }
 
 /* generate button prominent */
@@ -87,7 +87,7 @@ body{
 }
 .generate-btn:hover{ transform:translateY(-4px); box-shadow: 0 28px 70px rgba(255,175,40,0.28); }
 
-/* custom login & clear buttons (better visuals + liquid shimmer) */
+/* neat neutral button with shimmer */
 .btn-neutral{
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   border: 1px solid rgba(255,255,255,0.06);
@@ -107,12 +107,11 @@ body{
 .btn-neutral:hover{ transform:translateY(-4px); box-shadow: 0 20px 48px rgba(0,0,0,0.45); }
 .btn-neutral:hover::after{ left:120%; }
 
-/* add small accent primary login style */
+/* primary action style */
 .btn-primary{
   background: linear-gradient(180deg, rgba(255,245,200,0.98), var(--accent-yellow));
   color:#072022; font-weight:900; padding:10px 14px; border-radius:12px; border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 16px 40px rgba(255,170,50,0.16);
-  cursor:pointer; transition: transform .12s;
+  box-shadow: 0 16px 40px rgba(255,170,50,0.16); cursor:pointer; transition: transform .12s;
 }
 .btn-primary:hover{ transform:translateY(-3px); }
 
@@ -193,7 +192,7 @@ body{
   z-index:3;
 }
 
-/* panels & layout */
+/* layout & panels */
 .layout{display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px;min-width:0}
 @media(max-width:1100px){ .layout{grid-template-columns:1fr} }
 .panel{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(10px);min-width:0}
@@ -201,127 +200,173 @@ body{
 .route-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0}
 .kv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* modal/backdrop (forced auth) */
-.modal-back{
-  display:flex;
-  position:fixed;
-  inset:0;
-  background: rgba(2,6,14,0.6);
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  backdrop-filter: blur(8px) saturate(.9);
-}
-.modal{
-  width:420px;padding:20px;border-radius:14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 40px 120px rgba(0,0,0,0.8);
-  backdrop-filter: blur(10px) saturate(120%);
-}
+/* modals */
+.modal-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999}
+.modal{width:420px;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);backdrop-filter:blur(8px)}
 .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
 .small{font-size:13px}
 
-/* hide modal by default in markup; show via inline style display:flex when needed */
-.modal-hidden{ display:none !important; }
+/* welcome splash overlay (fullscreen) */
+.splash-back{
+  position:fixed; inset:0; z-index:10050;
+  display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(2,6,14,0.88), rgba(2,6,20,0.92));
+  backdrop-filter: blur(6px) saturate(0.9);
+}
+.splash-card{
+  width:100%; max-width:1150px; border-radius:16px; overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 50px 140px rgba(0,0,0,0.7);
+  display:flex; gap:0; align-items:stretch; justify-content:stretch;
+}
+/* left: video area */
+.splash-media{
+  width:60%; min-height:360px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(10,20,40,0.35), rgba(0,0,0,0.35));
+}
+.splash-media video{ width:100%; height:100%; object-fit:cover; display:block; }
 
-/* make html selectable and accessible */
-:focus{ outline: none; }
+/* right: message area */
+.splash-info{
+  width:40%; padding:36px; display:flex; flex-direction:column; justify-content:center; gap:18px;
+  backdrop-filter: blur(6px);
+}
+.splash-title{ font-size:28px; font-weight:900; color:var(--text); letter-spacing:0.2px; }
+.splash-sub{ color:var(--muted); font-size:15px; line-height:1.4; }
+.splash-cta{ margin-top:6px; display:flex; gap:12px; align-items:center; }
+
+/* video fallback — animated gradient if no file */
+.video-fallback{
+  width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#fff;
+  background: linear-gradient(270deg,#001428,#00304b,#00263a);
+  background-size: 600% 600%;
+  animation: gradientShift 8s ease infinite;
+}
+@keyframes gradientShift{
+  0%{ background-position: 0% 50% }
+  50%{ background-position: 100% 50% }
+  100%{ background-position: 0% 50% }
+}
+
+/* minimal continue button */
+.btn-continue{
+  padding:12px 20px; border-radius:12px; background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; font-weight:900; border:1px solid rgba(0,0,0,0.08); cursor:pointer;
+  box-shadow: 0 18px 44px rgba(255,175,40,0.16);
+}
+.btn-ghost{ padding:10px 14px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--text); cursor:pointer; }
+
+/* responsiveness */
+@media(max-width:900px){
+  .splash-card{ flex-direction:column; }
+  .splash-media{ width:100%; height:260px; }
+  .splash-info{ width:100%; padding:20px; }
+  .splash-title{ font-size:22px; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <div id="appHero" class="hero">
-    <div class="header">
-      <div class="brand">
-        <div class="logo">LH</div>
-        <div>
-          <div class="title">Lufthansa Helper</div>
-          <div class="subtitle">усиленное LED · liquid glass · принудительная авторизация</div>
+<!-- App root that can be blocked when splash or modal active -->
+<div id="appRoot" class="app-root">
+  <div class="container">
+    <div id="appHero" class="hero">
+      <!-- header -->
+      <div class="header">
+        <div class="brand">
+          <div class="logo">LH</div>
+          <div>
+            <div class="title">Lufthansa Helper</div>
+            <div class="subtitle">усиленное LED · liquid glass · принудительная авторизация</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center">
+          <div id="sessionBadge" class="kv">Неавторизован</div>
+          <button id="openGateBtn" class="btn-neutral">Вход</button>
+          <button id="logoutBtn" class="btn-neutral" style="display:none">Выйти</button>
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;align-items:center">
-        <div id="sessionBadge" class="kv">Неавторизован</div>
-        <button id="openGateBtn" class="btn-neutral">Вход</button>
-        <button id="logoutBtn" class="btn-neutral" style="display:none">Выйти</button>
+      <!-- tabs -->
+      <div class="tabs" id="tabsRow" style="margin-top:14px">
+        <div class="tab active" data-target="panelGenerate" id="tabGen">Генерация</div>
+        <div class="tab" data-target="panelRoutes" id="tabRoutes">Направления</div>
+        <div class="tab" data-target="panelFleet" id="tabFleet">Флот</div>
+        <div id="liquidUnderline" class="liquid-underline"></div>
       </div>
-    </div>
 
-    <div class="tabs" id="tabsRow" style="margin-top:14px">
-      <div class="tab active" data-target="panelGenerate" id="tabGen">Генерация</div>
-      <div class="tab" data-target="panelRoutes" id="tabRoutes">Направления</div>
-      <div class="tab" data-target="panelFleet" id="tabFleet">Флот</div>
-      <div id="liquidUnderline" class="liquid-underline"></div>
-    </div>
-
-    <div class="controls">
-      <input id="airSearch" class="search" placeholder="Поиск авиакомпании или кода" autocomplete="off" />
-      <div style="display:flex;align-items:center;gap:10px">
-        <strong class="kv">Время</strong>
-        <div id="durations" class="durations"></div>
-      </div>
-      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-        <button id="clearBtn" class="btn-neutral">Сброс</button>
-        <button id="genBtn" class="generate-btn">СГЕНЕРИРОВАТЬ</button>
-      </div>
-    </div>
-
-    <div id="airGrid" class="airline-grid" aria-live="polite"></div>
-
-    <div class="layout">
-      <main>
-        <section id="panelGenerate" class="panel">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:900">Генерация</div>
-            <div class="kv">Нажмите СГЕНЕРИРОВАТЬ для демонстрации</div>
-          </div>
-          <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и интервал времени</div>
-        </section>
-
-        <section id="panelRoutes" class="panel" style="display:none;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:900">Направления</div>
-            <div class="kv">Список маршрутов по фильтрам</div>
-          </div>
-          <div id="routesList" class="route-list"></div>
-        </section>
-
-        <section id="panelFleet" class="panel" style="display:none;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:900">Флот</div>
-            <div class="kv">Самолёты под фильтрами</div>
-          </div>
-          <div id="fleetList" class="fleet-list"></div>
-        </section>
-      </main>
-
-      <aside>
-        <div class="panel" style="padding:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:900">Пилоты</div>
-            <div class="kv">Demo</div>
-          </div>
-          <div style="margin-top:8px">
-            <input id="pilotSearch" class="input" placeholder="Поиск пилота" />
-          </div>
-          <div id="pilotList" style="margin-top:8px"></div>
+      <!-- controls -->
+      <div class="controls">
+        <input id="airSearch" class="search" placeholder="Поиск авиакомпании или кода" autocomplete="off" />
+        <div style="display:flex;align-items:center;gap:10px">
+          <strong class="kv">Время</strong>
+          <div id="durations" class="durations"></div>
         </div>
 
-        <div class="panel" style="margin-top:12px;padding:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:900">Журнал</div>
-            <div><button id="openGate2" class="btn-neutral">Вход</button></div>
-          </div>
-          <div id="log" class="kv" style="margin-top:8px;max-height:320px;overflow:auto">Пусто</div>
+        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+          <button id="clearBtn" class="btn-neutral">Сброс</button>
+          <button id="genBtn" class="generate-btn">СГЕНЕРИРОВАТЬ</button>
         </div>
-      </aside>
+      </div>
+
+      <!-- airlines grid -->
+      <div id="airGrid" class="airline-grid" aria-live="polite"></div>
+
+      <!-- main layout -->
+      <div class="layout">
+        <main>
+          <section id="panelGenerate" class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Генерация</div>
+              <div class="kv">Нажмите СГЕНЕРИРОВАТЬ для демонстрации</div>
+            </div>
+            <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и интервал времени</div>
+          </section>
+
+          <section id="panelRoutes" class="panel" style="display:none;margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Направления</div>
+              <div class="kv">Список маршрутов по фильтрам</div>
+            </div>
+            <div id="routesList" class="route-list"></div>
+          </section>
+
+          <section id="panelFleet" class="panel" style="display:none;margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Флот</div>
+              <div class="kv">Самолёты под фильтрами</div>
+            </div>
+            <div id="fleetList" class="fleet-list"></div>
+          </section>
+        </main>
+
+        <aside>
+          <div class="panel" style="padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Пилоты</div>
+              <div class="kv">Demo</div>
+            </div>
+            <div style="margin-top:8px">
+              <input id="pilotSearch" class="input" placeholder="Поиск пилота" />
+            </div>
+            <div id="pilotList" style="margin-top:8px"></div>
+          </div>
+
+          <div class="panel" style="margin-top:12px;padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Журнал</div>
+              <div><button id="openGate2" class="btn-neutral">Вход</button></div>
+            </div>
+            <div id="log" class="kv" style="margin-top:8px;max-height:320px;overflow:auto">Пусто</div>
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Forced auth modal - will show on every load -->
+<!-- Forced auth modal - shows on every load -->
 <div id="gateModal" class="modal-back" style="display:none;">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Вход">
     <div style="font-weight:900">Вход в систему</div>
@@ -345,7 +390,38 @@ body{
   </div>
 </div>
 
-<!-- Confirm modal (reservation) -->
+<!-- Welcome splash (appears after login each time) -->
+<div id="splash" class="splash-back" style="display:none;">
+  <div class="splash-card" role="dialog" aria-modal="true" aria-label="Welcome">
+    <div class="splash-media" id="splashMedia">
+      <!-- Replace media/nyc.mp4 with your short clip in the repo if you want a real video -->
+      <video id="splashVideo" playsinline muted autoplay preload="auto" style="display:block;" >
+        <source src="media/nyc.mp4" type="video/mp4">
+        <!-- Fallback content -->
+      </video>
+      <div id="videoFallback" class="video-fallback" style="display:none;">
+        <div style="text-align:center;max-width:560px;padding:20px">
+          <h3 style="margin:0 0 8px;font-weight:800;font-size:20px">Welcome flight preview</h3>
+          <p style="margin:0;color:rgba(255,255,255,0.9)">Если видео не доступно, показан анимированный фон</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="splash-info">
+      <div>
+        <div class="splash-title">Welcome to Lufthansa Group</div>
+        <div class="splash-sub">Добро пожаловать. Здесь вы сможете быстро организовать рейсы, бронировать самолёты и управлять флотом. Нажмите «Дальше», чтобы продолжить.</div>
+      </div>
+
+      <div class="splash-cta">
+        <button id="btnContinue" class="btn-continue">Дальше</button>
+        <button id="btnSkipVideo" class="btn-ghost">Пропустить видео</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
 <div id="confirmModal" class="modal-back" style="display:none;align-items:center;justify-content:center">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Подтвердить бронь">
     <div style="font-weight:900">Подтвердить бронь</div>
@@ -358,7 +434,7 @@ body{
 </div>
 
 <script>
-/* ================= DATA & STATE ================= */
+/* ================= DATA & STATE (kept from prior working version) ================= */
 const CODEWORD = 'quickaccess2025';
 const SESSION_KEY = 'lh_force_auth_v1';
 
@@ -413,7 +489,7 @@ let PILOTS = [
 let FLEET_LOG = [];
 let PENDING_RESERVATION = null;
 
-/* session stored but modal will still appear on each load — per your request */
+/* session: note we still persist, but modal and splash will appear each load after login per your request */
 let SESSION = (function(){ try{ const s = sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
 
 /* UI state */
@@ -422,6 +498,7 @@ let chosenDuration = null;
 let searchQuery = '';
 
 /* DOM refs */
+const appRoot = document.getElementById('appRoot');
 const appHero = document.getElementById('appHero');
 const airGrid = document.getElementById('airGrid');
 const durWrap = document.getElementById('durations');
@@ -439,10 +516,11 @@ const btnLogin = document.getElementById('btnLogin');
 const btnDemoQuick = document.getElementById('btnDemoQuick');
 const loginCall = document.getElementById('loginCall');
 const loginPass = document.getElementById('loginPass');
-const confirmModal = document.getElementById('confirmModal');
-const confirmDetails = document.getElementById('confirmDetails');
-const confirmAccept = document.getElementById('confirmAccept');
-const confirmCancel = document.getElementById('confirmCancel');
+const splash = document.getElementById('splash');
+const splashVideo = document.getElementById('splashVideo');
+const videoFallback = document.getElementById('videoFallback');
+const btnContinue = document.getElementById('btnContinue');
+const btnSkipVideo = document.getElementById('btnSkipVideo');
 const genBtn = document.getElementById('genBtn');
 const tabElements = document.querySelectorAll('.tab');
 const liquidUnderline = document.getElementById('liquidUnderline');
@@ -452,9 +530,9 @@ function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&
 function nowMs(){ return Date.now(); }
 function uid(p='id'){ return p+'_'+Math.random().toString(36).slice(2,9); }
 function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
-function log(msg){ const el=document.getElementById('log'); const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
+function log(msg){ const el=document.getElementById('log'); if(!el) return; const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
 
-/* ---------- Render durations (readable) ---------- */
+/* ---------- Render durations ---------- */
 function renderDurations(){
   durWrap.innerHTML = '';
   DURATIONS.forEach((d,i)=>{
@@ -470,10 +548,10 @@ function renderDurations(){
   });
 }
 
-/* ---------- Render airlines with colored glow and selection visuals ---------- */
+/* ---------- Render airlines grid with colored glow and selection visuals ---------- */
 function renderAirGrid(){
   airGrid.innerHTML = '';
-  const filtered = AIRLINES.filter(a=> {
+  const filtered = AIRLINES.filter(a=>{
     if(!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     return a.name.toLowerCase().includes(q) || (a.code && a.code.toLowerCase().includes(q));
@@ -500,21 +578,16 @@ function renderAirGrid(){
     meta.appendChild(name); meta.appendChild(code);
     card.appendChild(dot); card.appendChild(meta);
 
-    // left stripe element (will be added/removed on selection)
-    // selection handled in updateActiveUI()
-
     // interactions
     card.addEventListener('mouseenter', ()=> {
       card.style.boxShadow = `0 36px 120px ${hexToRgba(a.color,0.18)}, inset 0 2px 8px rgba(255,255,255,0.02)`;
     });
     card.addEventListener('mouseleave', ()=> {
-      // only reset if not selected
       if(!(chosenAirline === a.name)) card.style.boxShadow = '';
     });
 
     card.addEventListener('click', ()=> {
       chosenAirline = (chosenAirline === a.name) ? null : a.name;
-      // animate small pulse
       card.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
       updateActiveUI();
       renderLists();
@@ -523,7 +596,7 @@ function renderAirGrid(){
     airGrid.appendChild(card);
   });
 
-  updateActiveUI(); // ensure selected visuals applied after building
+  updateActiveUI();
 }
 
 /* ---------- Routes & Fleet ---------- */
@@ -584,17 +657,18 @@ function renderPilots(){
 /* ---------- Auth modal behavior (forced each load) ---------- */
 function showGateModal(){
   gateModal.style.display = 'flex';
-  document.documentElement.classList.add('modal-open');
-  // visually block app with class on container
+  // block app visually
+  appRoot.classList.add('app-blocked');
   document.querySelector('.container').classList.add('app-blocked');
-  // also add class to hero for pointer-events/blur
   document.getElementById('appHero').classList.add('app-blocked');
   setTimeout(()=> loginCall.focus(),50);
 }
 function hideGateModal(){
   gateModal.style.display = 'none';
-  document.querySelector('.container').classList.remove('app-blocked');
-  document.getElementById('appHero').classList.remove('app-blocked');
+  // keep app blocked until user completes splash (per requirement: splash after login)
+  // but remove modal-specific visual
+  // do not remove app-blocked here; splash flow will control unblocking after continue
+  // we still ensure hero retains blocked until splash handled
 }
 
 /* login handling */
@@ -605,22 +679,24 @@ btnLogin.addEventListener('click', ()=> {
   const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
   if(!p){ alert('Пилот не найден'); return; }
   if(pass === CODEWORD || (p.password && pass === p.password)){
+    // set session but still show splash overlay
     SESSION.pilotId = p.id; saveSession();
-    hideGateModal();
     renderSession();
+    // close modal, then open splash
+    gateModal.style.display = 'none';
+    openSplash();
     log(`Вошёл ${p.name}`);
   } else {
     alert('Неверный пароль');
   }
 });
 
-/* demo quick button fills codeword and logs in current user if matching callSign */
+/* demo quick login fills codeword and triggers login */
 btnDemoQuick.addEventListener('click', ()=> {
   const cs = (loginCall.value||'').trim();
   if(!cs){ alert('Введите позывной для быстрого входа'); return; }
   const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
   if(!p){ alert('Пилот не найден'); return; }
-  // use codeword
   loginPass.value = CODEWORD;
   btnLogin.click();
 });
@@ -631,7 +707,9 @@ openGate2.addEventListener('click', showGateModal);
 
 /* logout */
 logoutBtn.addEventListener('click', ()=>{
-  SESSION.pilotId = null; saveSession(); renderSession(); // show modal again per request
+  SESSION.pilotId = null; saveSession(); renderSession();
+  // show modal and hide splash if present
+  hideSplash(true);
   showGateModal();
   log('Вышел');
 });
@@ -650,7 +728,60 @@ function renderSession(){
   }
 }
 
-/* ---------- Reservation flow (same as before) ---------- */
+/* ---------- Splash handling (shows after login each time) ---------- */
+function openSplash(){
+  // show splash overlay
+  splash.style.display = 'flex';
+  // keep app blocked until user continues
+  appRoot.classList.add('app-blocked');
+  document.querySelector('.container').classList.add('app-blocked');
+  document.getElementById('appHero').classList.add('app-blocked');
+
+  // Prepare video: if source not loadable, show fallback animation
+  // Video path is media/nyc.mp4; replace with your asset in repo.
+  // We test readiness and show fallback if it errors
+  let video = splashVideo;
+  let fallback = videoFallback;
+  // attach handlers
+  const showFallback = ()=> {
+    try{ video.style.display = 'none'; }catch(e){}
+    fallback.style.display = 'flex';
+  };
+  video.oncanplay = ()=> {
+    fallback.style.display = 'none';
+    video.style.display = 'block';
+    // autoplay is set; pause after 8s if you want; keep user control minimal
+  };
+  video.onerror = showFallback;
+  // if no source or fails, show fallback
+  setTimeout(()=> {
+    // if video still not playing or has zero duration, show fallback
+    if(video.readyState === 0) showFallback();
+  }, 600);
+}
+
+function hideSplash(forceHide){
+  splash.style.display = 'none';
+  // unblock app
+  appRoot.classList.remove('app-blocked');
+  document.querySelector('.container').classList.remove('app-blocked');
+  document.getElementById('appHero').classList.remove('app-blocked');
+  // if forceHide true, also close modal (used on logout flow)
+  if(forceHide) gateModal.style.display = 'none';
+}
+
+/* continue button and skip */
+btnContinue.addEventListener('click', ()=> {
+  // stop video if playing
+  try{ splashVideo.pause(); }catch(e){}
+  hideSplash(false);
+});
+btnSkipVideo.addEventListener('click', ()=> {
+  try{ splashVideo.pause(); }catch(e){}
+  hideSplash(false);
+});
+
+/* ---------- Reservation flow (kept) ---------- */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.maxFlightMinutes!=='number' || ac.maxFlightMinutes >= dur) && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -671,26 +802,23 @@ function openConfirmFromRoute(route){
   candidate.reservedUntil = nowMs() + 120000;
   PENDING_RESERVATION = { token: candidate.reservedToken, aircraft: candidate, route, pilotId: pilot.id, expires: candidate.reservedUntil };
   confirmDetails.textContent = `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин`;
-  confirmModal.style.display = 'flex';
-  confirmModal.style.alignItems = 'center';
-  confirmModal.style.justifyContent = 'center';
-  renderLists();
+  document.getElementById('confirmModal').style.display = 'flex';
 }
-confirmAccept.addEventListener('click', ()=> {
-  if(!PENDING_RESERVATION){ confirmModal.style.display='none'; return; }
+document.getElementById('confirmAccept').addEventListener('click', ()=> {
+  if(!PENDING_RESERVATION){ document.getElementById('confirmModal').style.display='none'; return; }
   const ac = FLEET.find(a=>a.reservedToken === PENDING_RESERVATION.token);
-  if(!ac){ alert('Резервация потеряна'); confirmModal.style.display='none'; return; }
+  if(!ac){ alert('Резервация потеряна'); document.getElementById('confirmModal').style.display='none'; return; }
   const p = PILOTS.find(x=>x.id===PENDING_RESERVATION.pilotId);
-  if(!(p && p.verified)){ alert('Пилот не верифицирован'); confirmModal.style.display='none'; return; }
+  if(!(p && p.verified)){ alert('Пилот не верифицирован'); document.getElementById('confirmModal').style.display='none'; return; }
   ac.fuelMinutes = Math.max(0, (ac.fuelMinutes||0) - Number(PENDING_RESERVATION.route.durationMinutes));
   ac.status='inFlight'; ac.availableAt = nowMs() + (PENDING_RESERVATION.route.durationMinutes||120)*60000 + (ac.turnaround||0)*60000;
   delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
   FLEET_LOG.push({ts:nowMs(),event:'assign_confirmed',aircraft:ac.id,route:`${PENDING_RESERVATION.route.fromICAO}->${PENDING_RESERVATION.route.toICAO}`});
-  PENDING_RESERVATION = null; confirmModal.style.display='none'; renderLists(); log(`Рейс подтверждён ${ac.id}`);
+  PENDING_RESERVATION = null; document.getElementById('confirmModal').style.display='none'; renderLists(); log(`Рейс подтверждён ${ac.id}`);
 });
-confirmCancel.addEventListener('click', ()=> {
+document.getElementById('confirmCancel').addEventListener('click', ()=> {
   if(PENDING_RESERVATION){ const token = PENDING_RESERVATION.token; FLEET.forEach(a=>{ if(a.reservedToken === token){ a.status='idle'; delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; FLEET_LOG.push({ts:nowMs(), event:'reservation_cancelled', aircraft:a.id}); }}); PENDING_RESERVATION = null; }
-  confirmModal.style.display='none'; renderLists(); log('Бронь отменена');
+  document.getElementById('confirmModal').style.display='none'; renderLists(); log('Бронь отменена');
 });
 
 /* ---------- UI helpers & selection visuals ---------- */
@@ -698,16 +826,13 @@ function updateActiveUI(){
   Array.from(airGrid.children).forEach(card=>{
     const name = card.getAttribute('data-airline');
     const glow = card.querySelector('.glow');
-    const dot = card.querySelector('.dot');
     if(name === chosenAirline){
       card.classList.add('selected');
-      // set selected-color CSS custom property inline
       const airline = AIRLINES.find(x=>x.name===name);
       const c = airline ? airline.color : '#ffbf3a';
       card.style.setProperty('--selected-color', c);
       card.style.setProperty('--selected-color-shadow', hexToRgba(c,0.14));
       if(glow) glow.style.opacity = '0.86';
-      // ensure left stripe exists via ::after (handled by CSS using custom property)
     } else {
       card.classList.remove('selected');
       if(glow) glow.style.opacity = '0';
@@ -716,13 +841,9 @@ function updateActiveUI(){
     }
   });
 
-  // update duration pills visual (active class)
   Array.from(durWrap.children).forEach((b, idx)=>{
-    if(idx === chosenDuration){
-      b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
-    } else {
-      b.style.boxShadow = '';
-    }
+    if(idx === chosenDuration) b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
+    else b.style.boxShadow = '';
   });
 }
 
@@ -808,15 +929,23 @@ function hexToRgba(hex, a = 1){
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
-/* init */
+/* ---------- Initialisation ---------- */
 function init(){
   renderLists();
   const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
   if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
-  // Render session UI
   renderSession();
-  // Show modal on every load (forced)
+  // Force show login modal on load
   showGateModal();
+  // Ensure splash is hidden initially
+  splash.style.display = 'none';
+
+  // Try to detect if splash video file exists; if not, show fallback when splash opens.
+  // (This check simply attempts to load metadata; if it fails, fallback will show on openSplash)
+  splashVideo.addEventListener('error', ()=> {
+    videoFallback.style.display = 'flex';
+    splashVideo.style.display = 'none';
+  });
 }
 init();
 </script>
