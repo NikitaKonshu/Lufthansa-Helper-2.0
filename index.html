@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — splash video → login → optional tour</title>
+<title>Lufthansa Helper — splash + tutorial + full app</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -12,6 +12,7 @@
   --accent-yellow:#ffd54a;
   font-family:Inter,system-ui,Arial,sans-serif;
   font-size:15px;
+  --glass-bg: rgba(255,255,255,0.03);
 }
 
 /* reset */
@@ -21,7 +22,7 @@ body{
   margin:0;padding:0;
   background:linear-gradient(180deg,var(--bg-top),var(--bg-bot));
   color:var(--text); -webkit-font-smoothing:antialiased;
-  min-height:100vh;
+  min-height:100vh; font-family:Inter,system-ui,Arial,sans-serif;
 }
 
 /* app root */
@@ -36,7 +37,11 @@ body{
   border:1px solid rgba(255,255,255,0.05);
   box-shadow: 0 36px 120px rgba(2,8,18,0.7), inset 0 2px 0 rgba(255,255,255,0.02);
   backdrop-filter: blur(12px) saturate(120%);
+  transition: filter .28s ease, opacity .22s ease;
 }
+
+/* blocked state */
+.app-blocked .hero{ filter: blur(8px) saturate(.9) brightness(.9); pointer-events:none; user-select:none; opacity:0.98; }
 
 /* header */
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -45,11 +50,160 @@ body{
 .title{font-weight:900}
 .subtitle{font-size:13px;color:var(--muted)}
 
-/* compact controls reused from before */
-.btn-neutral{ padding:8px 12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);color:var(--text);font-weight:700;cursor:pointer}
-.btn-primary{ padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,var(--accent-yellow),#ffbf3a);border:1px solid rgba(0,0,0,0.08);color:#072022;font-weight:900;cursor:pointer}
+/* tabs */
+.tabs{display:flex;gap:10px;margin-top:14px;position:relative;flex-wrap:wrap}
+.tab{padding:10px 16px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));cursor:pointer;font-weight:800;color:var(--text);transition:transform .12s,box-shadow .12s}
+.tab.active{ transform:translateY(-4px); box-shadow:0 20px 48px rgba(0,0,0,0.45) }
+.liquid-underline{ position:absolute; height:9px; bottom:-12px; border-radius:8px; background: linear-gradient(90deg,#ffd54a,#ffb84d); transition:left 220ms,width 220ms,opacity 220ms; box-shadow:0 12px 36px rgba(255,160,60,0.14); opacity:0; }
 
-/* splash (full-screen) */
+/* controls */
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:240px}
+.durations{display:flex;gap:8px;flex-wrap:wrap}
+
+/* time pills */
+.time-pill{
+  --h:46px;
+  display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
+  min-height:var(--h);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,242,200,0.95));
+  border: 1px solid rgba(255,195,40,0.18);
+  box-shadow: inset 0 2px 8px rgba(255,235,170,0.04), 0 10px 28px rgba(0,0,0,0.28);
+  color:#111; font-weight:800; cursor:pointer; transition:transform .14s, box-shadow .14s, filter .12s;
+}
+.time-pill .label{ font-weight:900; color:#1b1b1b; font-size:15px; }
+.time-pill .hint{ font-size:12px; color:rgba(0,0,0,0.5); }
+.time-pill:hover{ transform:translateY(-6px); box-shadow: 0 22px 48px rgba(0,0,0,0.38); }
+
+/* prominent generate */
+.generate-btn{
+  background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a);
+  border: 1px solid rgba(0,0,0,0.12);
+  color:#072022;
+  font-weight:900;
+  padding:12px 20px;border-radius:12px;font-size:16px;
+  box-shadow: 0 18px 44px rgba(255,175,40,0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+  cursor:pointer; transition:transform .12s, box-shadow .12s;
+}
+.generate-btn:hover{ transform:translateY(-4px); box-shadow: 0 28px 70px rgba(255,175,40,0.28); }
+
+/* neutral / primary */
+.btn-neutral{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  color:var(--text);
+  padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  position:relative; overflow:hidden;
+  transition: transform .12s, box-shadow .12s, filter .12s;
+}
+.btn-neutral::after{
+  content:'';
+  position:absolute; left:-40%; top:0; bottom:0; width:40%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  transform: skewX(-12deg);
+  transition: left 420ms cubic-bezier(.2,.9,.2,1);
+}
+.btn-neutral:hover{ transform:translateY(-4px); box-shadow: 0 20px 48px rgba(0,0,0,0.45); }
+.btn-neutral:hover::after{ left:120%; }
+
+.btn-primary{
+  background: linear-gradient(180deg, rgba(255,245,200,0.98), var(--accent-yellow));
+  color:#072022; font-weight:900; padding:10px 14px; border-radius:12px; border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 16px 40px rgba(255,170,50,0.16); cursor:pointer; transition: transform .12s;
+}
+.btn-primary:hover{ transform:translateY(-3px); }
+
+/* airline grid */
+.airline-grid{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap:12px;
+  align-items:start;
+  width:100%;
+  min-width:0;
+  max-height:520px;
+  overflow:auto;
+  padding:14px;
+  border-radius:16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+/* shimmer + glow */
+.airline{
+  position:relative;
+  display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden;
+  transition:transform .18s,box-shadow .18s,filter .18s;
+}
+.airline:hover{ transform:translateY(-8px); box-shadow:0 36px 90px rgba(0,0,0,0.6) }
+.airline .dot{ width:16px;height:16px;border-radius:50%;flex:0 0 16px;border:2px solid rgba(255,255,255,0.06) }
+.airline .meta{min-width:0}
+.airline .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.airline .code{font-size:12px;color:var(--muted)}
+
+/* glow overlay */
+.airline .glow{
+  position:absolute; left:50%; top:50%;
+  width:260%; height:110%;
+  transform:translate(-50%,-50%) scale(0.96);
+  border-radius:20px; z-index:0; pointer-events:none;
+  filter: blur(52px) saturate(180%);
+  opacity:0; transition:opacity .16s, transform .16s;
+  mix-blend-mode:screen;
+}
+.airline .shimmer{
+  position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity .18s;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  mix-blend-mode: overlay; transform: translateX(-20%);
+}
+
+/* selected visuals */
+.airline.selected{
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 44px 160px rgba(0,0,0,0.72);
+  transform: translateY(-6px) scale(1.01);
+}
+.airline.selected::after{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:10px;border-top-left-radius:12px;border-bottom-left-radius:12px;
+  background:var(--selected-color, #ffbf3a);
+  box-shadow: 0 12px 40px var(--selected-color-shadow, rgba(255,191,58,0.14));
+  z-index:1;
+}
+.airline.selected .glow{ opacity:0.86; transform:translate(-50%,-50%) scale(1.06); filter: blur(60px) saturate(200%); }
+.airline.selected .name::after{
+  content:' Выбран';
+  margin-left:10px;
+  font-weight:700;
+  font-size:12px;
+  color:rgba(255,255,255,0.96);
+  background: rgba(0,0,0,0.18);
+  padding:4px 8px;
+  border-radius:8px;
+  vertical-align:middle;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  z-index:3;
+}
+
+/* layout */
+.layout{display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px;min-width:0}
+@media(max-width:1100px){ .layout{grid-template-columns:1fr} }
+.panel{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(10px);min-width:0}
+.route-list, .fleet-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;min-width:0}
+.route-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0}
+.kv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* modals */
+.modal-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999}
+.modal{width:420px;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);backdrop-filter:blur(8px)}
+.input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+.row{display:flex;gap:8px;align-items:center;margin-top:10px}
+.small{font-size:13px}
+
+/* splash */
 .splash-back{
   position:fixed; inset:0; z-index:10050;
   display:flex; align-items:center; justify-content:center;
@@ -57,47 +211,74 @@ body{
   backdrop-filter: blur(6px) saturate(0.9);
 }
 .splash-card{
-  width:100%; max-width:1150px; height:60vh; border-radius:16px; overflow:hidden; display:flex;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
-  border: 1px solid rgba(255,255,255,0.04); box-shadow: 0 50px 140px rgba(0,0,0,0.7);
+  width:100%; max-width:1150px; border-radius:16px; overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 50px 140px rgba(0,0,0,0.7);
+  display:flex; gap:0; align-items:stretch; justify-content:stretch;
 }
-.splash-media{ width:60%; position:relative; display:flex; align-items:center; justify-content:center; background:#000; overflow:hidden; }
-#yt-player{ width:100%; height:100%; }
-.splash-overlay{
-  position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; padding:28px;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5));
+.splash-media{
+  width:60%; min-height:360px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(10,20,40,0.35), rgba(0,0,0,0.35));
 }
-.splash-cta-big{
-  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  border-radius:12px; padding:18px 22px; color:#fff; font-weight:800; font-size:20px; display:flex; gap:12px; align-items:center;
-  box-shadow: 0 18px 46px rgba(0,0,0,0.5);
-}
-.splash-cta-big .primary{
-  margin-left:auto; background:linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; padding:10px 16px; border-radius:10px; font-weight:900; cursor:pointer;
-}
-.splash-cta-small{ margin-top:8px; color:var(--muted); font-size:13px; }
+.splash-media iframe{ width:100%; height:100%; border:0; display:block; }
 
-/* right panel */
-.splash-info{ width:40%; padding:26px; display:flex; flex-direction:column; gap:14px; justify-content:center; }
-.splash-info h1{ margin:0;font-size:24px; font-weight:900; color:var(--text) }
-.splash-info p{ margin:0;color:var(--muted) }
+/* overlay matching the photo — centered title + button */
+.splash-center{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
+}
+.splash-center .center-block{
+  pointer-events:auto;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.18), rgba(0,0,0,0.10));
+  padding:18px 28px; border-radius:12px;
+}
+.splash-center h2{ margin:0;font-size:26px;font-weight:900;color:#fff; text-align:center; }
+.splash-center .center-cta{ margin-top:6px; display:flex; gap:10px; }
+.splash-center .center-cta button{ font-weight:900; padding:10px 16px; border-radius:10px; border:0; cursor:pointer; background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; }
 
-/* login modal */
-.modal-back{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:10100; }
-.modal{ width:420px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04)); border:1px solid rgba(255,255,255,0.03); box-shadow:0 30px 80px rgba(0,0,0,0.6); }
-.input{ width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text) }
-.row{ display:flex; gap:8px; align-items:center; margin-top:10px }
-.small{ font-size:13px; color:var(--muted) }
+/* splash-info right column */
+.splash-info{
+  width:40%; padding:36px; display:flex; flex-direction:column; justify-content:center; gap:12px;
+  align-items:center; text-align:center;
+}
+.splash-info .welcome{ font-size:20px; font-weight:900; color:var(--text); margin-bottom:6px; }
+.splash-info .desc{ color:var(--muted); }
 
-/* tour overlay (optional) */
-.tour-back{ display:none; position:fixed; inset:0; z-index:10150; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(2,6,14,0.84), rgba(2,6,20,0.9)); }
-.tour-card{ width:92%; max-width:760px; border-radius:14px; padding:20px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03)); border:1px solid rgba(255,255,255,0.04); }
+/* tutorial overlay (appears after splash Continue) */
+.tour-back{
+  position:fixed; inset:0; z-index:10060;
+  display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(2,6,14,0.84), rgba(2,6,20,0.9));
+  backdrop-filter: blur(6px) saturate(0.9);
+}
+.tour-card{
+  width:100%; max-width:920px; border-radius:14px; padding:22px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.06); box-shadow: 0 50px 140px rgba(0,0,0,0.7);
+  display:flex; gap:18px; align-items:flex-start;
+}
+.tour-step{
+  display:flex; gap:16px; align-items:flex-start; width:100%;
+}
+.tour-step .icon{
+  width:84px; height:84px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02)); display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--accent-yellow); font-size:28px;
+}
+.tour-body{ flex:1; }
+.tour-title{ font-size:20px; font-weight:900; margin-bottom:6px; color:var(--text); }
+.tour-text{ color:var(--muted); line-height:1.45; font-size:14px; margin-bottom:12px; }
+.tour-controls{ display:flex; gap:10px; justify-content:flex-end; width:100%; margin-top:6px; }
+.tour-pill{ padding:8px 12px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text); cursor:pointer; }
+.tour-primary{ padding:10px 14px; border-radius:12px; background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; font-weight:900; cursor:pointer; }
 
 /* responsive */
 @media(max-width:900px){
-  .splash-card{ flex-direction:column; height:56vh; }
-  .splash-media, #yt-player { width:100%; height:220px; }
-  .splash-info{ width:100%; padding:14px; }
+  .splash-card{ flex-direction:column; }
+  .splash-media{ width:100%; height:260px; }
+  .splash-info{ width:100%; padding:20px; }
+  .splash-center h2{ font-size:20px; }
+  .tour-card{ padding:14px; flex-direction:column; }
+  .tour-step{ flex-direction:column; align-items:center; text-align:center; }
+  .tour-step .icon{ margin-bottom:8px; }
+  .tour-controls{ justify-content:center; }
 }
 </style>
 </head>
@@ -110,52 +291,96 @@ body{
           <div class="logo">LH</div>
           <div>
             <div class="title">Lufthansa Helper</div>
-            <div class="subtitle">усиленное LED · liquid glass · демонстрация</div>
+            <div class="subtitle">усиленное LED · liquid glass · принудительная авторизация</div>
           </div>
         </div>
+
         <div style="display:flex;gap:10px;align-items:center">
-          <div id="sessionBadge" class="small">Неавторизован</div>
+          <div id="sessionBadge" class="kv">Неавторизован</div>
           <button id="openGateBtn" class="btn-neutral">Вход</button>
+          <button id="logoutBtn" class="btn-neutral" style="display:none">Выйти</button>
         </div>
       </div>
 
-      <!-- основной контент оставлен упрощённым -->
-      <div style="padding:18px;color:var(--muted)">Интерфейс приложения загрузится после входа.</div>
-    </div>
-  </div>
-</div>
+      <div class="tabs" id="tabsRow" style="margin-top:14px">
+        <div class="tab active" data-target="panelGenerate" id="tabGen">Генерация</div>
+        <div class="tab" data-target="panelRoutes" id="tabRoutes">Направления</div>
+        <div class="tab" data-target="panelFleet" id="tabFleet">Флот</div>
+        <div id="liquidUnderline" class="liquid-underline"></div>
+      </div>
 
-<!-- splash with YouTube and big CTA resembling image overlay -->
-<div id="splash" class="splash-back" style="display:flex;">
-  <div class="splash-card" role="dialog" aria-modal="true">
-    <div class="splash-media" id="splashMedia">
-      <div id="yt-player"></div>
-      <div class="splash-overlay" aria-hidden="false">
-        <div class="splash-cta-big" role="button" aria-label="Дальше">
-          <div style="display:flex;flex-direction:column;align-items:flex-start">
-            <div style="font-size:22px;font-weight:900;color:#fff">Sound makes it home</div>
-            <div class="splash-cta-small">Geschenke kaufen</div>
+      <div class="controls">
+        <input id="airSearch" class="search" placeholder="Поиск авиакомпании или кода" autocomplete="off" />
+        <div style="display:flex;align-items:center;gap:10px">
+          <strong class="kv">Время</strong>
+          <div id="durations" class="durations"></div>
+        </div>
+
+        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+          <button id="clearBtn" class="btn-neutral">Сброс</button>
+          <button id="genBtn" class="generate-btn">СГЕНЕРИРОВАТЬ</button>
+        </div>
+      </div>
+
+      <div id="airGrid" class="airline-grid" aria-live="polite"></div>
+
+      <div class="layout">
+        <main>
+          <section id="panelGenerate" class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Генерация</div>
+              <div class="kv">Нажмите СГЕНЕРИРОВАТЬ для демонстрации</div>
+            </div>
+            <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и интервал времени</div>
+          </section>
+
+          <section id="panelRoutes" class="panel" style="display:none;margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Направления</div>
+              <div class="kv">Список маршрутов по фильтрам</div>
+            </div>
+            <div id="routesList" class="route-list"></div>
+          </section>
+
+          <section id="panelFleet" class="panel" style="display:none;margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Флот</div>
+              <div class="kv">Самолёты под фильтрами</div>
+            </div>
+            <div id="fleetList" class="fleet-list"></div>
+          </section>
+        </main>
+
+        <aside>
+          <div class="panel" style="padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Пилоты</div>
+              <div class="kv">Demo</div>
+            </div>
+            <div style="margin-top:8px">
+              <input id="pilotSearch" class="input" placeholder="Поиск пилота" />
+            </div>
+            <div id="pilotList" style="margin-top:8px"></div>
           </div>
-          <button id="splashContinue" class="primary">Дальше</button>
-        </div>
-      </div>
-    </div>
-    <div class="splash-info">
-      <h1>Добро пожаловать</h1>
-      <p>Просмотрите короткий ролик. Нажмите «Дальше», чтобы продолжить вход в систему.</p>
-      <div style="display:flex;gap:10px">
-        <button id="btnSkipVideo" class="btn-neutral">Пропустить видео</button>
-        <button id="btnOpenLogin" class="btn-primary">Вход</button>
+
+          <div class="panel" style="margin-top:12px;padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900">Журнал</div>
+              <div><button id="openGate2" class="btn-neutral">Вход</button></div>
+            </div>
+            <div id="log" class="kv" style="margin-top:8px;max-height:320px;overflow:auto">Пусто</div>
+          </div>
+        </aside>
       </div>
     </div>
   </div>
 </div>
 
-<!-- login modal (появляется после сшипа или по кнопке) -->
+<!-- forced login modal -->
 <div id="gateModal" class="modal-back" style="display:none;">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Вход">
     <div style="font-weight:900">Вход в систему</div>
-    <div class="small" style="margin-top:8px">Введите позывной и пароль. Кодовое слово: <strong>quickaccess2025</strong></div>
+    <div class="small kv" style="margin-top:8px">Введите позывной и пароль. Кодовое слово: <strong>quickaccess2025</strong></div>
 
     <div class="row">
       <input id="loginCall" class="input" placeholder="Позывной (callSign)" />
@@ -180,16 +405,60 @@ body{
   </div>
 </div>
 
-<!-- optional tour overlay -->
+<!-- splash -->
+<div id="splash" class="splash-back" style="display:none;">
+  <div class="splash-card" role="dialog" aria-modal="true" aria-label="Welcome">
+    <div class="splash-media" id="splashMedia">
+      <!-- YouTube iframe will be created here by API -->
+      <div id="yt-player"></div>
+
+      <!-- centered overlay like on your photo: title in the center + continue button -->
+      <div class="splash-center" aria-hidden="false">
+        <div class="center-block">
+          <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
+          <div class="center-cta">
+            <button id="splashContinue" class="center-btn">Дальше</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="splash-info">
+      <div class="welcome">Добро пожаловать</div>
+      <div class="desc">Короткий обзор. Нажмите Дальше для входа в систему.</div>
+      <div style="display:flex;gap:10px">
+        <button id="btnSkipVideo" class="btn-neutral">Пропустить видео</button>
+        <button id="btnOpenLogin" class="btn-primary">Вход</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- tutorial overlay -->
 <div id="tour" class="tour-back" style="display:none;">
   <div class="tour-card" role="dialog" aria-modal="true" aria-label="Инструкция для пилотов">
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="font-weight:900;font-size:18px">Краткая инструкция</div>
-      <div style="color:var(--muted)">1. Выберите авиакомпанию в списке; 2. Выберите интервал времени; 3. Нажмите СГЕНЕРИРОВАТЬ и подтвердите бронь.</div>
-      <div style="display:flex;justify-content:flex-end;gap:8px">
-        <button id="tourSkip" class="btn-neutral">Пропустить инструкцию</button>
-        <button id="tourDone" class="btn-primary">Готово</button>
+    <div class="tour-step">
+      <div class="icon" id="tourIcon">1</div>
+      <div class="tour-body">
+        <div class="tour-title" id="tourTitle">Краткая инструкция</div>
+        <div class="tour-text" id="tourText">1) Выберите авиакомпанию; 2) Выберите интервал времени; 3) Нажмите СГЕНЕРИРОВАТЬ и подтвердите бронь.</div>
+        <div class="tour-controls">
+          <button id="tourSkip" class="tour-pill">Пропустить инструкцию</button>
+          <button id="tourDone" class="tour-primary">Готово</button>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm modal -->
+<div id="confirmModal" class="modal-back" style="display:none;align-items:center;justify-content:center">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Подтвердить бронь">
+    <div style="font-weight:900">Подтвердить бронь</div>
+    <div id="confirmDetails" class="kv" style="margin-top:8px"></div>
+    <div style="display:flex;justify-content:space-between;gap:8px;margin-top:12px">
+      <button id="confirmCancel" class="btn-neutral">Отменить</button>
+      <button id="confirmAccept" class="btn-primary">Подтвердить</button>
     </div>
   </div>
 </div>
@@ -198,36 +467,551 @@ body{
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-/* ========== SETTINGS ========== */
-const YT_VIDEO_ID = '7S7smPw9EiE'; // ваш ролик
-const YT_AUTOMUTE = 1;             // 1 = mute для автоплея
-let ytPlayer = null;
+/* ================= DATA & STATE ================= */
+const CODEWORD = 'quickaccess2025';
+const SESSION_KEY = 'lh_force_auth_v1';
 
-/* ========== DOM refs ========== */
-const splash = document.getElementById('splash');
-const splashContinue = document.getElementById('splashContinue');
-const btnSkipVideo = document.getElementById('btnSkipVideo');
-const btnOpenLogin = document.getElementById('btnOpenLogin');
+const DURATIONS = [
+  {label:"1–2ч",min:60,max:120},{label:"2–3ч",min:120,max:180},{label:"3–4ч",min:180,max:240},
+  {label:"5–6ч",min:300,max:360},{label:"6–7ч",min:360,max:420},{label:"7–8ч",min:420,max:480},
+  {label:"8–9ч",min:480,max:540},{label:"9–10ч",min:540,max:600},{label:"10+ч",min:600,max:99999}
+];
+
+const AIRLINES = [
+  {name:"Lufthansa",code:"LH",color:"#1E6FFF"},
+  {name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},
+  {name:"Lufthansa CityLine",code:"CL",color:"#2D6DE6"},
+  {name:"Lufthansa Technik",code:"LT",color:"#2D6DE6"},
+  {name:"Lufthansa Private Jet",code:"PJ",color:"#0a5fb0"},
+  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
+  {name:"Discover Airlines",code:"DH",color:"#F07F2A"},
+  {name:"Condor",code:"DE",color:"#FFD200"},
+  {name:"AeroLogic",code:"3S",color:"#8A8D8F"},
+  {name:"Swiss International Air Lines",code:"LX",color:"#D81E5B"},
+  {name:"Austrian Airlines",code:"OS",color:"#DA291C"},
+  {name:"Brussels Airlines",code:"SN",color:"#003399"},
+  {name:"Edelweiss Air",code:"WK",color:"#FF7BAC"},
+  {name:"Air Dolomiti",code:"EN",color:"#00A1DE"},
+  {name:"SAS Scandinavian Airlines",code:"SK",color:"#003A63"},
+  {name:"Norwegian Airlines",code:"DY",color:"#BA0C2F"},
+  {name:"Widerøe",code:"WF",color:"#00A651"},
+  {name:"AirBaltic",code:"BT",color:"#00A99D"},
+  {name:"Finnair",code:"AY",color:"#003366"},
+  {name:"ITA Airways",code:"AZ",color:"#0067B1"},
+  {name:"SunExpress",code:"SX",color:"#FF8A3D"}
+];
+
+const ROUTES = [
+  {airline:"Lufthansa",fromICAO:"EDDF",toICAO:"ENGM",fromCity:"Frankfurt",toCity:"Oslo",durationMinutes:120},
+  {airline:"Swiss International Air Lines",fromICAO:"EDDF",toICAO:"LSZH",fromCity:"Frankfurt",toCity:"Zurich",durationMinutes:60},
+  {airline:"SunExpress",fromICAO:"EDDF",toICAO:"LTAI",fromCity:"Frankfurt",toCity:"Antalya",durationMinutes:180},
+  {airline:"Condor",fromICAO:"EDDF",toICAO:"KJFK",fromCity:"Frankfurt",toCity:"New York",durationMinutes:480}
+];
+
+let FLEET = [
+  {id:"LH-A320-01",airline:"Lufthansa",type:"A320",locationICAO:"EDDF",status:"idle",maxFlightMinutes:240,fuelMinutes:400,turnaround:35,reserveMargin:30},
+  {id:"LX-A320-01",airline:"Swiss International Air Lines",type:"A320",locationICAO:"EDDF",status:"idle",maxFlightMinutes:300,fuelMinutes:420,turnaround:35,reserveMargin:30},
+  {id:"DE-B767-01",airline:"Condor",type:"B767",locationICAO:"EDDF",status:"idle",maxFlightMinutes:720,fuelMinutes:800,turnaround:50,reserveMargin:60}
+];
+
+let PILOTS = [
+  {id:"pilot_ivan",name:"Ivan Petrov",callSign:"IPET",verified:true,password:""},
+  {id:"pilot_loui",name:"Loui Desulier",callSign:"FRENCH",verified:true,password:"louiSecret"}
+];
+
+let FLEET_LOG = [];
+let PENDING_RESERVATION = null;
+
+/* session persists */
+let SESSION = (function(){ try{ const s = sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
+
+/* ui state */
+let chosenAirline = null;
+let chosenDuration = null;
+let searchQuery = '';
+
+/* DOM refs */
+const appRoot = document.getElementById('appRoot');
+const appHero = document.getElementById('appHero');
+const airGrid = document.getElementById('airGrid');
+const durWrap = document.getElementById('durations');
+const airSearch = document.getElementById('airSearch');
+const routesList = document.getElementById('routesList');
+const fleetList = document.getElementById('fleetList');
+const pilotListEl = document.getElementById('pilotList');
+const pilotSearch = document.getElementById('pilotSearch');
+const sessionBadge = document.getElementById('sessionBadge');
+const openGateBtn = document.getElementById('openGateBtn');
+const openGate2 = document.getElementById('openGate2');
+const logoutBtn = document.getElementById('logoutBtn');
 const gateModal = document.getElementById('gateModal');
 const btnLogin = document.getElementById('btnLogin');
 const btnDemoQuick = document.getElementById('btnDemoQuick');
 const loginCall = document.getElementById('loginCall');
 const loginPass = document.getElementById('loginPass');
-const tourOverlay = document.getElementById('tour');
-const tourAfterLogin = document.getElementById('tourAfterLogin');
+const splash = document.getElementById('splash');
+const btnContinue = document.getElementById('splashContinue');
+const btnSkipVideo = document.getElementById('btnSkipVideo');
+const btnOpenLogin = document.getElementById('btnOpenLogin');
+const tour = document.getElementById('tour');
 const tourSkip = document.getElementById('tourSkip');
 const tourDone = document.getElementById('tourDone');
-const openGateBtn = document.getElementById('openGateBtn');
-const sessionBadge = document.getElementById('sessionBadge');
+const tourAfterLogin = document.getElementById('tourAfterLogin');
+const genBtn = document.getElementById('genBtn');
+const tabElements = document.querySelectorAll('.tab');
+const liquidUnderline = document.getElementById('liquidUnderline');
 
-/* demo pilots (упрощённо) */
-const PILOTS = [
-  {id:'pilot_ivan',name:'Ivan Petrov',callSign:'IPET',verified:true,password:''},
-  {id:'pilot_loui',name:'Loui Desulier',callSign:'FRENCH',verified:true,password:'louiSecret'}
+/* ===== YouTube player settings ===== */
+let ytPlayer = null;
+const YT_VIDEO_ID = '7S7smPw9EiE'; // <-- замените на ваш ID при необходимости
+const YT_AUTOMUTE = 1;
+
+/* tour content (steps) */
+const TOUR_STEPS = [
+  {icon:'1', title:'Выбор авиакомпании', text:'Кликните любую авиакомпанию в списке — появится цветная лента слева, яркое свечение и метка «Выбран». Это показывает, что пилот выбрал авиакомпанию.'},
+  {icon:'2', title:'Выбор времени', text:'Выберите желаемый интервал времени в панели времени. Пилы видны, объёмны и читаемы; выбранный интервал подсвечивается.'},
+  {icon:'3', title:'Генерация и бронь', text:'Нажмите СГЕНЕРИРОВАТЬ; затем выберите маршрут и подтвердите бронь. Резервация отобразится в журнале.'}
 ];
-let SESSION = { pilotId: null };
+let tourIndex = 0;
 
-/* ========== YouTube player init ========== */
+/* helpers */
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function nowMs(){ return Date.now(); }
+function uid(p='id'){ return p+'_'+Math.random().toString(36).slice(2,9); }
+function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
+function log(msg){ const el=document.getElementById('log'); if(!el) return; const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
+
+/* ====== RENDER FUNCTIONS (restored full) ====== */
+function renderDurations(){
+  durWrap.innerHTML = '';
+  DURATIONS.forEach((d,i)=>{
+    const b = document.createElement('div'); b.className='time-pill'; b.dataset.idx = i;
+    b.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div class="badge" style="width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),#ffbf4a);box-shadow:0 8px 20px rgba(255,190,50,0.22)"></div><div><div class="label">${d.label}</div><div class="hint">Интервал</div></div></div>`;
+    b.addEventListener('click', ()=> {
+      chosenDuration = (chosenDuration === i) ? null : i;
+      updateActiveUI();
+      renderLists();
+    });
+    if(chosenDuration===i) b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
+    durWrap.appendChild(b);
+  });
+}
+
+function renderAirGrid(){
+  airGrid.innerHTML = '';
+  const filtered = AIRLINES.filter(a=>{
+    if(!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return a.name.toLowerCase().includes(q) || (a.code && a.code.toLowerCase().includes(q));
+  });
+
+  filtered.forEach(a=>{
+    const card = document.createElement('div'); card.className = 'airline';
+    card.setAttribute('data-airline', a.name);
+
+    const glow = document.createElement('div'); glow.className = 'glow';
+    glow.style.background = `radial-gradient(60% 60% at 50% 40%, ${a.color}dd 0%, ${a.color}c0 10%, ${a.color}99 20%, transparent 46%)`;
+    card.appendChild(glow);
+
+    const shimmer = document.createElement('div'); shimmer.className = 'shimmer';
+    card.appendChild(shimmer);
+
+    const dot = document.createElement('div'); dot.className = 'dot'; dot.style.background = a.color;
+    const meta = document.createElement('div'); meta.className = 'meta';
+    const name = document.createElement('div'); name.className = 'name'; name.textContent = a.name;
+    const code = document.createElement('div'); code.className = 'code'; code.textContent = a.code || '';
+    meta.appendChild(name); meta.appendChild(code);
+    card.appendChild(dot); card.appendChild(meta);
+
+    card.addEventListener('mouseenter', ()=> {
+      card.style.boxShadow = `0 36px 120px ${hexToRgba(a.color,0.18)}, inset 0 2px 8px rgba(255,255,255,0.02)`;
+    });
+    card.addEventListener('mouseleave', ()=> {
+      if(!(chosenAirline === a.name)) card.style.boxShadow = '';
+    });
+
+    card.addEventListener('click', ()=> {
+      chosenAirline = (chosenAirline === a.name) ? null : a.name;
+      card.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      updateActiveUI();
+      renderLists();
+    });
+
+    airGrid.appendChild(card);
+  });
+
+  updateActiveUI();
+}
+
+function renderRoutes(){
+  routesList.innerHTML = '';
+  const list = ROUTES.filter(r=>{
+    if(chosenAirline && r.airline !== chosenAirline) return false;
+    if(chosenDuration !== null){
+      const d = DURATIONS[chosenDuration]; if(!(r.durationMinutes >= d.min && r.durationMinutes <= d.max)) return false;
+    }
+    return true;
+  });
+  if(!list.length){ routesList.innerHTML = '<div class="kv">Нет направлений</div>'; return; }
+  list.forEach(r=>{
+    const row = document.createElement('div'); row.className='route-item';
+    row.innerHTML = `<div style="min-width:0"><div style="font-weight:800">${esc(r.fromICAO)} → ${esc(r.toICAO)}</div><div class="kv">${esc(r.fromCity)} → ${esc(r.toCity)} · ${esc(r.airline)}</div></div><div class="kv">${r.durationMinutes} мин</div>`;
+    row.addEventListener('click', ()=> openConfirmFromRoute(r));
+    routesList.appendChild(row);
+  });
+}
+
+function renderFleet(){
+  fleetList.innerHTML = '';
+  const list = FLEET.filter(a=>{
+    if(chosenAirline && a.airline !== chosenAirline) return false;
+    if(chosenDuration !== null){
+      const d = DURATIONS[chosenDuration]; if(a.maxFlightMinutes < d.min) return false;
+    }
+    return true;
+  });
+  if(!list.length){ fleetList.innerHTML = '<div class="kv">Нет самолётов</div>'; return; }
+  list.forEach(a=>{
+    const div = document.createElement('div'); div.className='route-item';
+    const pct = Math.min(100, Math.round((a.fuelMinutes / Math.max(a.maxFlightMinutes,300)) * 100));
+    div.innerHTML = `<div style="min-width:0"><div style="font-weight:800">${esc(a.id)}</div><div class="kv">${esc(a.airline)} · ${esc(a.type)} · ${esc(a.locationICAO)}</div></div><div class="kv">${pct}% · ${a.fuelMinutes} мин</div>`;
+    fleetList.appendChild(div);
+  });
+}
+
+function renderPilots(){
+  pilotListEl.innerHTML = '';
+  const q = (pilotSearch.value||'').toLowerCase().trim();
+  PILOTS.filter(p => !q || (p.name+' '+p.callSign).toLowerCase().includes(q)).forEach(p=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px';
+    row.innerHTML = `<div><strong>${esc(p.name)}</strong><div class="kv">${esc(p.callSign)} ${p.verified? '· Verified':''}</div></div>`;
+    const b = document.createElement('button'); b.className='btn-neutral'; b.textContent='Войти';
+    b.addEventListener('click', ()=> {
+      loginCall.value = p.callSign || '';
+      loginPass.value = '';
+      showGateModal();
+    });
+    row.appendChild(b);
+    pilotListEl.appendChild(row);
+  });
+}
+
+/* ====== AUTH & SESSION ====== */
+function showGateModal(){
+  gateModal.style.display = 'flex';
+  appRoot.classList.add('app-blocked');
+  document.querySelector('.container').classList.add('app-blocked');
+  document.getElementById('appHero').classList.add('app-blocked');
+  setTimeout(()=> loginCall.focus(),50);
+}
+function hideGateModal(){
+  gateModal.style.display = 'none';
+  // keep app blocked until splash+tour handled
+}
+
+btnLogin.addEventListener('click', ()=> {
+  const cs = (loginCall.value||'').trim();
+  const pass = (loginPass.value||'').trim();
+  if(!cs){ alert('Введите позывной'); return; }
+  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
+  if(!p){ alert('Пилот не найден'); return; }
+  if(pass === CODEWORD || (p.password && pass === p.password)){
+    SESSION.pilotId = p.id; saveSession();
+    renderSession();
+    gateModal.style.display = 'none';
+    // optionally show tour
+    if(document.getElementById('tourAfterLogin').checked){
+      openTour(0);
+    } else {
+      // open app (nothing to hide)
+      appRoot.classList.remove('app-blocked');
+      document.querySelector('.container').classList.remove('app-blocked');
+      document.getElementById('appHero').classList.remove('app-blocked');
+    }
+    log(`Вошёл ${p.name}`);
+  } else {
+    alert('Неверный пароль');
+  }
+});
+
+btnDemoQuick.addEventListener('click', ()=> {
+  const cs = (loginCall.value||'').trim();
+  if(!cs){ alert('Введите позывной для быстрого входа'); return; }
+  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
+  if(!p){ alert('Пилот не найден'); return; }
+  loginPass.value = CODEWORD;
+  btnLogin.click();
+});
+
+openGateBtn.addEventListener('click', showGateModal);
+openGate2.addEventListener('click', showGateModal);
+
+logoutBtn.addEventListener('click', ()=>{
+  SESSION.pilotId = null; saveSession(); renderSession();
+  hideSplash(true);
+  showGateModal();
+  log('Вышел');
+});
+
+function renderSession(){
+  if(SESSION.pilotId){
+    const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {};
+    sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл';
+    logoutBtn.style.display = 'inline-flex';
+    openGateBtn.style.display = 'none';
+  } else {
+    sessionBadge.textContent = 'Неавторизован';
+    logoutBtn.style.display = 'none';
+    openGateBtn.style.display = 'inline-flex';
+  }
+}
+
+/* ====== SPLASH & TOUR FLOW & YouTube integration ====== */
+function openSplash(){
+  splash.style.display = 'flex';
+  appRoot.classList.add('app-blocked');
+  document.querySelector('.container').classList.add('app-blocked');
+  document.getElementById('appHero').classList.add('app-blocked');
+
+  setTimeout(()=> {
+    if(ytPlayer){
+      try{ ytPlayer.playVideo(); }catch(e){}
+    }
+  }, 600);
+}
+
+function hideSplash(forceHide){
+  splash.style.display = 'none';
+  // leave app blocked for tour — tour flow will control unblocking
+  document.querySelector('.container').classList.add('app-blocked');
+  document.getElementById('appHero').classList.add('app-blocked');
+}
+
+function openTour(startIndex=0){
+  tourIndex = startIndex || 0;
+  tourSetStep(tourIndex);
+  tour.style.display = 'flex';
+  appRoot.classList.add('app-blocked');
+  document.querySelector('.container').classList.add('app-blocked');
+  document.getElementById('appHero').classList.add('app-blocked');
+}
+
+function hideTour(){
+  tour.style.display = 'none';
+  appRoot.classList.remove('app-blocked');
+  document.querySelector('.container').classList.remove('app-blocked');
+  document.getElementById('appHero').classList.remove('app-blocked');
+}
+
+/* tour navigation */
+function tourSetStep(i){
+  const s = TOUR_STEPS[i];
+  document.getElementById('tourIcon').textContent = s.icon;
+  document.getElementById('tourTitle').textContent = s.title;
+  document.getElementById('tourText').textContent = s.text;
+  document.getElementById('tourSkip').style.display = (i>0)?'inline-flex':'inline-flex';
+  document.getElementById('tourDone').textContent = (i < TOUR_STEPS.length - 1) ? 'Дальше' : 'Завершить';
+}
+
+document.getElementById('tourDone').addEventListener('click', ()=>{
+  if(tourIndex < TOUR_STEPS.length - 1){
+    tourIndex++;
+    tourSetStep(tourIndex);
+  } else {
+    hideTour();
+    // after finishing tour, unlock app
+    appRoot.classList.remove('app-blocked');
+    document.querySelector('.container').classList.remove('app-blocked');
+    document.getElementById('appHero').classList.remove('app-blocked');
+  }
+});
+tourSkip.addEventListener('click', ()=>{
+  hideTour();
+  appRoot.classList.remove('app-blocked');
+  document.querySelector('.container').classList.remove('app-blocked');
+  document.getElementById('appHero').classList.remove('app-blocked');
+});
+
+/* splash continue / skip behavior */
+btnContinue.addEventListener('click', ()=>{
+  try{ if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); }catch(e){}
+  hideSplash();
+  openLoginModal();
+});
+btnSkipVideo.addEventListener('click', ()=>{
+  try{ if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); }catch(e){}
+  hideSplash();
+  openLoginModal();
+});
+btnOpenLogin.addEventListener('click', ()=>{
+  try{ if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); }catch(e){}
+  hideSplash();
+  openLoginModal();
+});
+
+/* ====== Reservation flow (kept) ====== */
+function findCandidateAircraftForRoute(route){
+  const dur = Number(route.durationMinutes) || 0;
+  const can = ac => ac.status==='idle' && (typeof ac.maxFlightMinutes!=='number' || ac.maxFlightMinutes >= dur) && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
+  let cand = FLEET.filter(ac => (ac.locationICAO||'').toUpperCase() === (route.fromICAO||'').toUpperCase() && can(ac));
+  if(!cand.length) cand = FLEET.filter(ac => can(ac));
+  if(!cand.length) return null;
+  cand.sort((a,b)=> (b.fuelMinutes||0) - (a.fuelMinutes||0));
+  return cand[0];
+}
+function openConfirmFromRoute(route){
+  const pilot = (SESSION.pilotId ? PILOTS.find(x=>x.id === SESSION.pilotId) : null);
+  if(!pilot){ showGateModal(); return; }
+  const candidate = findCandidateAircraftForRoute(route);
+  if(!candidate){ alert('Нет подходящих самолётов с запасом топлива'); return; }
+  candidate.status='reserved';
+  candidate.reservedBy = pilot.id;
+  candidate.reservedToken = pilot.id+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
+  candidate.reservedUntil = nowMs() + 120000;
+  PENDING_RESERVATION = { token: candidate.reservedToken, aircraft: candidate, route, pilotId: pilot.id, expires: candidate.reservedUntil };
+  document.getElementById('confirmDetails').textContent = `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин`;
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+document.getElementById('confirmAccept').addEventListener('click', ()=> {
+  if(!PENDING_RESERVATION){ document.getElementById('confirmModal').style.display='none'; return; }
+  const ac = FLEET.find(a=>a.reservedToken === PENDING_RESERVATION.token);
+  if(!ac){ alert('Резервация потеряна'); document.getElementById('confirmModal').style.display='none'; return; }
+  const p = PILOTS.find(x=>x.id===PENDING_RESERVATION.pilotId);
+  if(!(p && p.verified)){ alert('Пилот не верифицирован'); document.getElementById('confirmModal').style.display='none'; return; }
+  ac.fuelMinutes = Math.max(0, (ac.fuelMinutes||0) - Number(PENDING_RESERVATION.route.durationMinutes));
+  ac.status='inFlight'; ac.availableAt = nowMs() + (PENDING_RESERVATION.route.durationMinutes||120)*60000 + (ac.turnaround||0)*60000;
+  delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
+  FLEET_LOG.push({ts:nowMs(),event:'assign_confirmed',aircraft:ac.id,route:`${PENDING_RESERVATION.route.fromICAO}->${PENDING_RESERVATION.route.toICAO}`});
+  PENDING_RESERVATION = null; document.getElementById('confirmModal').style.display='none'; renderLists(); log(`Рейс подтверждён ${ac.id}`);
+});
+document.getElementById('confirmCancel').addEventListener('click', ()=> {
+  if(PENDING_RESERVATION){ const token = PENDING_RESERVATION.token; FLEET.forEach(a=>{ if(a.reservedToken === token){ a.status='idle'; delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; FLEET_LOG.push({ts:nowMs(), event:'reservation_cancelled', aircraft:a.id}); }}); PENDING_RESERVATION = null; }
+  document.getElementById('confirmModal').style.display='none'; renderLists(); log('Бронь отменена');
+});
+
+/* ====== UI helpers & selection visuals ====== */
+function updateActiveUI(){
+  Array.from(airGrid.children).forEach(card=>{
+    const name = card.getAttribute('data-airline');
+    const glow = card.querySelector('.glow');
+    if(name === chosenAirline){
+      card.classList.add('selected');
+      const airline = AIRLINES.find(x=>x.name===name);
+      const c = airline ? airline.color : '#ffbf3a';
+      card.style.setProperty('--selected-color', c);
+      card.style.setProperty('--selected-color-shadow', hexToRgba(c,0.14));
+      if(glow) glow.style.opacity = '0.86';
+    } else {
+      card.classList.remove('selected');
+      if(glow) glow.style.opacity = '0';
+      card.style.removeProperty('--selected-color');
+      card.style.removeProperty('--selected-color-shadow');
+    }
+  });
+
+  Array.from(durWrap.children).forEach((b, idx)=>{
+    if(idx === chosenDuration) b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
+    else b.style.boxShadow = '';
+  });
+}
+
+/* place underline */
+function placeUnderline(tabEl){
+  if(!tabEl){ liquidUnderline.style.opacity = '0'; return; }
+  const parentRect = tabEl.parentElement.getBoundingClientRect();
+  const rect = tabEl.getBoundingClientRect();
+  liquidUnderline.style.left = (rect.left - parentRect.left) + 'px';
+  liquidUnderline.style.width = rect.width + 'px';
+  liquidUnderline.style.opacity = '1';
+}
+
+/* tabs */
+tabElements.forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    tabElements.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.getAttribute('data-target');
+    ['panelGenerate','panelRoutes','panelFleet'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.style.display = (id === target) ? 'block' : 'none';
+    });
+    genBtn.style.display = (target === 'panelGenerate') ? 'inline-flex' : 'none';
+    requestAnimationFrame(()=> placeUnderline(tab));
+  });
+});
+window.addEventListener('resize', ()=> {
+  const active = document.querySelector('.tab.active');
+  if(active) placeUnderline(active);
+});
+
+/* interactions */
+airSearch.addEventListener('input', e=>{ searchQuery = e.target.value.trim(); renderAirGrid(); updateActiveUI(); });
+document.getElementById('clearBtn').addEventListener('click', ()=>{ searchQuery=''; airSearch.value=''; chosenAirline=null; chosenDuration=null; renderLists(); updateActiveUI(); });
+
+genBtn.addEventListener('click', ()=> {
+  if(!SESSION.pilotId){ showGateModal(); return; }
+  const pool = ROUTES.filter(r=>{
+    if(chosenAirline && r.airline !== chosenAirline) return false;
+    if(chosenDuration!==null){ const d = DURATIONS[chosenDuration]; if(!(r.durationMinutes >= d.min && r.durationMinutes <= d.max)) return false; }
+    return true;
+  });
+  if(!pool.length){ alert('Нет маршрутов по текущим фильтрам'); return; }
+  const route = pool[Math.floor(Math.random()*pool.length)];
+  openConfirmFromRoute(route);
+});
+
+/* periodic maintenance */
+setInterval(()=>{
+  const now = nowMs();
+  FLEET.forEach(ac=>{
+    if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil <= now){
+      ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.push({ts:now,event:'reservation_expired',aircraft:ac.id});
+    }
+    if(ac.status==='inFlight' && ac.availableAt && ac.availableAt <= now){
+      ac.status='idle'; if(ac.nextLocation) ac.locationICAO = ac.nextLocation; delete ac.availableAt; delete ac.nextLocation; FLEET_LOG.push({ts:now,event:'aircraft_available',aircraft:ac.id,location:ac.locationICAO});
+    }
+  });
+  renderAssignLog(); renderFleet();
+},1500);
+
+/* render logs and lists */
+function renderAssignLog(){
+  const el = document.getElementById('log'); el.innerHTML = '';
+  if(!FLEET_LOG.length){ el.textContent = 'Пусто'; return; }
+  FLEET_LOG.slice(-200).reverse().forEach(e=>{
+    const d = document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleTimeString()} — ${e.event}${e.aircraft? ' ' + e.aircraft: ''}${e.route? ' ' + e.route: ''}`; el.appendChild(d);
+  });
+}
+
+function renderLists(){
+  renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); updateActiveUI(); renderAssignLog();
+}
+
+/* hex->rgba */
+function hexToRgba(hex, a = 1){
+  const h = hex.replace('#','');
+  const full = h.length === 3 ? h.split('').map(ch=>ch+ch).join('') : h;
+  const num = parseInt(full, 16);
+  const r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
+
+/* init */
+function init(){
+  renderLists();
+  const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
+  if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
+  renderSession();
+  // force login modal on load
+  showGateModal();
+  // show splash first (user wanted video first)
+  openSplash();
+  tour.style.display = 'none';
+}
+init();
+
+/* ===== YouTube integration: create player and manage playback ===== */
 function onYouTubeIframeAPIReady() {
   try {
     ytPlayer = new YT.Player('yt-player', {
@@ -250,121 +1034,12 @@ function onYouTubeIframeAPIReady() {
           try { e.target.playVideo(); } catch(err) {}
         },
         onStateChange: function(e){
-          // если видео закончилось (в теории loop = 1 предотвратит это), можно реагировать
-          if(e.data === YT.PlayerState.ENDED){
-            // ничего не делаем, оно зациклено
-          }
+          // loop should handle replay; do nothing special
         }
       }
     });
-  } catch(err) {
-    // если что-то не так — оставляем fallback (в этом простом варианте fallback не реализован отдельно)
-  }
+  } catch(err){}
 }
-
-/* ========== Splash -> Login -> Optional Tour flow ========== */
-
-function openLoginModal(){
-  gateModal.style.display = 'flex';
-}
-function closeLoginModal(){
-  gateModal.style.display = 'none';
-}
-
-/* 1) События на splash */
-splashContinue.addEventListener('click', ()=> {
-  try { if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); }catch(e){}
-  splash.style.display = 'none';
-  openLoginModal();
-});
-btnSkipVideo.addEventListener('click', ()=> {
-  try { if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); }catch(e){}
-  splash.style.display = 'none';
-  openLoginModal();
-});
-btnOpenLogin.addEventListener('click', ()=> {
-  try { if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); }catch(e){}
-  splash.style.display = 'none';
-  openLoginModal();
-});
-
-/* 2) Login handlers */
-btnLogin.addEventListener('click', ()=> {
-  const cs = (loginCall.value||'').trim();
-  const pass = (loginPass.value||'').trim();
-  if(!cs){ alert('Введите позывной'); return; }
-  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
-  if(!p){ alert('Пилот не найден'); return; }
-  // пароли: либо кодовое слово quickaccess2025, либо индивидуальный пароль
-  if(pass === 'quickaccess2025' || (p.password && pass === p.password)){
-    SESSION.pilotId = p.id;
-    renderSession();
-    closeLoginModal();
-    // показать тур если пользователь разрешил
-    if(tourAfterLogin.checked){
-      showTour();
-    } else {
-      // продолжить в приложении (ничего — demo)
-      console.info('Login complete, tour skipped');
-    }
-  } else {
-    alert('Неверный пароль');
-  }
-});
-
-btnDemoQuick.addEventListener('click', ()=>{
-  const cs = (loginCall.value||'').trim();
-  if(!cs){ alert('Введите позывной для быстрого входа'); return; }
-  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
-  if(!p){ alert('Пилот не найден'); return; }
-  loginPass.value = 'quickaccess2025';
-  btnLogin.click();
-});
-
-openGateBtn.addEventListener('click', ()=> {
-  openLoginModal();
-});
-
-/* render session badge */
-function renderSession(){
-  if(SESSION.pilotId){
-    const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {};
-    sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл';
-  } else {
-    sessionBadge.textContent = 'Неавторизован';
-  }
-}
-
-/* 3) Tour handlers */
-function showTour(){ tourOverlay.style.display = 'flex'; }
-function hideTour(){ tourOverlay.style.display = 'none'; }
-
-tourSkip.addEventListener('click', ()=> {
-  tourOverlay.style.display = 'none';
-});
-tourDone.addEventListener('click', ()=> {
-  tourOverlay.style.display = 'none';
-});
-
-/* small safety: element refs used in tour */
-const tourOverlay = document.getElementById('tour');
-
-/* init: show splash on load */
-(function init(){
-  renderSession();
-  // show splash by default
-  splash.style.display = 'flex';
-  // ensure login modal hidden initially
-  gateModal.style.display = 'none';
-  tourOverlay.style.display = 'none';
-  // slight fallback: if YT doesn't initialize, keep splash showing and allow manual "Вход"
-  setTimeout(()=> {
-    if(!ytPlayer){
-      // nothing else to do — user can press "Вход"
-      console.warn('YouTube player not ready yet');
-    }
-  }, 1200);
-})();
 </script>
 </body>
 </html>
