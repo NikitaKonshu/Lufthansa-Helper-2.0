@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — strong LED, full airlines, forced auth</title>
+<title>Lufthansa Helper — forced auth on every load</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-top:#031127; --bg-bot:#072b3a;
   --muted:#9fc0d8; --text:#eaf4ff;
   --accent-yellow:#ffd54a;
-  --glass-weak: rgba(255,255,255,0.03);
   font-family:Inter,system-ui,Arial,sans-serif;
   font-size:15px;
 }
@@ -25,14 +24,23 @@ body{
   display:flex;justify-content:center;align-items:flex-start;min-width:0;
 }
 
-/* container with strong liquid glass */
+/* container + liquid glass hero */
 .container{width:100%;max-width:1280px}
 .hero{
   border-radius:16px;padding:16px;
   background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(2,8,18,0.06));
   border:1px solid rgba(255,255,255,0.05);
   box-shadow: 0 36px 120px rgba(2,8,18,0.7), inset 0 2px 0 rgba(255,255,255,0.02);
-  backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(12px) saturate(120%);
+  transition: filter .28s ease, opacity .22s ease;
+}
+
+/* blocked state when modal open: stronger blur */
+.app-blocked .hero{
+  filter: blur(8px) saturate(.9) brightness(.9);
+  pointer-events: none;
+  user-select: none;
+  opacity:0.98;
 }
 
 /* header */
@@ -52,9 +60,61 @@ body{
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:240px}
 .durations{display:flex;gap:8px;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-weight:800;cursor:pointer;color:var(--text);transition:transform .12s,box-shadow .12s}
-.pill.small{padding:6px 10px;font-size:13px}
-.pill.active{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,0.45)}
+
+/* time pills — made readable, volumetric, yellow highlight */
+.time-pill{
+  --h:46px;
+  display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
+  min-height:var(--h);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,242,200,0.95));
+  border: 1px solid rgba(255,195,40,0.18);
+  box-shadow: inset 0 2px 8px rgba(255,235,170,0.04), 0 10px 28px rgba(0,0,0,0.28);
+  color:#111; font-weight:800; cursor:pointer; transition:transform .14s, box-shadow .14s, filter .12s;
+}
+.time-pill .label{ font-weight:900; color:#1b1b1b; font-size:15px; }
+.time-pill .hint{ font-size:12px; color:rgba(0,0,0,0.5); margin-top:0; }
+.time-pill:hover{ transform:translateY(-6px); box-shadow: 0 22px 48px rgba(0,0,0,0.38); }
+
+/* generate button prominent */
+.generate-btn{
+  background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a);
+  border: 1px solid rgba(0,0,0,0.12);
+  color:#072022;
+  font-weight:900;
+  padding:12px 20px;border-radius:12px;font-size:16px;
+  box-shadow: 0 18px 44px rgba(255,175,40,0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+  cursor:pointer; transition:transform .12s, box-shadow .12s;
+}
+.generate-btn:hover{ transform:translateY(-4px); box-shadow: 0 28px 70px rgba(255,175,40,0.28); }
+
+/* custom login & clear buttons (better visuals + liquid shimmer) */
+.btn-neutral{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  color:var(--text);
+  padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  position:relative; overflow:hidden;
+  transition: transform .12s, box-shadow .12s, filter .12s;
+}
+.btn-neutral::after{
+  content:'';
+  position:absolute; left:-40%; top:0; bottom:0; width:40%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  transform: skewX(-12deg);
+  transition: left 420ms cubic-bezier(.2,.9,.2,1);
+}
+.btn-neutral:hover{ transform:translateY(-4px); box-shadow: 0 20px 48px rgba(0,0,0,0.45); }
+.btn-neutral:hover::after{ left:120%; }
+
+/* add small accent primary login style */
+.btn-primary{
+  background: linear-gradient(180deg, rgba(255,245,200,0.98), var(--accent-yellow));
+  color:#072022; font-weight:900; padding:10px 14px; border-radius:12px; border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 16px 40px rgba(255,170,50,0.16);
+  cursor:pointer; transition: transform .12s;
+}
+.btn-primary:hover{ transform:translateY(-3px); }
 
 /* airline grid */
 .airline-grid{
@@ -74,16 +134,7 @@ body{
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
-/* liquid flow animation overlay */
-@keyframes liquidFlow {
-  0% { transform: translateX(-12%) translateY(-6%) scale(0.98); opacity:0.22; }
-  25% { transform: translateX(-6%) translateY(-2%) scale(1.02); opacity:0.28; }
-  50% { transform: translateX(6%) translateY(2%) scale(1.04); opacity:0.36; }
-  75% { transform: translateX(12%) translateY(6%) scale(1.02); opacity:0.28; }
-  100% { transform: translateX(-12%) translateY(-6%) scale(0.98); opacity:0.22; }
-}
-
-/* airline item */
+/* shimmer + glow (liquid glass) */
 .airline{
   position:relative;
   display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden;
@@ -94,97 +145,38 @@ body{
 .airline .meta{min-width:0}
 .airline .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .airline .code{font-size:12px;color:var(--muted)}
-/* glow overlay that animates (liquid flow) */
+
+/* glow overlay */
 .airline .glow{
   position:absolute; left:50%; top:50%;
-  width:260%; height:94%;
-  transform:translate(-50%,-50%) scale(0.98);
+  width:260%; height:110%;
+  transform:translate(-50%,-50%) scale(0.96);
   border-radius:20px; z-index:0; pointer-events:none;
-  filter: blur(44px) saturate(180%);
+  filter: blur(52px) saturate(180%);
   opacity:0; transition:opacity .16s, transform .16s;
   mix-blend-mode:screen;
 }
-
-/* small directional shimmer stripe for liquid effect */
+/* shimmer stripe */
 .airline .shimmer{
   position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity .18s;
   background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));
   mix-blend-mode: overlay; transform: translateX(-20%);
 }
 
-/* hover/active states */
-.airline:hover .glow{ opacity:0.46; transform:translate(-50%,-50%) scale(1.06); animation: liquidFlow 3000ms infinite linear; }
-.airline.active .glow{ opacity:0.72; transform:translate(-50%,-50%) scale(1.04); animation: liquidFlow 2600ms infinite linear; }
-.airline:hover .shimmer{ opacity:1; transform: translateX(0%); transition:transform 900ms cubic-bezier(.2,.9,.2,1); }
-
-/* ensure content above overlays */
-.airline > *{ position:relative; z-index:2 }
-
-/* layout main */
-.layout{display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px;min-width:0}
-@media(max-width:1100px){ .layout{grid-template-columns:1fr} }
-
-/* panels */
-.panel{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(10px);min-width:0}
-.route-list, .fleet-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;min-width:0}
-.route-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0}
-.kv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* modal/backdrop (forced auth) */
-.modal-back{display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;z-index:9999}
-.modal{width:420px;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow:0 40px 120px rgba(0,0,0,0.8);backdrop-filter: blur(12px)}
-.input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
-.row{display:flex;gap:8px;align-items:center;margin-top:10px}
-.small{font-size:13px}
-
-/* block pointer events behind modal (when modal forced open) */
-.app-blocked{pointer-events:none;filter:grayscale(.02) brightness(.95)}
-
-/* avoid horizontal overflow */
-*{word-break:break-word}
-
-/* generate button styles - prominent */
-.generate-btn{
-  background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a);
-  border: 1px solid rgba(0,0,0,0.12);
-  color:#072022;
-  font-weight:900;
-  padding:12px 20px;border-radius:12px;font-size:16px;
-  box-shadow: 0 18px 44px rgba(255,175,40,0.18), inset 0 1px 0 rgba(255,255,255,0.2);
-  cursor:pointer; transition:transform .12s, box-shadow .12s;
-}
-.generate-btn:hover{ transform:translateY(-4px); box-shadow: 0 28px 70px rgba(255,175,40,0.28), 0 2px 8px rgba(0,0,0,0.2); }
-.generate-btn:active{ transform:translateY(-1px); }
-
-/* time pills more visible (default) */
-.time-pill{
-  --h:44px;
-  display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
-  min-height:var(--h);
-  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,240,190,0.95));
-  border: 1px solid rgba(255,195,40,0.18);
-  box-shadow: inset 0 2px 8px rgba(255,235,170,0.04), 0 8px 18px rgba(0,0,0,0.35);
-  color:#1b1b1b;font-weight:800;background-clip:padding-box;
-  position:relative; cursor:pointer; transition:transform .12s, box-shadow .12s;
-}
-.time-pill .badge{
-  width:12px;height:12px;border-radius:50%;background: linear-gradient(90deg,var(--accent-yellow),#ffbf4a);box-shadow:0 6px 20px rgba(255,190,50,0.28);
-}
-.time-pill:hover{ transform: translateY(-6px); box-shadow: 0 18px 44px rgba(0,0,0,0.45);}
-
-/* selected airline visual (left stripe) */
+/* selected airline visuals (color glow, left stripe and badge) */
 .airline.selected{
   border-color: rgba(255,255,255,0.12);
-  box-shadow: 0 42px 140px rgba(0,0,0,0.7), 0 6px 28px rgba(0,0,0,0.4);
+  box-shadow: 0 44px 160px rgba(0,0,0,0.72);
   transform: translateY(-6px) scale(1.01);
 }
 .airline.selected::after{
   content:'';
-  position:absolute;left:0;top:0;bottom:0;width:8px;border-top-left-radius:12px;border-bottom-left-radius:12px;
+  position:absolute;left:0;top:0;bottom:0;width:10px;border-top-left-radius:12px;border-bottom-left-radius:12px;
   background:var(--selected-color, #ffbf3a);
-  box-shadow: 0 10px 40px var(--selected-color-shadow, rgba(255,191,58,0.14));
+  box-shadow: 0 12px 40px var(--selected-color-shadow, rgba(255,191,58,0.14));
   z-index:1;
 }
+.airline.selected .glow{ opacity:0.86; transform:translate(-50%,-50%) scale(1.06); filter: blur(60px) saturate(200%); }
 
 /* selected name badge */
 .airline.selected .name::after{
@@ -200,6 +192,42 @@ body{
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   z-index:3;
 }
+
+/* panels & layout */
+.layout{display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px;min-width:0}
+@media(max-width:1100px){ .layout{grid-template-columns:1fr} }
+.panel{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(10px);min-width:0}
+.route-list, .fleet-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;min-width:0}
+.route-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0}
+.kv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* modal/backdrop (forced auth) */
+.modal-back{
+  display:flex;
+  position:fixed;
+  inset:0;
+  background: rgba(2,6,14,0.6);
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  backdrop-filter: blur(8px) saturate(.9);
+}
+.modal{
+  width:420px;padding:20px;border-radius:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px) saturate(120%);
+}
+.input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+.row{display:flex;gap:8px;align-items:center;margin-top:10px}
+.small{font-size:13px}
+
+/* hide modal by default in markup; show via inline style display:flex when needed */
+.modal-hidden{ display:none !important; }
+
+/* make html selectable and accessible */
+:focus{ outline: none; }
 </style>
 </head>
 <body>
@@ -216,8 +244,8 @@ body{
 
       <div style="display:flex;gap:10px;align-items:center">
         <div id="sessionBadge" class="kv">Неавторизован</div>
-        <button id="openGateBtn" class="pill small">Вход</button>
-        <button id="logoutBtn" class="pill small" style="display:none">Выйти</button>
+        <button id="openGateBtn" class="btn-neutral">Вход</button>
+        <button id="logoutBtn" class="btn-neutral" style="display:none">Выйти</button>
       </div>
     </div>
 
@@ -230,12 +258,12 @@ body{
 
     <div class="controls">
       <input id="airSearch" class="search" placeholder="Поиск авиакомпании или кода" autocomplete="off" />
-      <div style="display:flex;align-items:center;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
         <strong class="kv">Время</strong>
         <div id="durations" class="durations"></div>
       </div>
       <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-        <button id="clearBtn" class="pill small">Сброс</button>
+        <button id="clearBtn" class="btn-neutral">Сброс</button>
         <button id="genBtn" class="generate-btn">СГЕНЕРИРОВАТЬ</button>
       </div>
     </div>
@@ -284,7 +312,7 @@ body{
         <div class="panel" style="margin-top:12px;padding:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-weight:900">Журнал</div>
-            <div><button id="openGate2" class="pill small">Вход</button></div>
+            <div><button id="openGate2" class="btn-neutral">Вход</button></div>
           </div>
           <div id="log" class="kv" style="margin-top:8px;max-height:320px;overflow:auto">Пусто</div>
         </div>
@@ -293,15 +321,26 @@ body{
   </div>
 </div>
 
-<!-- Forced auth modal (shows on every load if not logged in) -->
+<!-- Forced auth modal - will show on every load -->
 <div id="gateModal" class="modal-back" style="display:none;">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Вход">
     <div style="font-weight:900">Вход в систему</div>
     <div class="small kv" style="margin-top:8px">Введите позывной и пароль. Кодовое слово: <strong>quickaccess2025</strong></div>
-    <div class="row"><input id="loginCall" class="input" placeholder="Позывной (callSign)" /></div>
-    <div class="row"><input id="loginPass" class="input" placeholder="Пароль или кодовое слово" type="password" /></div>
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
-      <button id="btnLogin" class="pill">Войти</button>
+
+    <div class="row">
+      <input id="loginCall" class="input" placeholder="Позывной (callSign)" />
+    </div>
+    <div class="row">
+      <input id="loginPass" class="input" placeholder="Пароль или кодовое слово" type="password" />
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:8px;margin-top:14px;align-items:center">
+      <div style="display:flex;gap:8px">
+        <button id="btnDemoQuick" class="btn-neutral" title="Быстрый вход (демо)">Быстрый вход</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button id="btnLogin" class="btn-primary">Войти</button>
+      </div>
     </div>
   </div>
 </div>
@@ -311,15 +350,15 @@ body{
   <div class="modal" role="dialog" aria-modal="true" aria-label="Подтвердить бронь">
     <div style="font-weight:900">Подтвердить бронь</div>
     <div id="confirmDetails" class="kv" style="margin-top:8px"></div>
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
-      <button id="confirmCancel" class="pill small">Отменить</button>
-      <button id="confirmAccept" class="pill">Подтвердить</button>
+    <div style="display:flex;justify-content:space-between;gap:8px;margin-top:12px">
+      <button id="confirmCancel" class="btn-neutral">Отменить</button>
+      <button id="confirmAccept" class="btn-primary">Подтвердить</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ================= DATA ================= */
+/* ================= DATA & STATE ================= */
 const CODEWORD = 'quickaccess2025';
 const SESSION_KEY = 'lh_force_auth_v1';
 
@@ -329,32 +368,30 @@ const DURATIONS = [
   {label:"8–9ч",min:480,max:540},{label:"9–10ч",min:540,max:600},{label:"10+ч",min:600,max:99999}
 ];
 
-/* Full airlines list (unique colors) */
 const AIRLINES = [
   {name:"Lufthansa",code:"LH",color:"#1E6FFF"},
-  {name:"Swiss International Air Lines",code:"LX",color:"#D81E5B"},
-  {name:"Austrian Airlines",code:"OS",color:"#DA291C"},
-  {name:"AirBaltic",code:"BT",color:"#00A99D"},
-  {name:"Brussels Airlines",code:"SN",color:"#003399"},
-  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
-  {name:"Discover Airlines",code:"DH",color:"#F07F2A"},
-  {name:"Edelweiss Air",code:"WK",color:"#FF7BAC"},
   {name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},
   {name:"Lufthansa CityLine",code:"CL",color:"#2D6DE6"},
   {name:"Lufthansa Technik",code:"LT",color:"#2D6DE6"},
-  {name:"Air Dolomiti",code:"EN",color:"#00A1DE"},
   {name:"Lufthansa Private Jet",code:"PJ",color:"#0a5fb0"},
-  {name:"ITA Airways",code:"AZ",color:"#0067B1"},
-  {name:"Widerøe",code:"WF",color:"#00A651"},
-  {name:"Norwegian Airlines",code:"DY",color:"#BA0C2F"},
-  {name:"Finnair",code:"AY",color:"#003366"},
-  {name:"SAS Scandinavian Airlines",code:"SK",color:"#003A63"},
+  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
+  {name:"Discover Airlines",code:"DH",color:"#F07F2A"},
   {name:"Condor",code:"DE",color:"#FFD200"},
   {name:"AeroLogic",code:"3S",color:"#8A8D8F"},
+  {name:"Swiss International Air Lines",code:"LX",color:"#D81E5B"},
+  {name:"Austrian Airlines",code:"OS",color:"#DA291C"},
+  {name:"Brussels Airlines",code:"SN",color:"#003399"},
+  {name:"Edelweiss Air",code:"WK",color:"#FF7BAC"},
+  {name:"Air Dolomiti",code:"EN",color:"#00A1DE"},
+  {name:"SAS Scandinavian Airlines",code:"SK",color:"#003A63"},
+  {name:"Norwegian Airlines",code:"DY",color:"#BA0C2F"},
+  {name:"Widerøe",code:"WF",color:"#00A651"},
+  {name:"AirBaltic",code:"BT",color:"#00A99D"},
+  {name:"Finnair",code:"AY",color:"#003366"},
+  {name:"ITA Airways",code:"AZ",color:"#0067B1"},
   {name:"SunExpress",code:"SX",color:"#FF8A3D"}
 ];
 
-/* Demo routes + fleet + pilots */
 const ROUTES = [
   {airline:"Lufthansa",fromICAO:"EDDF",toICAO:"ENGM",fromCity:"Frankfurt",toCity:"Oslo",durationMinutes:120},
   {airline:"Swiss International Air Lines",fromICAO:"EDDF",toICAO:"LSZH",fromCity:"Frankfurt",toCity:"Zurich",durationMinutes:60},
@@ -376,7 +413,7 @@ let PILOTS = [
 let FLEET_LOG = [];
 let PENDING_RESERVATION = null;
 
-/* session (persistent for the tab) */
+/* session stored but modal will still appear on each load — per your request */
 let SESSION = (function(){ try{ const s = sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
 
 /* UI state */
@@ -399,6 +436,7 @@ const openGate2 = document.getElementById('openGate2');
 const logoutBtn = document.getElementById('logoutBtn');
 const gateModal = document.getElementById('gateModal');
 const btnLogin = document.getElementById('btnLogin');
+const btnDemoQuick = document.getElementById('btnDemoQuick');
 const loginCall = document.getElementById('loginCall');
 const loginPass = document.getElementById('loginPass');
 const confirmModal = document.getElementById('confirmModal');
@@ -416,21 +454,26 @@ function uid(p='id'){ return p+'_'+Math.random().toString(36).slice(2,9); }
 function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
 function log(msg){ const el=document.getElementById('log'); const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
 
-/* ---------- Render durations ---------- */
+/* ---------- Render durations (readable) ---------- */
 function renderDurations(){
   durWrap.innerHTML = '';
   DURATIONS.forEach((d,i)=>{
-    const b = document.createElement('button'); b.className='pill small'; b.textContent = d.label; b.dataset.idx = i;
-    if(chosenDuration === i) b.classList.add('active');
-    b.addEventListener('click', ()=> { chosenDuration = (chosenDuration === i) ? null : i; updateActiveUI(); renderLists(); });
+    const b = document.createElement('div'); b.className='time-pill'; b.dataset.idx = i;
+    b.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div class="badge" style="width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),#ffbf4a);box-shadow:0 8px 20px rgba(255,190,50,0.22)"></div><div><div class="label">${d.label}</div><div class="hint">Интервал</div></div></div>`;
+    b.addEventListener('click', ()=> {
+      chosenDuration = (chosenDuration === i) ? null : i;
+      updateActiveUI();
+      renderLists();
+    });
+    if(chosenDuration===i) b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
     durWrap.appendChild(b);
   });
 }
 
-/* ---------- Render airlines grid with strong LED ---------- */
+/* ---------- Render airlines with colored glow and selection visuals ---------- */
 function renderAirGrid(){
   airGrid.innerHTML = '';
-  const filtered = AIRLINES.filter(a=>{
+  const filtered = AIRLINES.filter(a=> {
     if(!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     return a.name.toLowerCase().includes(q) || (a.code && a.code.toLowerCase().includes(q));
@@ -438,14 +481,17 @@ function renderAirGrid(){
 
   filtered.forEach(a=>{
     const card = document.createElement('div'); card.className = 'airline';
+    card.setAttribute('data-airline', a.name);
+
     // glow overlay
     const glow = document.createElement('div'); glow.className = 'glow';
     glow.style.background = `radial-gradient(60% 60% at 50% 40%, ${a.color}dd 0%, ${a.color}c0 10%, ${a.color}99 20%, transparent 46%)`;
     card.appendChild(glow);
-    // shimmer stripe for liquid motion
+
+    // shimmer stripe
     const shimmer = document.createElement('div'); shimmer.className = 'shimmer';
-    shimmer.style.background = `linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.08), rgba(255,255,255,0.03))`;
     card.appendChild(shimmer);
+
     // dot + meta
     const dot = document.createElement('div'); dot.className = 'dot'; dot.style.background = a.color;
     const meta = document.createElement('div'); meta.className = 'meta';
@@ -454,24 +500,30 @@ function renderAirGrid(){
     meta.appendChild(name); meta.appendChild(code);
     card.appendChild(dot); card.appendChild(meta);
 
-    // click: select/deselect with fluid ripple (temporary pulse)
-    card.addEventListener('click', ()=>{
-      chosenAirline = (chosenAirline === a.name) ? null : a.name;
-      card.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
-      updateActiveUI(); renderLists();
-    });
+    // left stripe element (will be added/removed on selection)
+    // selection handled in updateActiveUI()
 
-    // hover glow intensify (also set outer shadow)
+    // interactions
     card.addEventListener('mouseenter', ()=> {
       card.style.boxShadow = `0 36px 120px ${hexToRgba(a.color,0.18)}, inset 0 2px 8px rgba(255,255,255,0.02)`;
     });
     card.addEventListener('mouseleave', ()=> {
-      card.style.boxShadow = '';
+      // only reset if not selected
+      if(!(chosenAirline === a.name)) card.style.boxShadow = '';
     });
 
-    if(chosenAirline === a.name) card.classList.add('active');
+    card.addEventListener('click', ()=> {
+      chosenAirline = (chosenAirline === a.name) ? null : a.name;
+      // animate small pulse
+      card.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      updateActiveUI();
+      renderLists();
+    });
+
     airGrid.appendChild(card);
   });
+
+  updateActiveUI(); // ensure selected visuals applied after building
 }
 
 /* ---------- Routes & Fleet ---------- */
@@ -511,17 +563,17 @@ function renderFleet(){
   });
 }
 
-/* ---------- Pilots, auth UI ---------- */
+/* ---------- Pilots UI ---------- */
 function renderPilots(){
   pilotListEl.innerHTML = '';
   const q = (pilotSearch.value||'').toLowerCase().trim();
   PILOTS.filter(p => !q || (p.name+' '+p.callSign).toLowerCase().includes(q)).forEach(p=>{
     const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px';
     row.innerHTML = `<div><strong>${esc(p.name)}</strong><div class="kv">${esc(p.callSign)} ${p.verified? '· Verified':''}</div></div>`;
-    const b = document.createElement('button'); b.className='pill small'; b.textContent='Войти';
+    const b = document.createElement('button'); b.className='btn-neutral'; b.textContent='Войти';
     b.addEventListener('click', ()=> {
-      document.getElementById('loginCall').value = p.callSign || '';
-      document.getElementById('loginPass').value = '';
+      loginCall.value = p.callSign || '';
+      loginPass.value = '';
       showGateModal();
     });
     row.appendChild(b);
@@ -529,18 +581,23 @@ function renderPilots(){
   });
 }
 
-/* show/hide forced auth modal and block UI behind modal */
+/* ---------- Auth modal behavior (forced each load) ---------- */
 function showGateModal(){
   gateModal.style.display = 'flex';
-  appHero.classList.add('app-blocked');
-  setTimeout(()=> document.getElementById('loginCall').focus(),50);
+  document.documentElement.classList.add('modal-open');
+  // visually block app with class on container
+  document.querySelector('.container').classList.add('app-blocked');
+  // also add class to hero for pointer-events/blur
+  document.getElementById('appHero').classList.add('app-blocked');
+  setTimeout(()=> loginCall.focus(),50);
 }
 function hideGateModal(){
   gateModal.style.display = 'none';
-  appHero.classList.remove('app-blocked');
+  document.querySelector('.container').classList.remove('app-blocked');
+  document.getElementById('appHero').classList.remove('app-blocked');
 }
 
-/* login handling (forced) */
+/* login handling */
 btnLogin.addEventListener('click', ()=> {
   const cs = (loginCall.value||'').trim();
   const pass = (loginPass.value||'').trim();
@@ -548,34 +605,52 @@ btnLogin.addEventListener('click', ()=> {
   const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
   if(!p){ alert('Пилот не найден'); return; }
   if(pass === CODEWORD || (p.password && pass === p.password)){
-    SESSION.pilotId = p.id; saveSession(); hideGateModal(); renderSession(); log(`Вошёл ${p.name}`);
+    SESSION.pilotId = p.id; saveSession();
+    hideGateModal();
+    renderSession();
+    log(`Вошёл ${p.name}`);
   } else {
     alert('Неверный пароль');
   }
 });
 
+/* demo quick button fills codeword and logs in current user if matching callSign */
+btnDemoQuick.addEventListener('click', ()=> {
+  const cs = (loginCall.value||'').trim();
+  if(!cs){ alert('Введите позывной для быстрого входа'); return; }
+  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
+  if(!p){ alert('Пилот не найден'); return; }
+  // use codeword
+  loginPass.value = CODEWORD;
+  btnLogin.click();
+});
+
+/* open gate buttons in UI */
+openGateBtn.addEventListener('click', showGateModal);
+openGate2.addEventListener('click', showGateModal);
+
 /* logout */
-document.getElementById('logoutBtn').addEventListener('click', ()=>{
-  SESSION.pilotId = null; saveSession(); renderSession(); // force modal back (since you requested modal on every new login)
+logoutBtn.addEventListener('click', ()=>{
+  SESSION.pilotId = null; saveSession(); renderSession(); // show modal again per request
   showGateModal();
   log('Вышел');
 });
 
-/* render session state */
+/* session render */
 function renderSession(){
   if(SESSION.pilotId){
     const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {};
     sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл';
-    document.getElementById('logoutBtn').style.display = 'inline-flex';
-    document.getElementById('openGateBtn').style.display = 'none';
+    logoutBtn.style.display = 'inline-flex';
+    openGateBtn.style.display = 'none';
   } else {
     sessionBadge.textContent = 'Неавторизован';
-    document.getElementById('logoutBtn').style.display = 'none';
-    document.getElementById('openGateBtn').style.display = 'inline-flex';
+    logoutBtn.style.display = 'none';
+    openGateBtn.style.display = 'inline-flex';
   }
 }
 
-/* ---------- Reserve / confirm flow ---------- */
+/* ---------- Reservation flow (same as before) ---------- */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.maxFlightMinutes!=='number' || ac.maxFlightMinutes >= dur) && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -585,13 +660,12 @@ function findCandidateAircraftForRoute(route){
   cand.sort((a,b)=> (b.fuelMinutes||0) - (a.fuelMinutes||0));
   return cand[0];
 }
-
 function openConfirmFromRoute(route){
   const pilot = (SESSION.pilotId ? PILOTS.find(x=>x.id === SESSION.pilotId) : null);
   if(!pilot){ showGateModal(); return; }
   const candidate = findCandidateAircraftForRoute(route);
   if(!candidate){ alert('Нет подходящих самолётов с запасом топлива'); return; }
-  candidate.status = 'reserved';
+  candidate.status='reserved';
   candidate.reservedBy = pilot.id;
   candidate.reservedToken = pilot.id+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
   candidate.reservedUntil = nowMs() + 120000;
@@ -602,9 +676,7 @@ function openConfirmFromRoute(route){
   confirmModal.style.justifyContent = 'center';
   renderLists();
 }
-
-/* accept/cancel reservation */
-confirmAccept.addEventListener('click', ()=>{
+confirmAccept.addEventListener('click', ()=> {
   if(!PENDING_RESERVATION){ confirmModal.style.display='none'; return; }
   const ac = FLEET.find(a=>a.reservedToken === PENDING_RESERVATION.token);
   if(!ac){ alert('Резервация потеряна'); confirmModal.style.display='none'; return; }
@@ -614,30 +686,43 @@ confirmAccept.addEventListener('click', ()=>{
   ac.status='inFlight'; ac.availableAt = nowMs() + (PENDING_RESERVATION.route.durationMinutes||120)*60000 + (ac.turnaround||0)*60000;
   delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
   FLEET_LOG.push({ts:nowMs(),event:'assign_confirmed',aircraft:ac.id,route:`${PENDING_RESERVATION.route.fromICAO}->${PENDING_RESERVATION.route.toICAO}`});
-  PENDING_RESERVATION = null; confirmModal.style.display='none';
-  renderLists(); renderSession(); log(`Рейс подтверждён ${ac.id}`);
+  PENDING_RESERVATION = null; confirmModal.style.display='none'; renderLists(); log(`Рейс подтверждён ${ac.id}`);
 });
-
-confirmCancel.addEventListener('click', ()=>{
-  if(PENDING_RESERVATION){
-    const token = PENDING_RESERVATION.token;
-    FLEET.forEach(a=>{ if(a.reservedToken === token){ a.status='idle'; delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; FLEET_LOG.push({ts:nowMs(), event:'reservation_cancelled', aircraft:a.id}); }});
-    PENDING_RESERVATION = null;
-  }
+confirmCancel.addEventListener('click', ()=> {
+  if(PENDING_RESERVATION){ const token = PENDING_RESERVATION.token; FLEET.forEach(a=>{ if(a.reservedToken === token){ a.status='idle'; delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; FLEET_LOG.push({ts:nowMs(), event:'reservation_cancelled', aircraft:a.id}); }}); PENDING_RESERVATION = null; }
   confirmModal.style.display='none'; renderLists(); log('Бронь отменена');
 });
 
-/* ---------- UI helpers ---------- */
+/* ---------- UI helpers & selection visuals ---------- */
 function updateActiveUI(){
   Array.from(airGrid.children).forEach(card=>{
-    const name = card.querySelector('.name')?.textContent;
+    const name = card.getAttribute('data-airline');
     const glow = card.querySelector('.glow');
-    if(name === chosenAirline){ card.classList.add('active'); if(glow) glow.style.opacity = '0.72'; }
-    else { card.classList.remove('active'); if(glow) glow.style.opacity = '0'; }
+    const dot = card.querySelector('.dot');
+    if(name === chosenAirline){
+      card.classList.add('selected');
+      // set selected-color CSS custom property inline
+      const airline = AIRLINES.find(x=>x.name===name);
+      const c = airline ? airline.color : '#ffbf3a';
+      card.style.setProperty('--selected-color', c);
+      card.style.setProperty('--selected-color-shadow', hexToRgba(c,0.14));
+      if(glow) glow.style.opacity = '0.86';
+      // ensure left stripe exists via ::after (handled by CSS using custom property)
+    } else {
+      card.classList.remove('selected');
+      if(glow) glow.style.opacity = '0';
+      card.style.removeProperty('--selected-color');
+      card.style.removeProperty('--selected-color-shadow');
+    }
   });
-  Array.from(durWrap.children).forEach(btn=>{
-    const idx = Number(btn.dataset.idx);
-    btn.classList.toggle('active', chosenDuration === idx);
+
+  // update duration pills visual (active class)
+  Array.from(durWrap.children).forEach((b, idx)=>{
+    if(idx === chosenDuration){
+      b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
+    } else {
+      b.style.boxShadow = '';
+    }
   });
 }
 
@@ -651,7 +736,7 @@ function placeUnderline(tabEl){
   liquidUnderline.style.opacity = '1';
 }
 
-/* ---------- tabs robust handler ---------- */
+/* ---------- tabs handler ---------- */
 tabElements.forEach(tab=>{
   tab.addEventListener('click', ()=>{
     tabElements.forEach(t => t.classList.remove('active'));
@@ -666,10 +751,15 @@ tabElements.forEach(tab=>{
     requestAnimationFrame(()=> placeUnderline(tab));
   });
 });
+window.addEventListener('resize', ()=> {
+  const active = document.querySelector('.tab.active');
+  if(active) placeUnderline(active);
+});
 
 /* ---------- interactions ---------- */
 airSearch.addEventListener('input', e=>{ searchQuery = e.target.value.trim(); renderAirGrid(); updateActiveUI(); });
 document.getElementById('clearBtn').addEventListener('click', ()=>{ searchQuery=''; airSearch.value=''; chosenAirline=null; chosenDuration=null; renderLists(); updateActiveUI(); });
+
 genBtn.addEventListener('click', ()=> {
   if(!SESSION.pilotId){ showGateModal(); return; }
   const pool = ROUTES.filter(r=>{
@@ -682,7 +772,7 @@ genBtn.addEventListener('click', ()=> {
   openConfirmFromRoute(route);
 });
 
-/* ---------- periodic maintenance ---------- */
+/* periodic maintenance */
 setInterval(()=>{
   const now = nowMs();
   FLEET.forEach(ac=>{
@@ -701,7 +791,7 @@ function renderAssignLog(){
   const el = document.getElementById('log'); el.innerHTML = '';
   if(!FLEET_LOG.length){ el.textContent = 'Пусто'; return; }
   FLEET_LOG.slice(-200).reverse().forEach(e=>{
-    const d = document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleString()} — ${e.event}${e.aircraft? ' ' + e.aircraft: ''}${e.route? ' ' + e.route: ''}`; el.appendChild(d);
+    const d = document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleTimeString()} — ${e.event}${e.aircraft? ' ' + e.aircraft: ''}${e.route? ' ' + e.route: ''}`; el.appendChild(d);
   });
 }
 
@@ -709,7 +799,7 @@ function renderLists(){
   renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); updateActiveUI(); renderAssignLog();
 }
 
-/* utility: hex -> rgba */
+/* utility hex->rgba */
 function hexToRgba(hex, a = 1){
   const h = hex.replace('#','');
   const full = h.length === 3 ? h.split('').map(ch=>ch+ch).join('') : h;
@@ -721,13 +811,12 @@ function hexToRgba(hex, a = 1){
 /* init */
 function init(){
   renderLists();
-  // default tab underline
   const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
   if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
+  // Render session UI
   renderSession();
-  if(!SESSION.pilotId){
-    showGateModal();
-  }
+  // Show modal on every load (forced)
+  showGateModal();
 }
 init();
 </script>
