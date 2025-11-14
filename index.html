@@ -141,7 +141,7 @@ body{
           </div>
         </div>
 
-        <div style="margin-top:12px" id="generatorNote" class="kv">Нажми "Сгенерировать" — система создаст бронь; затем подтверди или отмени.</div>
+        <div style="margin-top:12px" id="generatorNote" class="kv">Нажми "Сгенерировать" — система создаст бронь; затем подтверзи или отмени.</div>
 
         <div id="pendingReservationBlock" class="card" style="display:none;margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
@@ -261,25 +261,14 @@ const AIRLINES=[
   {name:"SunExpress",hubs:["EDDF","EDDM"],color:"#FF8A3D",icao:"SX"}
 ];
 
-const ROUTES=(function(){
-  const base = [
-    {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Oslo",toICAO:"ENGM",durationMinutes:120},
-    {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Amsterdam",toICAO:"EHAM",durationMinutes:70},
-    {airline:"SunExpress",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Antalya",toICAO:"LTAI",durationMinutes:180},
-    {airline:"Eurowings",fromCity:"Munich",fromICAO:"EDDM",toCity:"Zurich",toICAO:"LSZH",durationMinutes:60},
-    {airline:"Lufthansa",fromCity:"Munich",fromICAO:"EDDM",toCity:"Berlin",toICAO:"EDDB",durationMinutes:50}
-  ];
-  const expanded=[];
-  for(let i=0;i<220;i++){
-    base.forEach((r,idx)=>{
-      const c = Object.assign({}, r);
-      c.id = `route_${idx}_${i}`;
-      if(i>0) c.toCity = `${r.toCity} ${i}`;
-      expanded.push(c);
-    });
-  }
-  return expanded;
-})();
+/* BASE ROUTES only — removed previous expansion to avoid "бесконечный" эффект */
+const ROUTES = [
+  {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Oslo",toICAO:"ENGM",durationMinutes:120},
+  {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Amsterdam",toICAO:"EHAM",durationMinutes:70},
+  {airline:"SunExpress",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Antalya",toICAO:"LTAI",durationMinutes:180},
+  {airline:"Eurowings",fromCity:"Munich",fromICAO:"EDDM",toCity:"Zurich",toICAO:"LSZH",durationMinutes:60},
+  {airline:"Lufthansa",fromCity:"Munich",fromICAO:"EDDM",toCity:"Berlin",toICAO:"EDDB",durationMinutes:50}
+];
 
 /* FLEET: fuelMinutes — запас топлива (минут); reserveMargin — минимальный резерв (минут) */
 const FLEET=[
@@ -474,7 +463,6 @@ function renderFleetList(){
   fleetList.innerHTML='';
   FLEET.forEach(a=>{
     const airlineObj = AIRLINES.find(x=>x.name===a.airline) || {color:'#ffd54a'};
-    // fuel percent relative to some nominal capacity: use max of maxFlightMinutes*1.5 or fuelMinutes baseline
     const nominal = Math.max(a.maxFlightMinutes || 300, 300);
     const percent = Math.min(100, Math.round((a.fuelMinutes / nominal) * 100));
     const fuelClass = fuelColorClass(percent);
@@ -504,7 +492,7 @@ function renderFleetList(){
   });
 }
 
-/* ---------- ROUTES RENDER & SELECTION ---------- */
+/* ---------- ROUTES RENDER & SELECTION (no expansion) ---------- */
 function renderRoutesPane(){
   routesList.innerHTML='';
   const activeAirEl = Array.from(airlinesWrap.children).find(c=>c.classList.contains('active'));
@@ -518,7 +506,7 @@ function renderRoutesPane(){
   });
 
   if(!list.length){ routesList.innerHTML='<div class="kv small">Нет направлений</div>'; return; }
-  list.slice(0,800).forEach(r=>{
+  list.forEach(r=>{
     const row=document.createElement('div'); row.className='route-item';
     const airlineObj = AIRLINES.find(a=>a.name===r.airline) || {color:'#ffd54a'};
     row.innerHTML = `
@@ -545,7 +533,6 @@ function findCandidateAircraftForRoute(route){
   const canDo = ac => ac.status === 'idle'
     && (typeof ac.maxFlightMinutes !== 'number' || ac.maxFlightMinutes >= duration)
     && (typeof ac.fuelMinutes === 'number' && ac.fuelMinutes >= (duration + (ac.reserveMargin||30)));
-  // prefer same hub
   let candidates = FLEET.filter(ac => (ac.locationICAO||'').toUpperCase() === (route.fromICAO||'').toUpperCase() && canDo(ac));
   if(!candidates.length) candidates = FLEET.filter(ac => canDo(ac));
   if(!candidates.length) return null;
@@ -576,7 +563,6 @@ function confirmReservation(token,route,pilotId){
   const p = PILOTS.find(x=>x.id===pilotId);
   if(!(p && p.verified)) return {ok:false,reason:'pilot_not_verified'};
   const now=nowMs(); const durMs = (Number(route.durationMinutes)||120)*60*1000;
-  // deduct fuel in minutes (simple model)
   ac.fuelMinutes = Math.max(0, (ac.fuelMinutes||0) - Number(route.durationMinutes));
   ac.status='inFlight'; ac.availableAt = now + durMs + (ac.turnaround||0)*60*1000; ac.nextLocation = route.toICAO;
   delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
@@ -824,7 +810,14 @@ function switchTab(name){
 
   document.getElementById('panelRoutes').style.display = (name==='routes') ? 'block' : 'none';
   document.getElementById('panelFleet').style.display = (name==='fleet') ? 'block' : 'none';
-  generatorControls.style.display = 'flex'; // unified panel visible on all tabs
+
+  /* unified panel visible on all tabs, but hide the Generate button on Routes and Fleet */
+  generatorControls.style.display = 'flex';
+  if(name === 'generate'){
+    genBtn.style.display = 'inline-block';
+  } else {
+    genBtn.style.display = 'none';
+  }
 
   const target = name==='generate' ? tabGenerate : (name==='routes' ? tabRoutes : tabFleet);
   moveUnderlineTo(target);
@@ -879,7 +872,6 @@ function renderAll(){
   renderRoutesPane();
   renderCurrentFlight();
 
-  // pilot badge
   if(!SESSION.pilotId){
     showGate();
     sessionBadge.textContent='Неавторизован';
