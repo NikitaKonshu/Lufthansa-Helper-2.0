@@ -3,16 +3,19 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — strong LED, full airlines, forced auth</title>
+<title>Lufthansa Helper — filtered airlines, strong LED, liquid flow</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-top:#031127; --bg-bot:#072b3a;
-  --muted:#9fc0d8; --text:#eaf4ff; --accent:#ffd54a;
-  font-family:Inter,system-ui,Arial,sans-serif; font-size:15px;
+  --muted:#9fc0d8; --text:#eaf4ff;
+  --accent-yellow:#ffd54a;
+  --glass-weak: rgba(255,255,255,0.03);
+  font-family:Inter,system-ui,Arial,sans-serif;
+  font-size:15px;
 }
 
-/* reset */
+/* base */
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{
@@ -22,12 +25,12 @@ body{
   display:flex;justify-content:center;align-items:flex-start;min-width:0;
 }
 
-/* container with strong liquid glass */
-.container{width:100%;max-width:1280px}
+/* container + strong liquid glass */
+.container{width:100%;max-width:1200px}
 .hero{
   border-radius:16px;padding:16px;
   background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(2,8,18,0.06));
-  border:1px solid rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.045);
   box-shadow: 0 36px 120px rgba(2,8,18,0.7), inset 0 2px 0 rgba(255,255,255,0.02);
   backdrop-filter: blur(18px) saturate(130%);
 }
@@ -35,7 +38,7 @@ body{
 /* header */
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{display:flex;gap:12px;align-items:center;min-width:0}
-.logo{width:60px;height:60px;border-radius:14px;background:linear-gradient(180deg,#0a3b3f,#042a2e);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent);font-size:18px}
+.logo{width:60px;height:60px;border-radius:14px;background:linear-gradient(180deg,#0a3b3f,#042a2e);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-yellow);font-size:18px}
 .title{font-weight:900}
 .subtitle{font-size:13px;color:var(--muted)}
 
@@ -43,21 +46,55 @@ body{
 .tabs{display:flex;gap:10px;margin-top:14px;position:relative;flex-wrap:wrap}
 .tab{padding:10px 16px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));cursor:pointer;font-weight:800;color:var(--text);transition:transform .12s,box-shadow .12s}
 .tab.active{ transform:translateY(-4px); box-shadow:0 20px 48px rgba(0,0,0,0.45) }
-.liquid-underline{ position:absolute; height:9px; bottom:-12px; border-radius:8px; background: linear-gradient(90deg,#ffd54a,#ffb84d); transition:left 220ms,width 220ms,opacity 220ms; box-shadow:0 12px 36px rgba(255,160,60,0.14); opacity:0; }
+.liquid-underline{ position:absolute; height:9px; bottom:-12px; border-radius:8px; background: linear-gradient(90deg,var(--accent-yellow),#ffb84d); transition:left 220ms,width 220ms,opacity 220ms; box-shadow:0 12px 36px rgba(255,160,60,0.14); opacity:0; }
 
 /* controls */
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:240px}
-.durations{display:flex;gap:8px;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-weight:800;cursor:pointer;color:var(--text);transition:transform .12s,box-shadow .12s}
-.pill.small{padding:6px 10px;font-size:13px}
-.pill.active{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,0.45)}
+.durations{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
-/* airline grid — responsive, no overflow horizontally */
+/* volumetric time pills */
+.time-pill{
+  --h:44px;
+  display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
+  min-height:var(--h);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,240,200,0.02));
+  border: 1px solid rgba(255,215,90,0.12);
+  box-shadow: inset 0 2px 8px rgba(255,235,170,0.04), 0 8px 18px rgba(0,0,0,0.35);
+  color:#1b1b1b;font-weight:800;background-clip:padding-box;
+  position:relative; cursor:pointer; transition:transform .12s, box-shadow .12s;
+}
+.time-pill .badge{
+  width:12px;height:12px;border-radius:50%;background: linear-gradient(90deg,var(--accent-yellow),#ffbf4a);box-shadow:0 6px 20px rgba(255,190,50,0.28);
+}
+.time-pill:hover{ transform: translateY(-6px); box-shadow: 0 18px 44px rgba(0,0,0,0.45);}
+
+/* "Generate" main button — highly visible */
+.generate-btn{
+  background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a);
+  border: 1px solid rgba(0,0,0,0.12);
+  color:#072022;
+  font-weight:900;
+  padding:12px 20px;border-radius:12px;font-size:16px;
+  box-shadow: 0 18px 44px rgba(255,175,40,0.18), inset 0 1px 0 rgba(255,255,255,0.2);
+  cursor:pointer; transition:transform .12s, box-shadow .12s;
+}
+.generate-btn:hover{ transform:translateY(-4px); box-shadow: 0 28px 70px rgba(255,175,40,0.28), 0 2px 8px rgba(0,0,0,0.2); }
+.generate-btn:active{ transform:translateY(-1px); }
+
+/* subtle pulse to attract attention */
+@keyframes pulse {
+  0%{ box-shadow: 0 18px 44px rgba(255,175,40,0.12); }
+  50%{ box-shadow: 0 28px 70px rgba(255,175,40,0.22); transform:translateY(-3px); }
+  100%{ box-shadow: 0 18px 44px rgba(255,175,40,0.12); transform:translateY(0); }
+}
+.generate-btn.attention{ animation: pulse 2400ms infinite; }
+
+/* airline grid */
 .airline-grid{
   margin-top:14px;
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap:12px;
   align-items:start;
   width:100%;
@@ -71,31 +108,50 @@ body{
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
+/* liquid flow animation overlay */
+@keyframes liquidFlow {
+  0% { transform: translateX(-12%) translateY(-6%) scale(0.98); opacity:0.22; }
+  25% { transform: translateX(-6%) translateY(-2%) scale(1.02); opacity:0.28; }
+  50% { transform: translateX(6%) translateY(2%) scale(1.04); opacity:0.36; }
+  75% { transform: translateX(12%) translateY(6%) scale(1.02); opacity:0.28; }
+  100% { transform: translateX(-12%) translateY(-6%) scale(0.98); opacity:0.22; }
+}
+
 /* airline item */
 .airline{
   position:relative;
-  display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden;transition:transform .14s,box-shadow .14s;
+  display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden;
+  transition:transform .18s,box-shadow .18s,filter .18s;
 }
-.airline:hover{ transform:translateY(-8px); box-shadow:0 32px 80px rgba(0,0,0,0.6) }
+.airline:hover{ transform:translateY(-8px); box-shadow:0 36px 90px rgba(0,0,0,0.6) }
 .airline .dot{ width:16px;height:16px;border-radius:50%;flex:0 0 16px;border:2px solid rgba(255,255,255,0.06) }
 .airline .meta{min-width:0}
 .airline .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.airline .code{font-size:12px;color:var(--muted);opacity:0.95}
+.airline .code{font-size:12px;color:var(--muted)}
+/* glow overlay that animates (liquid flow) */
 .airline .glow{
   position:absolute; left:50%; top:50%;
-  width:260%; height:94%;
-  transform:translate(-50%,-50%) scale(0.96);
+  width:260%; height:110%;
+  transform:translate(-50%,-50%) scale(0.98);
   border-radius:20px; z-index:0; pointer-events:none;
-  filter: blur(40px) saturate(180%); opacity:0;
-  transition:opacity .16s, transform .16s;
+  filter: blur(44px) saturate(180%);
+  opacity:0; transition:opacity .16s, transform .16s;
   mix-blend-mode:screen;
 }
 
-/* stronger LED effects for hover and active */
-.airline:hover .glow{ opacity:0.36; transform:translate(-50%,-50%) scale(1.06); }
-.airline.active .glow{ opacity:0.62; transform:translate(-50%,-50%) scale(1.03); }
+/* small directional shimmer stripe for liquid effect */
+.airline .shimmer{
+  position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity .18s;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  mix-blend-mode: overlay; transform: translateX(-20%);
+}
 
-/* contents above glow */
+/* hover/active states */
+.airline:hover .glow{ opacity:0.46; transform:translate(-50%,-50%) scale(1.06); animation: liquidFlow 3000ms infinite linear; }
+.airline.active .glow{ opacity:0.72; transform:translate(-50%,-50%) scale(1.04); animation: liquidFlow 2600ms infinite linear; }
+.airline:hover .shimmer{ opacity:1; transform: translateX(0%); transition:transform 900ms cubic-bezier(.2,.9,.2,1); }
+
+/* ensure content above overlays */
 .airline > *{ position:relative; z-index:2 }
 
 /* layout main */
@@ -108,7 +164,7 @@ body{
 .route-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0}
 .kv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* modal/backdrop (forced auth) */
+/* modal/backdrop */
 .modal-back{display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;z-index:9999}
 .modal{width:420px;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow:0 40px 120px rgba(0,0,0,0.8);backdrop-filter: blur(12px)}
 .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
@@ -130,7 +186,7 @@ body{
         <div class="logo">LH</div>
         <div>
           <div class="title">Lufthansa Helper</div>
-          <div class="subtitle">Все авиакомпании · усиленное LED · принудительная авторизация</div>
+          <div class="subtitle">только ваши авиакомпании · усиленное LED · liquid flow</div>
         </div>
       </div>
 
@@ -150,13 +206,10 @@ body{
 
     <div class="controls">
       <input id="airSearch" class="search" placeholder="Поиск авиакомпании или кода" autocomplete="off" />
-      <div style="display:flex;align-items:center;gap:8px">
-        <strong class="kv">Время</strong>
-        <div id="durations" class="durations"></div>
-      </div>
-      <div style="margin-left:auto;display:flex;gap:10px">
+      <div class="durations" id="durations"></div>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
         <button id="clearBtn" class="pill small">Сброс</button>
-        <button id="genBtn" class="pill">Сгенерировать</button>
+        <button id="genBtn" class="generate-btn">СГЕНЕРИРОВАТЬ</button>
       </div>
     </div>
 
@@ -167,7 +220,7 @@ body{
         <section id="panelGenerate" class="panel">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-weight:900">Генерация</div>
-            <div class="kv">Нажмите Сгенерировать для демонстрации</div>
+            <div class="kv">Нажмите СГЕНЕРИРОВАТЬ</div>
           </div>
           <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и интервал времени</div>
         </section>
@@ -183,7 +236,7 @@ body{
         <section id="panelFleet" class="panel" style="display:none;margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-weight:900">Флот</div>
-            <div class="kv">Самолёты под вашими фильтрами</div>
+            <div class="kv">Самолёты под фильтрами</div>
           </div>
           <div id="fleetList" class="fleet-list"></div>
         </section>
@@ -239,9 +292,9 @@ body{
 </div>
 
 <script>
-/* ================= DATA ================= */
+/* ========== DATA (only the airlines you listed) ========== */
 const CODEWORD = 'quickaccess2025';
-const SESSION_KEY = 'lh_force_auth_v1';
+const SESSION_KEY = 'lh_filtered_v1';
 
 const DURATIONS = [
   {label:"1–2ч",min:60,max:120},{label:"2–3ч",min:120,max:180},{label:"3–4ч",min:180,max:240},
@@ -249,41 +302,36 @@ const DURATIONS = [
   {label:"8–9ч",min:480,max:540},{label:"9–10ч",min:540,max:600},{label:"10+ч",min:600,max:99999}
 ];
 
-/* Full airlines list (unique colors) */
+/* EXACT airlines you previously provided (grouping implied but list flattened for grid) */
 const AIRLINES = [
+  /* Germany / Major */
   {name:"Lufthansa",code:"LH",color:"#1E6FFF"},
-  {name:"Swiss International Air Lines",code:"LX",color:"#D81E5B"},
-  {name:"Austrian Airlines",code:"OS",color:"#DA291C"},
-  {name:"AirBaltic",code:"BT",color:"#00A99D"},
-  {name:"Brussels Airlines",code:"SN",color:"#003399"},
-  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
-  {name:"Discover Airlines",code:"DH",color:"#F07F2A"},
-  {name:"Edelweiss Air",code:"WK",color:"#FF7BAC"},
   {name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},
   {name:"Lufthansa CityLine",code:"CL",color:"#2D6DE6"},
-  {name:"Lufthansa Technik",code:"LT",color:"#2D6DE6"},
-  {name:"Air Dolomiti",code:"EN",color:"#00A1DE"},
+  {name:"Lufthansa Technik",code:"LT",color:"#0e5aa5"},
   {name:"Lufthansa Private Jet",code:"PJ",color:"#0a5fb0"},
-  {name:"ITA Airways",code:"AZ",color:"#0067B1"},
-  {name:"Widerøe",code:"WF",color:"#00A651"},
-  {name:"Norwegian Airlines",code:"DY",color:"#BA0C2F"},
-  {name:"Finnair",code:"AY",color:"#003366"},
-  {name:"SAS Scandinavian Airlines",code:"SK",color:"#003A63"},
+  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
+  {name:"Discover Airlines",code:"DH",color:"#F07F2A"},
   {name:"Condor",code:"DE",color:"#FFD200"},
   {name:"AeroLogic",code:"3S",color:"#8A8D8F"},
-  {name:"SunExpress",code:"SX",color:"#FF8A3D"},
-  {name:"Vueling",code:"VY",color:"#FFBB00"},
-  {name:"KLM",code:"KL",color:"#0057B7"},
-  {name:"British Airways",code:"BA",color:"#012169"},
-  {name:"Air France",code:"AF",color:"#002157"},
-  {name:"Turkish Airlines",code:"TK",color:"#E21B23"},
-  {name:"Iberia",code:"IB",color:"#E3222B"},
-  {name:"Aeroflot",code:"SU",color:"#0033A0"},
-  {name:"LOT Polish",code:"LO",color:"#0033A0"}
+  /* Central / Western */
+  {name:"Swiss International Air Lines",code:"LX",color:"#D81E5B"},
+  {name:"Austrian Airlines",code:"OS",color:"#DA291C"},
+  {name:"Brussels Airlines",code:"SN",color:"#003399"},
+  {name:"Edelweiss Air",code:"WK",color:"#FF7BAC"},
+  {name:"Air Dolomiti",code:"EN",color:"#00A1DE"},
+  /* Nordic / Baltics */
+  {name:"SAS Scandinavian Airlines",code:"SK",color:"#003A63"},
+  {name:"Norwegian Airlines",code:"DY",color:"#BA0C2F"},
+  {name:"Widerøe",code:"WF",color:"#00A651"},
+  {name:"AirBaltic",code:"BT",color:"#00A99D"},
+  {name:"Finnair",code:"AY",color:"#003366"},
+  /* Others */
+  {name:"ITA Airways",code:"AZ",color:"#0067B1"},
+  {name:"SunExpress",code:"SX",color:"#FF8A3D"}
 ];
 
-
-/* Demo routes and fleet */
+/* Demo routes + fleet + pilots (kept small) */
 const ROUTES = [
   {airline:"Lufthansa",fromICAO:"EDDF",toICAO:"ENGM",fromCity:"Frankfurt",toCity:"Oslo",durationMinutes:120},
   {airline:"Swiss International Air Lines",fromICAO:"EDDF",toICAO:"LSZH",fromCity:"Frankfurt",toCity:"Zurich",durationMinutes:60},
@@ -305,7 +353,7 @@ let PILOTS = [
 let FLEET_LOG = [];
 let PENDING_RESERVATION = null;
 
-/* session (persistent for the tab) */
+/* session */
 let SESSION = (function(){ try{ const s = sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
 
 /* UI state */
@@ -345,21 +393,25 @@ function uid(p='id'){ return p+'_'+Math.random().toString(36).slice(2,9); }
 function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
 function log(msg){ const el=document.getElementById('log'); const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
 
-/* ---------- Render controls ---------- */
+/* ---------- Render durations as volumetric pills ---------- */
 function renderDurations(){
   durWrap.innerHTML = '';
   DURATIONS.forEach((d,i)=>{
-    const b = document.createElement('button'); b.className='pill small'; b.textContent = d.label; b.dataset.idx = i;
-    if(chosenDuration === i) b.classList.add('active');
+    const b = document.createElement('div');
+    b.className = 'time-pill';
+    b.dataset.idx = i;
+    b.innerHTML = `<div class="badge"></div><div style="min-width:0;overflow:hidden"><div style="font-weight:800">${d.label}</div><div class="kv" style="color:rgba(0,0,0,0.45);font-weight:600;font-size:12px">Интервал</div></div>`;
     b.addEventListener('click', ()=> {
       chosenDuration = (chosenDuration === i) ? null : i;
-      updateActiveUI(); renderLists();
+      updateActiveUI();
+      renderLists();
     });
+    if(chosenDuration === i) b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
     durWrap.appendChild(b);
   });
 }
 
-/* ---------- Airlines grid with strong LED ---------- */
+/* ---------- Render airlines grid with strong LED + liquid flow ---------- */
 function renderAirGrid(){
   airGrid.innerHTML = '';
   const filtered = AIRLINES.filter(a=>{
@@ -368,13 +420,16 @@ function renderAirGrid(){
     return a.name.toLowerCase().includes(q) || (a.code && a.code.toLowerCase().includes(q));
   });
 
-  filtered.forEach(a=>{
+  filtered.forEach((a, idx)=>{
     const card = document.createElement('div'); card.className = 'airline';
     // glow overlay
     const glow = document.createElement('div'); glow.className = 'glow';
-    // stronger multi-stop radial to feel luminous
-    glow.style.background = `radial-gradient(60% 60% at 50% 40%, ${a.color}dd 0%, ${a.color}b3 8%, ${a.color}88 18%, transparent 48%)`;
+    glow.style.background = `radial-gradient(60% 60% at 50% 40%, ${a.color}dd 0%, ${a.color}c0 10%, ${a.color}99 20%, transparent 46%)`;
     card.appendChild(glow);
+    // shimmer stripe for liquid motion
+    const shimmer = document.createElement('div'); shimmer.className = 'shimmer';
+    shimmer.style.background = `linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.08), rgba(255,255,255,0.03))`;
+    card.appendChild(shimmer);
     // dot + meta
     const dot = document.createElement('div'); dot.className = 'dot'; dot.style.background = a.color;
     const meta = document.createElement('div'); meta.className = 'meta';
@@ -383,15 +438,17 @@ function renderAirGrid(){
     meta.appendChild(name); meta.appendChild(code);
     card.appendChild(dot); card.appendChild(meta);
 
-    // click behavior: select/deselect
+    // click: select/deselect with fluid ripple (temporary pulse)
     card.addEventListener('click', ()=>{
       chosenAirline = (chosenAirline === a.name) ? null : a.name;
+      // small pulse via inline style
+      card.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
       updateActiveUI(); renderLists();
     });
 
-    // hover stronger glow via JS fallback for consistent intensity
+    // hover glow intensify (also set outer shadow)
     card.addEventListener('mouseenter', ()=> {
-      card.style.boxShadow = `0 36px 120px ${hexToRgba(a.color,0.18)}, inset 0 2px 10px rgba(255,255,255,0.02)`;
+      card.style.boxShadow = `0 36px 120px ${hexToRgba(a.color,0.18)}, inset 0 2px 8px rgba(255,255,255,0.02)`;
     });
     card.addEventListener('mouseleave', ()=> {
       card.style.boxShadow = '';
@@ -460,9 +517,7 @@ function renderPilots(){
 /* show/hide forced auth modal and block UI behind */
 function showGateModal(){
   gateModal.style.display = 'flex';
-  // block interaction with app behind modal by adding class
   appHero.classList.add('app-blocked');
-  // focus
   setTimeout(()=> document.getElementById('loginCall').focus(),50);
 }
 function hideGateModal(){
@@ -486,9 +541,7 @@ btnLogin.addEventListener('click', ()=> {
 
 /* logout */
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
-  SESSION.pilotId = null; saveSession(); renderSession(); // force modal back (since you requested modal on every new login)
-  showGateModal();
-  log('Вышел');
+  SESSION.pilotId = null; saveSession(); renderSession(); showGateModal(); log('Вышел');
 });
 
 /* render session state */
@@ -523,11 +576,7 @@ function openConfirmFromRoute(route){
   if(!candidate){ alert('Нет подходящих самолётов с запасом топлива'); return; }
   candidate.status = 'reserved';
   candidate.reservedBy = pilot.id;
-  candidate.reservedToken = pilto
-
-rToken = pilot.id+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
-  candidate.reservedToken = candidate.reservedToken || candidate.reservedToken; // ensure exists
-  candidate.reservedToken = candidate.reservedToken || (pilot.id+':'+Date.now()+':'+Math.random().toString(36).slice(2,8));
+  candidate.reservedToken = pilot.id+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
   candidate.reservedUntil = nowMs() + 120000;
   PENDING_RESERVATION = { token: candidate.reservedToken, aircraft: candidate, route, pilotId: pilot.id, expires: candidate.reservedUntil };
   confirmDetails.textContent = `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин`;
@@ -570,12 +619,12 @@ function updateActiveUI(){
   Array.from(airGrid.children).forEach(card=>{
     const name = card.querySelector('.name')?.textContent;
     const glow = card.querySelector('.glow');
-    if(name === chosenAirline){ card.classList.add('active'); if(glow) glow.style.opacity = '0.62'; }
+    if(name === chosenAirline){ card.classList.add('active'); if(glow) glow.style.opacity = '0.72'; }
     else { card.classList.remove('active'); if(glow) glow.style.opacity = '0'; }
   });
-  Array.from(durWrap.children).forEach(btn=>{
-    const idx = Number(btn.dataset.idx);
-    btn.classList.toggle('active', chosenDuration === idx);
+  // highlight selected duration
+  Array.from(durWrap.children).forEach((b, idx)=>{
+    b.style.boxShadow = (chosenDuration === idx) ? '0 26px 64px rgba(255,175,40,0.28)' : '';
   });
 }
 
@@ -592,19 +641,15 @@ function placeUnderline(tabEl){
 /* ---------- tabs robust handler ---------- */
 tabElements.forEach(tab=>{
   tab.addEventListener('click', ()=>{
-    // set active tab visual
     tabElements.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    // hide/show panels by data-target
     const target = tab.getAttribute('data-target');
     ['panelGenerate','panelRoutes','panelFleet'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
       el.style.display = (id === target) ? 'block' : 'none';
     });
-    // show/hide gen button
     genBtn.style.display = (target === 'panelGenerate') ? 'inline-flex' : 'none';
-    // place underline
     requestAnimationFrame(()=> placeUnderline(tab));
   });
 });
@@ -619,8 +664,12 @@ window.addEventListener('resize', ()=> {
 airSearch.addEventListener('input', e=>{ searchQuery = e.target.value.trim(); renderAirGrid(); updateActiveUI(); });
 document.getElementById('clearBtn').addEventListener('click', ()=>{ searchQuery=''; airSearch.value=''; chosenAirline=null; chosenDuration=null; renderLists(); updateActiveUI(); });
 
-genBtn.addEventListener('click', ()=>{
+document.getElementById('genBtn').addEventListener('click', ()=>{
   if(!SESSION.pilotId){ showGateModal(); return; }
+  // highlight button briefly
+  const btn = document.getElementById('genBtn');
+  btn.classList.add('attention');
+  setTimeout(()=> btn.classList.remove('attention'), 2600);
   const pool = ROUTES.filter(r=>{
     if(chosenAirline && r.airline !== chosenAirline) return false;
     if(chosenDuration !== null){ const d = DURATIONS[chosenDuration]; if(!(r.durationMinutes >= d.min && r.durationMinutes <= d.max)) return false; }
@@ -652,31 +701,13 @@ function renderAssignLog(){
   const el = document.getElementById('log'); el.innerHTML = '';
   if(!FLEET_LOG.length){ el.textContent = 'Пусто'; return; }
   FLEET_LOG.slice(-200).reverse().forEach(e=>{
-    const d = document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleString()} — ${e.event}${e.aircraft? ' ' + e.aircraft: ''}${e.route? ' ' + e.route: ''}`; el.appendChild(d);
+    const d = document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleTimeString()} — ${e.event}${e.aircraft? ' ' + e.aircraft: ''}${e.route? ' ' + e.route: ''}`; el.appendChild(d);
   });
 }
 
 function renderLists(){
   renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); updateActiveUI(); renderAssignLog();
 }
-
-/* initial render */
-function init(){
-  renderLists();
-  // default tab underline
-  const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
-  if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
-  // forced auth: if not logged in, show modal and block behind UI
-  renderSession();
-  if(!SESSION.pilotId){
-    // ensure UI blocked behind modal on load
-    showGateModal();
-  } else {
-    // still show auth modal each "new" login request? user asked: panel auth appear every new entry
-    // We'll show modal on page load only if no session; after logout, show again.
-  }
-}
-init();
 
 /* utility: hex -> rgba */
 function hexToRgba(hex, a = 1){
@@ -686,6 +717,17 @@ function hexToRgba(hex, a = 1){
   const r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
+
+/* init */
+function init(){
+  renderLists();
+  const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
+  if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
+  renderSession();
+  // force auth modal on first load if not logged in
+  if(!SESSION.pilotId){ showGateModal(); }
+}
+init();
 </script>
 </body>
 </html>
