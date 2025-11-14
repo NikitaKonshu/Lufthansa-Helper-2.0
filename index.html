@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — splash + tutorial + full app</title>
+<title>Lufthansa Helper — full app with full-bleed nocookie splash + tour</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -203,7 +203,7 @@ body{
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
 .small{font-size:13px}
 
-/* splash */
+/* splash full-bleed */
 .splash-back{
   position:fixed; inset:0; z-index:10050;
   display:flex; align-items:center; justify-content:center;
@@ -211,39 +211,34 @@ body{
   backdrop-filter: blur(6px) saturate(0.9);
 }
 .splash-card{
-  width:100%; max-width:1150px; border-radius:16px; overflow:hidden;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 50px 140px rgba(0,0,0,0.7);
-  display:flex; gap:0; align-items:stretch; justify-content:stretch;
+  width:100%; max-width:1400px; height:70vh; border-radius:12px; overflow:hidden; display:block;
+  background:#000; border:0; box-shadow: 0 50px 140px rgba(0,0,0,0.8);
+  position:relative;
 }
-.splash-media{
-  width:60%; min-height:360px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
-  background: linear-gradient(180deg, rgba(10,20,40,0.35), rgba(0,0,0,0.35));
-}
-.splash-media iframe{ width:100%; height:100%; border:0; display:block; }
 
-/* overlay matching the photo — centered title + button */
+/* make iframe cover entire splash-card */
+#yt-player{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+#yt-player iframe{ width:100%; height:100%; border:0; display:block; }
+
+/* central overlay (title + continue button), pointer-events properly set */
 .splash-center{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
 }
 .splash-center .center-block{
   pointer-events:auto;
   display:flex; flex-direction:column; align-items:center; gap:12px;
-  background: linear-gradient(90deg, rgba(0,0,0,0.18), rgba(0,0,0,0.10));
-  padding:18px 28px; border-radius:12px;
+  background: rgba(0,0,0,0.28);
+  padding:20px 28px; border-radius:12px; backdrop-filter: blur(6px);
 }
-.splash-center h2{ margin:0;font-size:26px;font-weight:900;color:#fff; text-align:center; }
-.splash-center .center-cta{ margin-top:6px; display:flex; gap:10px; }
-.splash-center .center-cta button{ font-weight:900; padding:10px 16px; border-radius:10px; border:0; cursor:pointer; background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; }
+.splash-center h2{ margin:0;font-size:30px;font-weight:900;color:#fff; text-align:center; letter-spacing:0.2px; }
+.splash-center .center-cta{ margin-top:4px; display:flex; gap:12px; }
+.splash-center .center-cta button{ font-weight:900; padding:12px 18px; border-radius:10px; border:0; cursor:pointer; background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; }
 
-/* splash-info right column */
-.splash-info{
-  width:40%; padding:36px; display:flex; flex-direction:column; justify-content:center; gap:12px;
-  align-items:center; text-align:center;
+/* small top controls */
+.splash-top-controls{
+  position:absolute; top:12px; right:12px; display:flex; gap:8px; align-items:center; pointer-events:auto;
 }
-.splash-info .welcome{ font-size:20px; font-weight:900; color:var(--text); margin-bottom:6px; }
-.splash-info .desc{ color:var(--muted); }
+.splash-top-controls button{ background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); color:var(--text); padding:8px 10px; border-radius:8px; cursor:pointer; }
 
 /* tutorial overlay (appears after splash Continue) */
 .tour-back{
@@ -271,10 +266,9 @@ body{
 
 /* responsive */
 @media(max-width:900px){
-  .splash-card{ flex-direction:column; }
-  .splash-media{ width:100%; height:260px; }
-  .splash-info{ width:100%; padding:20px; }
+  .splash-card{ height:56vh; border-radius:8px; }
   .splash-center h2{ font-size:20px; }
+  .splash-center .center-block{ padding:14px; }
   .tour-card{ padding:14px; flex-direction:column; }
   .tour-step{ flex-direction:column; align-items:center; text-align:center; }
   .tour-step .icon{ margin-bottom:8px; }
@@ -405,30 +399,22 @@ body{
   </div>
 </div>
 
-<!-- splash -->
+<!-- splash: full-bleed nocookie video -->
 <div id="splash" class="splash-back" style="display:none;">
   <div class="splash-card" role="dialog" aria-modal="true" aria-label="Welcome">
-    <div class="splash-media" id="splashMedia">
-      <!-- YouTube iframe will be created here by API -->
-      <div id="yt-player"></div>
+    <div id="yt-player"></div>
 
-      <!-- centered overlay like on your photo: title in the center + continue button -->
-      <div class="splash-center" aria-hidden="false">
-        <div class="center-block">
-          <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
-          <div class="center-cta">
-            <button id="splashContinue" class="center-btn">Дальше</button>
-          </div>
-        </div>
-      </div>
+    <div class="splash-top-controls">
+      <button id="btnSkipVideo">Пропустить видео</button>
+      <button id="btnOpenLogin">Вход</button>
     </div>
 
-    <div class="splash-info">
-      <div class="welcome">Добро пожаловать</div>
-      <div class="desc">Короткий обзор. Нажмите Дальше для входа в систему.</div>
-      <div style="display:flex;gap:10px">
-        <button id="btnSkipVideo" class="btn-neutral">Пропустить видео</button>
-        <button id="btnOpenLogin" class="btn-primary">Вход</button>
+    <div class="splash-center">
+      <div class="center-block">
+        <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
+        <div class="center-cta">
+          <button id="splashContinue">Дальше</button>
+        </div>
       </div>
     </div>
   </div>
@@ -561,9 +547,9 @@ const genBtn = document.getElementById('genBtn');
 const tabElements = document.querySelectorAll('.tab');
 const liquidUnderline = document.getElementById('liquidUnderline');
 
-/* ===== YouTube player settings ===== */
+/* ===== YouTube player settings (nocookie host) ===== */
 let ytPlayer = null;
-const YT_VIDEO_ID = '7S7smPw9EiE'; // <-- замените на ваш ID при необходимости
+const YT_VIDEO_ID = '7S7smPw9EiE';
 const YT_AUTOMUTE = 1;
 
 /* tour content (steps) */
@@ -581,7 +567,7 @@ function uid(p='id'){ return p+'_'+Math.random().toString(36).slice(2,9); }
 function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
 function log(msg){ const el=document.getElementById('log'); if(!el) return; const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
 
-/* ====== RENDER FUNCTIONS (restored full) ====== */
+/* ====== RENDER FUNCTIONS ====== */
 function renderDurations(){
   durWrap.innerHTML = '';
   DURATIONS.forEach((d,i)=>{
@@ -706,7 +692,6 @@ function showGateModal(){
 }
 function hideGateModal(){
   gateModal.style.display = 'none';
-  // keep app blocked until splash+tour handled
 }
 
 btnLogin.addEventListener('click', ()=> {
@@ -719,11 +704,9 @@ btnLogin.addEventListener('click', ()=> {
     SESSION.pilotId = p.id; saveSession();
     renderSession();
     gateModal.style.display = 'none';
-    // optionally show tour
     if(document.getElementById('tourAfterLogin').checked){
       openTour(0);
     } else {
-      // open app (nothing to hide)
       appRoot.classList.remove('app-blocked');
       document.querySelector('.container').classList.remove('app-blocked');
       document.getElementById('appHero').classList.remove('app-blocked');
@@ -766,7 +749,7 @@ function renderSession(){
   }
 }
 
-/* ====== SPLASH & TOUR FLOW & YouTube integration ====== */
+/* ====== SPLASH & TOUR FLOW & YouTube integration (nocookie host) ====== */
 function openSplash(){
   splash.style.display = 'flex';
   appRoot.classList.add('app-blocked');
@@ -782,7 +765,6 @@ function openSplash(){
 
 function hideSplash(forceHide){
   splash.style.display = 'none';
-  // leave app blocked for tour — tour flow will control unblocking
   document.querySelector('.container').classList.add('app-blocked');
   document.getElementById('appHero').classList.add('app-blocked');
 }
@@ -819,7 +801,6 @@ document.getElementById('tourDone').addEventListener('click', ()=>{
     tourSetStep(tourIndex);
   } else {
     hideTour();
-    // after finishing tour, unlock app
     appRoot.classList.remove('app-blocked');
     document.querySelector('.container').classList.remove('app-blocked');
     document.getElementById('appHero').classList.remove('app-blocked');
@@ -849,7 +830,7 @@ btnOpenLogin.addEventListener('click', ()=>{
   openLoginModal();
 });
 
-/* ====== Reservation flow (kept) ====== */
+/* ====== Reservation flow ====== */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.maxFlightMinutes!=='number' || ac.maxFlightMinutes >= dur) && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -1003,19 +984,18 @@ function init(){
   const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
   if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
   renderSession();
-  // force login modal on load
   showGateModal();
-  // show splash first (user wanted video first)
   openSplash();
   tour.style.display = 'none';
 }
 init();
 
-/* ===== YouTube integration: create player and manage playback ===== */
+/* ===== YouTube integration: create player and manage playback (nocookie host) ===== */
 function onYouTubeIframeAPIReady() {
   try {
     ytPlayer = new YT.Player('yt-player', {
       videoId: YT_VIDEO_ID,
+      host: 'https://www.youtube-nocookie.com',
       playerVars: {
         autoplay: 1,
         controls: 0,
@@ -1034,7 +1014,7 @@ function onYouTubeIframeAPIReady() {
           try { e.target.playVideo(); } catch(err) {}
         },
         onStateChange: function(e){
-          // loop should handle replay; do nothing special
+          // no extra behaviour; loop set via playerVars
         }
       }
     });
