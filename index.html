@@ -3,15 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — final</title>
+<title>Lufthansa Helper — colorized airlines</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-top:#041426; --bg-bot:#072b3a;
   --text:#eaf4ff; --muted:#9fc0d8;
   --accent:#ffd54a; --accent-2:#ffb84a;
-  --glass: rgba(255,255,255,0.04);
-  --radius:12px;
   font-family: Inter, system-ui, Roboto, Arial, sans-serif;
   font-size:15px;
 }
@@ -45,10 +43,8 @@ body{
 /* animated underline */
 .tabs .liquid-underline{ position:absolute; height:6px; bottom:-8px; border-radius:6px; background: linear-gradient(90deg,#ffd54a,#ffb84d); transition:left 300ms cubic-bezier(.2,.9,.2,1), width 300ms; box-shadow:0 8px 28px rgba(255,170,60,0.12); }
 
-/* --- unified pill controls --- */
+/* --- unified pill controls + colorized overlays --- */
 .filter-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-
-/* shared pill base */
 .pill{
   --pad-y:8px; --pad-x:12px;
   display:inline-flex;align-items:center;gap:10px;padding:var(--pad-y) var(--pad-x);
@@ -57,35 +53,29 @@ body{
   color:var(--text); font-weight:700; font-size:14px;
   box-shadow: 0 16px 40px rgba(2,8,20,0.45), inset 0 4px 10px rgba(255,255,255,0.02);
   transition: transform 180ms cubic-bezier(.2,.9,.2,1), box-shadow 180ms, background 240ms;
-  position:relative;
+  position:relative; overflow:visible;
   -webkit-tap-highlight-color: transparent;
 }
-.pill.inactive{ opacity:0.92 }
 .pill:hover{ transform: translateY(-3px); box-shadow:0 30px 80px rgba(2,8,20,0.5) }
 .pill:active{ transform: translateY(0); box-shadow:0 12px 32px rgba(2,8,20,0.45) }
 .pill:focus{ outline:none; box-shadow: 0 30px 90px rgba(2,8,20,0.55) }
 
-/* active state */
-.pill.active{
-  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  color:#062323;
-  border: 1px solid rgba(2,2,2,0.06);
-  box-shadow: 0 36px 120px rgba(2,8,20,0.6), inset 0 -10px 24px rgba(255,255,255,0.06);
-  transform: translateY(-4px) scale(1.02);
+/* colored overlay element inside pill (span.overlay) will be toggled via JS */
+.pill .overlay{
+  position:absolute; inset:0; border-radius:999px; z-index:0; pointer-events:none;
+  opacity:0; transition:opacity 260ms ease, transform 260ms ease; transform:scale(0.98);
+  mix-blend-mode: screen;
 }
-.pill.active::after{
-  content:""; position:absolute; pointer-events:none; border-radius:999px;
-  inset:0; background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
-  mix-blend-mode: overlay; opacity:0; transform:translateX(-30%);
-  transition: opacity 340ms, transform 420ms;
-}
-.pill.active:hover::after{ opacity:1; transform:translateX(0); transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 240ms; }
+.pill.active .overlay{ opacity:0.16; transform:scale(1); }
+
+/* label above overlay */
+.pill .pill-label{ position:relative; z-index:2; display:inline-flex; align-items:center; gap:8px; }
+
+/* airline dot inside label */
+.airline-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; flex:0 0 10px; }
 
 /* pilot chip */
 .pilot-chip{ padding:8px 12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));font-weight:800;color:var(--text);border:1px solid rgba(255,255,255,0.04)}
-
-/* airline dot + name inside pill */
-.airline-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; flex:0 0 10px; }
 
 /* pending action buttons */
 .action-btn{ position:relative; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:12px; border:0; font-weight:800; cursor:pointer; min-width:140px; box-shadow:0 20px 60px rgba(2,8,20,0.45); transition:transform 160ms,box-shadow 160ms,filter 220ms;}
@@ -135,7 +125,7 @@ body{
       <div class="logo">LH</div>
       <div>
         <div class="title">Lufthansa Helper</div>
-        <div class="subtitle small">Final UI — pending & auth fixes</div>
+        <div class="subtitle small">Colorized airlines & improved UX</div>
       </div>
     </div>
 
@@ -163,7 +153,7 @@ body{
           <div class="liquid-underline" id="liquidUnderline" style="left:0;width:0"></div>
         </div>
 
-        <!-- Generator controls (will be shown only on Генерация) -->
+        <!-- Generator controls (visible only on Генерация) -->
         <div id="generatorControls" style="display:flex;align-items:center;gap:12px;margin-top:6px" class="filter-row">
           <div style="display:flex;align-items:center;gap:8px">
             <div style="font-weight:800;margin-right:6px">Авиакомпании</div>
@@ -198,7 +188,7 @@ body{
           </div>
         </div>
 
-        <!-- Confirmed result (visible after confirmation) -->
+        <!-- Confirmed result -->
         <div id="confirmedSection" class="confirmed hidden" style="display:none"></div>
 
         <!-- Panels: Routes and Fleet -->
@@ -296,14 +286,16 @@ body{
 <script>
 /* ================= DATA & STATE ================= */
 const CODEWORD='quickaccess2025';
-const SESSION_KEY='lh_final_unified_v1';
+const SESSION_KEY='lh_colorized_v1';
 const CURRENT_FLIGHT_PREFIX='current_flight:';
 
+/* Brand colors updated per request */
 const AIRLINES=[
-  {name:"Lufthansa",hubs:["EDDF","EDDM"],color:"#ffd54a"},
-  {name:"Eurowings",hubs:["EDDF","EDDM"],color:"#6fc3ff"},
-  {name:"SunExpress",hubs:["EDDF","EDDM"],color:"#ff9f6b"}
+  {name:"Lufthansa",hubs:["EDDF","EDDM"],color:"#1E6FFF"}, /* синий */
+  {name:"Eurowings",hubs:["EDDF","EDDM"],color:"#8A4BFF"}, /* фиолетовый */
+  {name:"SunExpress",hubs:["EDDF","EDDM"],color:"#FF8A3D"} /* оранжевый */
 ];
+
 const ROUTES=[
   {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Oslo",toICAO:"ENGM",durationMinutes:120},
   {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Amsterdam",toICAO:"EHAM",durationMinutes:70},
@@ -323,7 +315,7 @@ let PILOTS=[
 ];
 
 let FLEET_LOG=[];
-let PENDING_RESERVATION = null; // {token, aircraftId, aircraft, route, pilotId, expires}
+let PENDING_RESERVATION = null;
 let SESSION=(function(){ try{ const s=sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){return {pilotId:null}; } })();
 
 const DURATIONS=[
@@ -354,7 +346,6 @@ const pilotSearch=document.getElementById('pilotSearch');
 const assignLog=document.getElementById('assignLog');
 
 const confirmedSection = document.getElementById('confirmedSection');
-const currentFlightWrap = document.getElementById('currentFlightWrap') || document.createElement('div');
 
 const filterAirline=document.getElementById('filterAirline');
 const filterHub=document.getElementById('filterHub');
@@ -389,28 +380,62 @@ const genBtn = document.getElementById('genBtn');
 const pendingBlock = document.getElementById('pendingReservationBlock');
 const pendingInfo = document.getElementById('pendingInfo');
 const pendingTimer = document.getElementById('pendingTimer');
-const pendingConfirmBtn = document.getElementById('confirmPendingBtn') || document.getElementById('confirmAccept');
-const pendingCancelBtn = document.getElementById('cancelPendingBtn') || document.getElementById('confirmCancel');
 
 const liquidUnderline = document.getElementById('liquidUnderline');
 const generatorControls = document.getElementById('generatorControls');
 
-/* ================= RENDER ================= */
+/* ================= RENDER / INTERACTIONS ================= */
+
+/* simple readable color check to choose white/black label */
+function readableTextColor(hex){
+  if(!hex) return '#ffffff';
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16);
+  const g = parseInt(h.substring(2,4),16);
+  const b = parseInt(h.substring(4,6),16);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum > 160 ? '#062323' : '#ffffff';
+}
 
 function renderAirlinePills(){
   airlinesWrap.innerHTML='';
   AIRLINES.forEach(a=>{
     const btn=document.createElement('button');
     btn.className='pill';
-    btn.style.fontWeight='800';
     btn.setAttribute('data-airline', a.name);
-    btn.innerHTML = `<span class="airline-dot" style="background:${a.color}"></span>${esc(a.name)}`;
+
+    const overlay = document.createElement('span');
+    overlay.className = 'overlay';
+    overlay.style.background = `linear-gradient(90deg, ${a.color}33, ${a.color}22)`;
+    btn.appendChild(overlay);
+
+    const label = document.createElement('span');
+    label.className='pill-label';
+    label.innerHTML = `<span class="airline-dot" style="background:${a.color}"></span><span style="font-weight:800">${esc(a.name)}</span>`;
+    btn.appendChild(label);
+
+    // click toggles active state; update select if exists
     btn.addEventListener('click', ()=>{
       const wasActive = btn.classList.contains('active');
-      Array.from(airlinesWrap.children).forEach(n=>n.classList.remove('active'));
-      if(!wasActive){ btn.classList.add('active'); filterAirline && (filterAirline.value = a.name); } else { filterAirline && (filterAirline.value = 'all'); }
+      Array.from(airlinesWrap.children).forEach(n=>{ n.classList.remove('active'); n.querySelector('.pill-label').style.color=''; });
+      if(!wasActive){
+        btn.classList.add('active');
+        btn.querySelector('.pill-label').style.color = readableTextColor(a.color);
+        if(filterAirline) filterAirline.value = a.name;
+      } else {
+        if(filterAirline) filterAirline.value = 'all';
+      }
       renderRoutesPane();
     });
+
+    // hover visual hint
+    btn.addEventListener('mouseenter', ()=> {
+      if(!btn.classList.contains('active')) overlay.style.opacity = '0.08';
+    });
+    btn.addEventListener('mouseleave', ()=> {
+      if(!btn.classList.contains('active')) overlay.style.opacity = '';
+    });
+
     airlinesWrap.appendChild(btn);
   });
 }
@@ -421,11 +446,11 @@ function renderDurationPills(){
     const btn = document.createElement('button');
     btn.className='pill';
     btn.setAttribute('data-dur', i);
-    btn.textContent = d.label;
+    btn.innerHTML = `<span class="pill-label">${d.label}</span>`;
     btn.addEventListener('click', ()=>{
       const wasActive = btn.classList.contains('active');
       Array.from(durationsWrap.children).forEach(n=>n.classList.remove('active'));
-      if(!wasActive){ btn.classList.add('active'); filterDuration && (filterDuration.value = i); chosenDur=i; } else { filterDuration && (filterDuration.value='all'); chosenDur=null; }
+      if(!wasActive){ btn.classList.add('active'); chosenDur = i; if(filterDuration) filterDuration.value = i; } else { chosenDur=null; if(filterDuration) filterDuration.value='all'; }
       renderRoutesPane();
     });
     durationsWrap.appendChild(btn);
@@ -443,17 +468,12 @@ function renderPilots(){
     row.innerHTML = `<div><strong>${esc(p.name)}</strong><div class="kv small">${esc(p.callSign)} ${p.verified? '· Verified':''}</div></div>`;
     const btn=document.createElement('button');
     btn.className='pill';
-    // IMPORTANT: do not sign in directly. Open modal to require auth.
-    if(SESSION.pilotId){
-      btn.disabled=true; btn.textContent='Недоступно'; btn.style.opacity='0.6';
-    } else {
-      btn.textContent='Войти';
-      btn.addEventListener('click', ()=> {
-        // prefill call sign for convenience, but require modal confirmation
-        document.getElementById('loginCall').value = p.callSign || '';
-        showGate();
-      });
-    }
+    // open modal instead of immediate sign-in
+    btn.textContent='Войти';
+    btn.addEventListener('click', ()=> {
+      document.getElementById('loginCall').value = p.callSign || '';
+      showGate();
+    });
     row.appendChild(btn);
     pilotListEl.appendChild(row);
   });
@@ -469,212 +489,23 @@ function renderAssignLog(){
   });
 }
 
-/* current flight rendering (right-side result displayed via confirmedSection and persisted current flight) */
-function renderCurrentFlight(){
-  // confirmedSection shows confirmed report; currentFlightWrap may be absent (kept for older versions)
-  if(!SESSION.pilotId){
-    pilotNameEl.textContent='—';
-    sessionBadge.textContent='Неавторизован';
-    logoutBtn.style.display='none';
-    openGateBtn.style.display='inline-block';
-    return;
-  }
-  const p = PILOTS.find(x=>x.id===SESSION.pilotId)||{};
-  pilotNameEl.textContent = p.name || '—';
-  sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл';
-  logoutBtn.style.display='inline-block'; openGateBtn.style.display='none';
-
-  const cur = loadCurrentFlight(SESSION.pilotId);
-  if(!cur){
-    // hide confirmedSection if no current flight
-    if(confirmedSection){ confirmedSection.style.display='none'; confirmedSection.classList.add('hidden'); confirmedSection.innerHTML=''; }
-    return;
-  }
-  // Show confirmedSection using persisted flight
-  renderConfirmedSection({id:cur.aircraftId,airline:cur.airline}, cur.route, cur.pilotId);
-}
-
-/* reservation */
-function reserveAircraft(ac, ownerId, ttlMs=120000){
-  if(ac.status==='inFlight') return {ok:false,reason:'inflight'};
-  if(ac.status==='reserved') return {ok:false,reason:'already_reserved'};
-  ac.status='reserved'; ac.reservedBy=ownerId;
-  ac.reservedToken = ownerId+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
-  ac.reservedUntil = nowMs()+ttlMs;
-  FLEET_LOG.push({ts:nowMs(),event:'reserved',aircraft:ac.id});
-  renderAssignLog(); renderFleetList();
-  return {ok:true,token:ac.reservedToken,expires:ac.reservedUntil};
-}
-
-function confirmReservation(token,route,pilotId){
-  const ac = FLEET.find(a=>a.reservedToken===token);
-  if(!ac) return {ok:false,reason:'no_res'};
-  const p = PILOTS.find(x=>x.id===pilotId);
-  if(!(p && p.verified)) return {ok:false,reason:'pilot_not_verified'};
-  const now=nowMs(); const durMs = (Number(route.durationMinutes)||120)*60*1000;
-  ac.status='inFlight'; ac.availableAt = now + durMs + (ac.turnaround||0)*60*1000; ac.nextLocation = route.toICAO;
-  delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
-  FLEET_LOG.push({ts:now,event:'assign_confirmed',aircraft:ac.id,route:`${route.fromICAO}->${route.toICAO}`});
-  renderAssignLog(); renderFleetList();
-  const current = {
-    flightId: uid('flt'),
-    aircraftId: ac.id,
-    aircraftType: ac.type,
-    seats: ac.seats,
-    airline: ac.airline,
-    route,
-    pilotId: p.id,
-    pilotName: p.name,
-    pilotCall: p.callSign,
-    confirmedAt: now,
-    etaMs: durMs
-  };
-  persistCurrentFlight(p.id,current);
-  renderCurrentFlight();
-  renderConfirmedSection(ac,route,p.id);
-  return {ok:true,ac,current};
-}
-
-function releaseReservationByToken(token){
-  if(!token) return false;
-  let found=false;
-  FLEET.forEach(a=>{
-    if(a.reservedToken && a.reservedToken === token){
-      a.status='idle';
-      delete a.reservedBy;
-      delete a.reservedToken;
-      delete a.reservedUntil;
-      FLEET_LOG.push({ts: nowMs(), event:'reservation_cancelled', aircraft: a.id});
-      found=true;
-    }
+function renderFleetList(){
+  const fl = document.getElementById('fleetList');
+  if(!fl) return;
+  fl.innerHTML='';
+  const fa = filterFleetAirline && filterFleetAirline.value || 'all';
+  const fs = filterFleetStatus && filterFleetStatus.value || 'all';
+  const list = FLEET.filter(a=> { if(fa!=='all' && a.airline !== fa) return false; if(fs!=='all' && a.status !== fs) return false; return true; });
+  if(!list.length){ fl.innerHTML='<div class="kv small">Нет самолётов</div>'; return; }
+  list.forEach(a=>{
+    const airlineObj = AIRLINES.find(x=>x.name===a.airline) || {color:'#ffd54a'};
+    const el=document.createElement('div'); el.className='fleet-item';
+    el.style.padding='10px'; el.style.borderRadius='10px'; el.style.marginTop='8px';
+    el.innerHTML = `<div style="display:flex;gap:12px;align-items:center"><div style="width:10px;height:10px;border-radius:50%;background:${airlineObj.color}"></div><div><strong>${esc(a.id)}</strong><div class="kv small">${esc(a.airline)} · ${esc(a.type)} · ${a.seats} мест · ${esc(a.locationICAO)}</div></div></div><div class="kv small">${esc(a.status)}</div>`;
+    fl.appendChild(el);
   });
-  renderAssignLog(); renderFleetList();
-  return found;
 }
 
-/* choose pilot */
-function choosePilotForAssignment(){
-  if(SESSION.pilotId){
-    const p=PILOTS.find(x=>x.id===SESSION.pilotId); if(p) return p;
-  }
-  return null;
-}
-
-/* generate -> reserve -> pending */
-let pendingInterval=null;
-function generateCreatePending(){
-  const chosenPilot = choosePilotForAssignment();
-  if(!chosenPilot){ alert('Пожалуйста, войдите — пилот назначается автоматически.'); return; }
-
-  let pool = ROUTES.slice();
-  const activeAir = Array.from(airlinesWrap.children).find(c=>c.classList.contains('active'));
-  if(activeAir) pool = pool.filter(r=> r.airline === (activeAir.textContent||'').trim());
-  if(chosenDur !== null){ const range=DURATIONS[chosenDur]; pool = pool.filter(r=> r.durationMinutes >= range.min && r.durationMinutes <= range.max); }
-  if(!pool.length){ alert('Нет маршрутов по выбранным фильтрам'); return; }
-
-  const route = pool[Math.floor(Math.random()*pool.length)];
-  let candidates = FLEET.filter(ac=> (ac.locationICAO||'').toUpperCase() === (route.fromICAO||'').toUpperCase() && ac.status==='idle');
-  if(!candidates.length) candidates = FLEET.filter(ac=>ac.status==='idle');
-  if(!candidates.length){ alert('Нет свободных самолётов'); return; }
-  candidates.sort((a,b)=> Math.abs(a.seats-180)-Math.abs(b.seats-180));
-  const candidate = candidates[0];
-  const r = reserveAircraft(candidate, chosenPilot.id);
-  if(!r.ok){ alert('Ошибка резерва: '+r.reason); return; }
-
-  PENDING_RESERVATION = { token: r.token, aircraftId: candidate.id, aircraft: candidate, route, pilotId: chosenPilot.id, expires: r.expires || (nowMs()+120000) };
-  pendingBlock.style.display = 'block';
-  pendingInfo.textContent = `${candidate.id} · ${candidate.airline} · ${route.fromICAO} → ${route.toICAO} · ${route.durationMinutes} мин`;
-  updatePendingTimer();
-
-  if(pendingInterval) clearInterval(pendingInterval);
-  pendingInterval = setInterval(()=>{
-    if(!PENDING_RESERVATION){ clearInterval(pendingInterval); pendingInterval=null; pendingBlock.style.display='none'; return; }
-    if(nowMs() > (PENDING_RESERVATION.expires||0)){
-      releaseReservationByToken(PENDING_RESERVATION.token);
-      PENDING_RESERVATION = null;
-      pendingBlock.style.display='none';
-      clearInterval(pendingInterval); pendingInterval=null;
-    } else {
-      updatePendingTimer();
-    }
-  }, 800);
-
-  openConfirmModalForPending();
-}
-
-/* update timer */
-function updatePendingTimer(){
-  if(!PENDING_RESERVATION){ pendingTimer.textContent=''; return; }
-  const left = Math.max(0, Math.ceil(((PENDING_RESERVATION.expires||0)-nowMs())/1000));
-  pendingTimer.textContent = `Бронь действует ${left}s`;
-}
-
-/* open confirm modal */
-function openConfirmModalForPending(){
-  if(!PENDING_RESERVATION) return;
-  const {aircraft, route, pilotId} = PENDING_RESERVATION;
-  const p = PILOTS.find(x=>x.id===pilotId) || {};
-  confirmDetails.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div><strong>${esc(route.fromICAO)} → ${esc(route.toICAO)}</strong><div class="kv small">${esc(route.fromCity)} → ${esc(route.toCity)} · ${route.durationMinutes} мин</div></div>
-      <div class="kv small">${esc(route.airline)}</div>
-    </div>
-    <div style="margin-top:8px" class="kv small">Aircraft: ${esc(aircraft.id)} · ${esc(aircraft.type)} · ${aircraft.seats} seats</div>
-    <div style="margin-top:8px" class="kv small">Pilot: ${esc(p.name||'—')} (${esc(p.callSign||'—')})</div>
-  `;
-  confirmModal.style.display = 'flex';
-}
-
-/* accept pending (confirm) */
-function acceptPendingReservation(){
-  if(!PENDING_RESERVATION) return;
-  const {token, route, pilotId} = PENDING_RESERVATION;
-  const res = confirmReservation(token, route, pilotId);
-  if(!res.ok){ alert('Не удалось подтвердить: '+(res.reason||'')); return; }
-  // Ensure report is shown immediately
-  if(res && res.current){
-    renderConfirmedSection(res.ac, res.current.route, res.current.pilotId);
-  }
-  PENDING_RESERVATION = null;
-  pendingBlock.style.display = 'none';
-  confirmModal.style.display = 'none';
-  if(pendingInterval){ clearInterval(pendingInterval); pendingInterval=null; }
-}
-
-/* cancel pending */
-function cancelPendingReservation(){
-  if(!PENDING_RESERVATION) return;
-  const tok = PENDING_RESERVATION.token;
-  const released = releaseReservationByToken(tok);
-  if(!released){
-    const a = FLEET.find(x=>x.id===PENDING_RESERVATION.aircraftId);
-    if(a && a.status==='reserved'){ a.status='idle'; delete a.reservedToken; delete a.reservedBy; delete a.reservedUntil; FLEET_LOG.push({ts:nowMs(),event:'reservation_force_released',aircraft:a.id}); }
-  }
-  PENDING_RESERVATION = null;
-  pendingBlock.style.display = 'none';
-  confirmModal.style.display = 'none';
-  if(pendingInterval){ clearInterval(pendingInterval); pendingInterval=null; }
-  renderAssignLog(); renderFleetList();
-}
-
-/* render confirmed result */
-function renderConfirmedSection(ac,route,pilotId){
-  if(!confirmedSection) return;
-  confirmedSection.style.display = 'block';
-  confirmedSection.classList.remove('hidden');
-  const airlineObj = AIRLINES.find(a=>a.name===ac.airline) || {color:'#ffd54a'};
-  confirmedSection.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div><div class="big">${esc(ac.airline)} · ${esc(route.fromICAO)}→${esc(route.toICAO)}</div><div class="kv small" style="margin-top:6px">${esc(route.fromCity)} → ${esc(route.toCity)}</div></div>
-      <div style="text-align:right">
-        <div style="font-weight:900;color:${airlineObj.color}">${esc(ac.id)}</div>
-        <div class="kv small">ETA: <strong style="font-weight:800">${new Date(Date.now() + (route.durationMinutes||120)*60*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</strong></div>
-      </div>
-    </div>
-  `;
-}
-
-/* render routes */
 function renderRoutesPane(){
   const routesEl = document.getElementById('routesList');
   if(!routesEl) return;
@@ -711,209 +542,16 @@ function renderRoutesPane(){
   });
 }
 
-/* render fleet list */
-function renderFleetList(){
-  const fl = document.getElementById('fleetList');
-  if(!fl) return;
-  fl.innerHTML='';
-  const fa = filterFleetAirline && filterFleetAirline.value || 'all';
-  const fs = filterFleetStatus && filterFleetStatus.value || 'all';
-  const list = FLEET.filter(a=> { if(fa!=='all' && a.airline !== fa) return false; if(fs!=='all' && a.status !== fs) return false; return true; });
-  if(!list.length){ fl.innerHTML='<div class="kv small">Нет самолётов</div>'; return; }
-  list.forEach(a=>{
-    const airlineObj = AIRLINES.find(x=>x.name===a.airline) || {color:'#ffd54a'};
-    const el=document.createElement('div'); el.className='fleet-item';
-    el.style.padding='10px'; el.style.borderRadius='10px'; el.style.marginTop='8px';
-    el.innerHTML = `<div style="display:flex;gap:12px;align-items:center"><div style="width:10px;height:10px;border-radius:50%;background:${airlineObj.color}"></div><div><strong>${esc(a.id)}</strong><div class="kv small">${esc(a.airline)} · ${esc(a.type)} · ${a.seats} мест · ${esc(a.locationICAO)}</div></div></div><div class="kv small">${esc(a.status)}</div>`;
-    fl.appendChild(el);
-  });
-}
-
-/* open route modal */
-function openRouteModal(route){
-  routeTitleEl.textContent = `${route.airline} • ${route.fromICAO} → ${route.toICAO}`;
-  routeSubEl.textContent = `${route.fromCity} → ${route.toCity}`;
-  routeDurEl.textContent = `${route.durationMinutes} мин`;
-  routeModal.style.display='flex';
-}
-
-/* expiry loop */
-setInterval(()=>{
-  const now = nowMs();
-  FLEET.forEach(ac=>{
-    if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil <= now){
-      ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.push({ts:now,event:'reservation_expired',aircraft:ac.id});
-      if(PENDING_RESERVATION && PENDING_RESERVATION.token === ac.reservedToken){
-        PENDING_RESERVATION = null; pendingBlock.style.display='none';
-        if(pendingInterval){ clearInterval(pendingInterval); pendingInterval=null; }
-      }
-    }
-    if(ac.status==='inFlight' && ac.availableAt && ac.availableAt <= now){
-      ac.status='idle'; if(ac.nextLocation) ac.locationICAO = ac.nextLocation; delete ac.availableAt; delete ac.nextLocation; FLEET_LOG.push({ts:now,event:'aircraft_available',aircraft:ac.id,location:ac.locationICAO});
-    }
-  });
+/* reservation helpers */
+function reserveAircraft(ac, ownerId, ttlMs=120000){
+  if(ac.status==='inFlight') return {ok:false,reason:'inflight'};
+  if(ac.status==='reserved') return {ok:false,reason:'already_reserved'};
+  ac.status='reserved'; ac.reservedBy=ownerId;
+  ac.reservedToken = ownerId+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
+  ac.reservedUntil = nowMs()+ttlMs;
+  FLEET_LOG.push({ts:nowMs(),event:'reserved',aircraft:ac.id});
   renderAssignLog(); renderFleetList();
-},1500);
-
-/* AUTH */
-function signInAsPilot(pid){
-  const p = PILOTS.find(x=>x.id===pid);
-  if(!p) return;
-  SESSION.pilotId = pid; saveSession();
-  renderAll();
-  closeGate();
+  return {ok:true,token:ac.reservedToken,expires:ac.reservedUntil};
 }
 
-function attemptLoginFromModal(){
-  const cs = document.getElementById('loginCall').value.trim();
-  const pass = document.getElementById('loginPass').value.trim();
-  if(!cs){ alert('Введите позывной'); return; }
-  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
-  if(!p){ alert('Пилот не найден'); return; }
-  if(pass === CODEWORD || (p.password && pass === p.password)){
-    SESSION.pilotId = p.id; saveSession();
-    renderAll();
-    closeGate();
-  } else {
-    alert('Неверный пароль или кодовое слово');
-  }
-}
-
-function logout(){
-  if(!SESSION.pilotId) return;
-  SESSION.pilotId = null; saveSession();
-  renderAll();
-  showGate();
-}
-
-/* modal helpers */
-function showGate(){ gateModal.style.display = 'flex'; }
-function closeGate(){ gateModal.style.display = 'none'; }
-
-/* Generate button handler */
-genBtn.addEventListener('click', (e)=>{
-  if(genBtn.disabled) return;
-  if(!SESSION.pilotId){ alert('Пожалуйста, войдите — пилот назначается автоматически.'); showGate(); return; }
-  genBtn.classList.add('loading');
-  setTimeout(()=>{
-    generateCreatePending();
-    genBtn.classList.remove('loading');
-  }, 320);
-});
-
-/* Confirm/cancel handlers */
-document.getElementById('confirmAccept')?.addEventListener('click', ()=> { acceptPendingReservation(); });
-document.getElementById('confirmCancel')?.addEventListener('click', ()=> { cancelPendingReservation(); });
-
-document.getElementById('confirmPendingBtn')?.addEventListener('click', ()=> acceptPendingReservation());
-document.getElementById('cancelPendingBtn')?.addEventListener('click', ()=> cancelPendingReservation());
-
-/* header open/close */
-openGateBtn.addEventListener('click', ()=> showGate());
-btnCloseGate.addEventListener('click', ()=> closeGate());
-document.getElementById('btnLoginPilot')?.addEventListener('click', ()=> attemptLoginFromModal());
-logoutBtn.addEventListener('click', ()=> logout());
-document.getElementById('showGate').addEventListener('click', ()=> showGate());
-document.getElementById('routeCloseBtn').addEventListener('click', ()=> routeModal.style.display='none');
-
-/* reset (if exists) */
-document.getElementById('resetBtn')?.addEventListener('click', ()=>{
-  chosenDur = null;
-  Array.from(durationsWrap.children).forEach(n=>n.classList.remove('active'));
-  Array.from(airlinesWrap.children).forEach(n=>n.classList.remove('active'));
-  if(confirmedSection){ confirmedSection.classList.add('hidden'); confirmedSection.style.display='none'; confirmedSection.innerHTML=''; }
-});
-
-/* pilot search */
-pilotSearch.addEventListener('input', ()=> renderPilots());
-
-/* filters (selects) */
-filterAirline && filterAirline.addEventListener('change', ()=> renderRoutesPane());
-filterHub && filterHub.addEventListener('change', ()=> renderRoutesPane());
-filterDuration && filterDuration.addEventListener('change', ()=> renderRoutesPane());
-filterFleetAirline && filterFleetAirline.addEventListener('change', ()=> renderFleetList());
-filterFleetStatus && filterFleetStatus.addEventListener('change', ()=> renderFleetList());
-
-/* tabs + hide generator controls on other tabs */
-function moveUnderlineTo(el){
-  if(!liquidUnderline || !el) return;
-  const parentRect = el.parentElement.getBoundingClientRect();
-  const rect = el.getBoundingClientRect();
-  liquidUnderline.style.left = (rect.left - parentRect.left) + 'px';
-  liquidUnderline.style.width = rect.width + 'px';
-}
-
-tabGenerate.addEventListener('click', ()=> switchTab('generate'));
-tabRoutes.addEventListener('click', ()=> switchTab('routes'));
-tabFleet.addEventListener('click', ()=> switchTab('fleet'));
-
-function switchTab(name){
-  tabGenerate.classList.toggle('active', name==='generate');
-  tabRoutes.classList.toggle('active', name==='routes');
-  tabFleet.classList.toggle('active', name==='fleet');
-
-  // Panels: show/hide routes & fleet
-  document.getElementById('panelRoutes').style.display = (name==='routes') ? 'block' : 'none';
-  document.getElementById('panelFleet').style.display = (name==='fleet') ? 'block' : 'none';
-
-  // Show generator controls only on 'generate'
-  if(generatorControls){
-    generatorControls.style.display = (name === 'generate') ? 'flex' : 'none';
-  }
-
-  // If leaving generate, hide confirm/gate modals for cleanliness
-  if(name !== 'generate'){
-    confirmModal && (confirmModal.style.display = 'none');
-    gateModal && (gateModal.style.display = 'none');
-  }
-
-  const target = name==='generate' ? tabGenerate : (name==='routes' ? tabRoutes : tabFleet);
-  moveUnderlineTo(target);
-}
-
-/* init render */
-function renderAll(){
-  renderAirlinePills();
-  renderDurationPills();
-  renderPilots();
-  renderAssignLog();
-  renderFleetList();
-  renderRoutesPane();
-  renderCurrentFlight();
-
-  // populate selects
-  if(filterAirline) filterAirline.innerHTML = '<option value="all">Все авиакомпании</option>';
-  if(filterFleetAirline) filterFleetAirline.innerHTML = '<option value="all">Все</option>';
-  AIRLINES.forEach(a=>{
-    if(filterAirline){ const o=document.createElement('option'); o.value=a.name; o.textContent=a.name; filterAirline.appendChild(o); }
-    if(filterFleetAirline){ const o2=document.createElement('option'); o2.value=a.name; o2.textContent=a.name; filterFleetAirline.appendChild(o2); }
-  });
-  const hubs = Array.from(new Set(AIRLINES.flatMap(a=>a.hubs)));
-  if(filterHub){ filterHub.innerHTML = '<option value="all">Все хабы</option>'; hubs.forEach(h=>{ const o=document.createElement('option'); o.value=h; o.textContent=h; filterHub.appendChild(o); }); }
-
-  if(!SESSION.pilotId){
-    showGate();
-    sessionBadge.textContent='Неавторизован';
-    logoutBtn.style.display='none';
-    openGateBtn.style.display='inline-block';
-  } else {
-    closeGate();
-    openGateBtn.style.display='none';
-    logoutBtn.style.display='inline-block';
-    const p=PILOTS.find(x=>x.id===SESSION.pilotId)||{};
-    sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл';
-    pilotNameEl.textContent = p.name || '—';
-    document.getElementById('pilotBadge') && (document.getElementById('pilotBadge').querySelector('strong').textContent = p.name || '—');
-  }
-
-  // initial underline
-  setTimeout(()=>{ moveUnderlineTo(tabGenerate); },80);
-}
-
-/* debug */
-window._lh = {PILOTS,ROUTES,AIRLINES,FLEET,SESSION};
-
-renderAll();
-</script>
-</body>
-</html>
+function confirmReservation(token
