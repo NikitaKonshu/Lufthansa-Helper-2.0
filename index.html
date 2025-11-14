@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — Directions + Fleet search (fixed)</title>
+<title>Lufthansa Helper — unified</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -55,6 +55,7 @@ body{
   transition: transform 160ms, box-shadow 220ms, background 220ms;
   overflow:visible;
 }
+.pill.small{padding:6px 10px;font-size:13px}
 
 /* LED backdrop */
 .pill .led {
@@ -117,6 +118,15 @@ body{
 .modal{width:min(720px,94%);padding:18px;border-radius:12px;background:linear-gradient(180deg,#062b31,#04222a);border:1px solid rgba(255,255,255,0.03);box-shadow:0 40px 160px rgba(2,8,20,0.7)}
 .modal h3{margin:0;color:var(--accent);font-weight:800}
 
+/* panel controls (matching generator) */
+.panel-controls{
+  display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px;border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03)
+}
+.panel-controls .left, .panel-controls .center, .panel-controls .right{display:flex;align-items:center;gap:8px}
+.panel-controls .label{font-weight:800;margin-right:6px}
+.panel-controls .search{width:200px}
+
 /* utilities */
 .kv{font-size:13px;color:var(--muted)}
 .input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
@@ -133,7 +143,7 @@ body{
       <div class="logo">LH</div>
       <div>
         <div class="title">Lufthansa Helper</div>
-        <div class="subtitle small">Directions + Fleet search</div>
+        <div class="subtitle small">Unified — Генерация / Направления / Флот</div>
       </div>
     </div>
 
@@ -150,7 +160,7 @@ body{
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-weight:900">Рабочая область</div>
-            <div class="kv">Вкладка Направления теперь позволяет выбирать рейс и проходить подтверждение как в Генерации; Флот — расширенный поиск</div>
+            <div class="kv">Единый интерфейс: генерация, выбор направлений и расширенный поиск по флоту</div>
           </div>
         </div>
 
@@ -161,7 +171,7 @@ body{
           <div class="liquid-underline" id="liquidUnderline" style="left:0;width:0"></div>
         </div>
 
-        <!-- Generator controls (existing) -->
+        <!-- Generator controls -->
         <div id="generatorControls" style="display:flex;align-items:center;gap:12px;margin-top:6px" class="filter-row">
           <div style="display:flex;align-items:center;gap:8px">
             <div style="font-weight:800;margin-right:6px">Авиакомпании</div>
@@ -181,7 +191,7 @@ body{
 
         <div style="margin-top:12px" id="generatorNote" class="kv">Нажми "Сгенерировать" — система создаст бронь; затем подтверди или отмени.</div>
 
-        <!-- Pending block (reused) -->
+        <!-- Pending block -->
         <div id="pendingReservationBlock" class="card" style="display:none;margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-weight:800">Рейс готов к подтверждению</div>
@@ -199,7 +209,7 @@ body{
         <!-- Confirmed result -->
         <div id="confirmedSection" class="confirmed hidden" style="display:none"></div>
 
-        <!-- Panel: Routes (выбор рейсов без генерации) -->
+        <!-- Panel: Routes -->
         <div id="panelRoutes" class="panel hidden" style="margin-top:14px;display:none">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
             <div style="font-weight:800">Направления</div>
@@ -210,11 +220,29 @@ body{
             </div>
           </div>
 
+          <!-- Controls for Routes (matching generator style) -->
+          <div id="routesControls" class="panel-controls">
+            <div class="left">
+              <div class="label">Авиакомпании</div>
+              <div id="routesAirlines" style="display:flex;gap:8px;align-items:center"></div>
+            </div>
+
+            <div class="center">
+              <div class="label">Время</div>
+              <div id="routesDurations" style="display:flex;gap:8px;align-items:center"></div>
+            </div>
+
+            <div class="right" style="margin-left:auto">
+              <div class="label">Пилот</div>
+              <div id="routesPilot" style="min-width:140px">—</div>
+            </div>
+          </div>
+
           <div id="routesList" class="route-list" style="margin-top:12px"></div>
-          <div class="kv small" style="margin-top:8px">Клик по рейсу откроет окно подтверждения. В Directions генерация не запускается — только выбор из списка.</div>
+          <div class="kv small" style="margin-top:8px">Клик по рейсу откроет окно подтверждения; в Directions генерация не запускается — только выбор из списка.</div>
         </div>
 
-        <!-- Panel: Fleet (расширенный поиск по хабу и max flight minutes) -->
+        <!-- Panel: Fleet -->
         <div id="panelFleet" class="panel hidden" style="margin-top:14px;display:none">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
             <div style="font-weight:800">Флот — расширенный поиск</div>
@@ -225,6 +253,27 @@ body{
               <select id="filterFleetStatus" class="input"><option value="all">Все статусы</option><option value="idle">idle</option><option value="reserved">reserved</option><option value="inFlight">inFlight</option></select>
             </div>
           </div>
+
+          <!-- Controls for Fleet (quick search) -->
+          <div id="fleetControls" class="panel-controls">
+            <div class="left">
+              <div class="label">Поиск по хабу</div>
+              <select id="fleetHubQuick" class="input search">
+                <option value="any">Все хабы</option>
+              </select>
+            </div>
+
+            <div class="center">
+              <div class="label">Макс длит. рейса</div>
+              <input id="fleetMaxQuick" class="input search" placeholder="мин" />
+            </div>
+
+            <div class="right" style="margin-left:auto">
+              <button id="fleetApplyBtn" class="pill small" style="background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#062323;border:0">Применить</button>
+              <button id="fleetResetBtn" class="pill small">Сброс</button>
+            </div>
+          </div>
+
           <div id="fleetList" style="margin-top:12px"></div>
           <div class="kv small" style="margin-top:8px">Поиск фильтрует самолёты по их location hub и по допустимой длительности полёта (maxFlightMinutes).</div>
         </div>
@@ -271,7 +320,7 @@ body{
   </div>
 </div>
 
-<!-- Confirm modal (используется для Routes selection и pending confirm) -->
+<!-- Confirm modal -->
 <div id="confirmModal" class="modal-back" style="display:none">
   <div class="modal">
     <h3>Подтвердить рейс</h3>
@@ -284,7 +333,7 @@ body{
   </div>
 </div>
 
-<!-- Route modal (view-only) -->
+<!-- Route modal -->
 <div id="routeModal" class="modal-back" style="display:none">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -300,17 +349,15 @@ body{
 <script>
 /* ================= DATA & STATE ================= */
 const CODEWORD='quickaccess2025';
-const SESSION_KEY='lh_dirs_fleet_v1';
+const SESSION_KEY='lh_unified_v1';
 const CURRENT_FLIGHT_PREFIX='current_flight:';
 
-/* Airlines */
 const AIRLINES=[
   {name:"Lufthansa",hubs:["EDDF","EDDM","EDDH"],color:"#1E6FFF",icao:"LH"},
   {name:"Eurowings",hubs:["EDDF","EDDM"],color:"#8A4BFF",icao:"EW"},
   {name:"SunExpress",hubs:["EDDF","EDDM"],color:"#FF8A3D",icao:"SX"}
 ];
 
-/* ROUTES (example expanded) */
 const ROUTES=(function(){
   const base = [
     {airline:"Lufthansa",fromCity:"Frankfurt",fromICAO:"EDDF",toCity:"Oslo",toICAO:"ENGM",durationMinutes:120},
@@ -331,24 +378,22 @@ const ROUTES=(function(){
   return expanded;
 })();
 
-/* FLEET with maxFlightMinutes property for filtering */
 const FLEET=[
   {id:'LH-A320-01',airline:'Lufthansa',type:'A320',seats:180,turnaround:40,status:'idle',locationICAO:'EDDF',maxFlightMinutes:240},
   {id:'EW-A320-01',airline:'Eurowings',type:'A320',seats:180,turnaround:40,status:'idle',locationICAO:'EDDM',maxFlightMinutes:180},
   {id:'SX-B737-01',airline:'SunExpress',type:'737-800',seats:189,turnaround:35,status:'idle',locationICAO:'EDDF',maxFlightMinutes:300}
 ];
 
-/* Pilots */
 let PILOTS=[
   {id:'pilot_loui',name:'Loui Desulier',callSign:'FRENCH',verified:true,password:'louiSecret'},
   {id:'pilot_ivan',name:'Ivan Petrov',callSign:'IPET',verified:true},
   {id:'pilot_anna',name:'Anna Müller',callSign:'AMUL',verified:false}
 ];
 
-/* State */
 let FLEET_LOG=[];
 let PENDING_RESERVATION = null;
 let SESSION=(function(){ try{ const s=sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){return {pilotId:null}; } })();
+
 const DURATIONS=[
   {label:"1–2ч",min:60,max:120},
   {label:"3–4ч",min:180,max:240},
@@ -472,6 +517,8 @@ function renderAirlinePills(){
         if(filterAirline) filterAirline.value = 'all';
       }
       renderRoutesPane();
+      // sync routesControls visual
+      syncRoutesAirlineSelection();
     });
 
     btn.addEventListener('mouseenter', ()=> {
@@ -502,6 +549,7 @@ function renderDurationPills(){
       Array.from(durationsWrap.children).forEach(n=>n.classList.remove('active'));
       if(!wasActive){ btn.classList.add('active'); chosenDur = i; if(filterDuration) filterDuration.value = i; } else { chosenDur=null; if(filterDuration) filterDuration.value='all'; }
       renderRoutesPane();
+      syncRoutesDurationSelection();
     });
     durationsWrap.appendChild(btn);
   });
@@ -533,7 +581,7 @@ function renderAssignLog(){
   });
 }
 
-/* ---------- FLEET RENDER + SEARCH (по хабу и maxFlightMinutes) ---------- */
+/* ---------- FLEET RENDER + SEARCH ---------- */
 function renderFleetList(){
   fleetList.innerHTML='';
   const fa = filterFleetAirline && filterFleetAirline.value || 'all';
@@ -606,7 +654,6 @@ function renderRoutesPane(){
         <div class="duration-tag">${r.durationMinutes} мин</div>
       </div>
     `;
-    // click in Routes: open confirmation flow (reserve candidate aircraft then show confirm modal)
     row.addEventListener('click', ()=> {
       openConfirmFromRoute(r);
     });
@@ -614,7 +661,7 @@ function renderRoutesPane(){
   });
 }
 
-/* ---------- RESERVATION / CONFIRM / RELEASE (shared flow) ---------- */
+/* ---------- RESERVATION / CONFIRM / RELEASE ---------- */
 function reserveAircraft(ac, ownerId, ttlMs=120000){
   if(ac.status==='inFlight') return {ok:false,reason:'inflight'};
   if(ac.status==='reserved') return {ok:false,reason:'already_reserved'};
@@ -674,7 +721,6 @@ function releaseReservationByToken(token){
 
 /* ---------- ROUTES -> CONFIRM FLOW (no generation) ---------- */
 function openConfirmFromRoute(route){
-  // find idle candidate aircraft at route.fromICAO first, otherwise any idle
   let candidates = FLEET.filter(ac=> (ac.locationICAO||'').toUpperCase() === (route.fromICAO||'').toUpperCase() && ac.status==='idle' && (!ac.maxFlightMinutes || ac.maxFlightMinutes >= route.durationMinutes));
   if(!candidates.length) candidates = FLEET.filter(ac=>ac.status==='idle' && (!ac.maxFlightMinutes || ac.maxFlightMinutes >= route.durationMinutes));
   if(!candidates.length){
@@ -757,7 +803,7 @@ function updatePendingTimer(){
   pendingTimer.textContent = `Бронь действует ${left}s`;
 }
 
-/* render confirmed UI same as generation flow */
+/* render confirmed UI */
 function renderConfirmedSection(ac,route,pilotId){
   if(!confirmedSection) return;
   confirmedSection.style.display = 'block';
@@ -799,7 +845,7 @@ function markArrival(aircraftId, pilotId, route){
   alert(`Рейс ${ac.id} помечен как прилетевший`);
 }
 
-/* ---------- AUTH, GENERATE (kept) ---------- */
+/* ---------- AUTH, GENERATE ---------- */
 function choosePilotForAssignment(){
   if(SESSION.pilotId){
     const p=PILOTS.find(x=>x.id===SESSION.pilotId); if(p) return p;
@@ -844,6 +890,101 @@ function generateCreatePending(){
   openConfirmModalForPending();
 }
 
+/* ---------- CONTROLS: routesControls + fleetControls ---------- */
+function renderRoutesControls(){
+  const wrap = document.getElementById('routesAirlines');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  AIRLINES.forEach(a=>{
+    const btn = document.createElement('button');
+    btn.className = 'pill small';
+    btn.style.padding = '6px 10px';
+    btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${a.color};margin-right:8px"></span>${a.name}`;
+    btn.addEventListener('click', ()=>{
+      const current = filterAirline.value;
+      filterAirline.value = (current === a.name) ? 'all' : a.name;
+      renderRoutesPane();
+      syncAirlinePillsFromRoutes(a.name);
+      syncRoutesAirlineSelection();
+    });
+    wrap.appendChild(btn);
+  });
+
+  const dwrap = document.getElementById('routesDurations');
+  dwrap.innerHTML = '';
+  DURATIONS.forEach((d,i)=>{
+    const b = document.createElement('button');
+    b.className = 'pill small';
+    b.textContent = d.label;
+    b.addEventListener('click', ()=>{
+      if(filterDuration.value === String(i)){ filterDuration.value = 'all'; } else filterDuration.value = String(i);
+      renderRoutesPane();
+      syncDurationPillsFromRoutes(i);
+      syncRoutesDurationSelection();
+    });
+    dwrap.appendChild(b);
+  });
+
+  const rp = document.getElementById('routesPilot');
+  rp.textContent = SESSION.pilotId ? (PILOTS.find(p=>p.id===SESSION.pilotId)?.name || '—') : '—';
+}
+
+function renderFleetControls(){
+  const hubSel = document.getElementById('fleetHubQuick');
+  if(!hubSel) return;
+  hubSel.innerHTML = '<option value="any">Все хабы</option>';
+  const hubs = Array.from(new Set(AIRLINES.flatMap(a=>a.hubs)));
+  hubs.forEach(h => {
+    const o = document.createElement('option'); o.value = h; o.textContent = h; hubSel.appendChild(o);
+  });
+
+  document.getElementById('fleetApplyBtn').onclick = ()=>{
+    const hub = hubSel.value;
+    const max = document.getElementById('fleetMaxQuick').value.trim();
+    if(hub && hub !== 'any') filterFleetHub.value = hub; else filterFleetHub.value = 'any';
+    filterFleetMaxFlight.value = max;
+    renderFleetList();
+  };
+  document.getElementById('fleetResetBtn').onclick = ()=>{
+    hubSel.value = 'any';
+    document.getElementById('fleetMaxQuick').value = '';
+    filterFleetHub.value = 'any';
+    filterFleetMaxFlight.value = '';
+    renderFleetList();
+  };
+}
+
+/* sync visual helpers */
+function syncAirlinePillsFromRoutes(selected){
+  Array.from(airlinesWrap.children).forEach(n=>{
+    const name = (n.textContent||'').trim();
+    if(name === selected){ n.classList.add('active'); n.querySelector('.led') && (n.querySelector('.led').style.opacity='0.46'); n.querySelector('.led-rim') && (n.querySelector('.led-rim').style.opacity='0.44'); }
+    else { n.classList.remove('active'); n.querySelector('.led') && (n.querySelector('.led').style.opacity='0.12'); n.querySelector('.led-rim') && (n.querySelector('.led-rim').style.opacity='0.08'); }
+  });
+}
+function syncDurationPillsFromRoutes(idx){
+  Array.from(durationsWrap.children).forEach((n,i)=>{
+    if(i === idx){ n.classList.add('active'); } else n.classList.remove('active');
+  });
+}
+function syncRoutesAirlineSelection(){ // visual highlight in routesControls
+  const val = filterAirline.value || 'all';
+  const wrap = document.getElementById('routesAirlines');
+  if(!wrap) return;
+  Array.from(wrap.children).forEach(btn=>{
+    const txt = btn.textContent.trim();
+    btn.style.boxShadow = (val === txt) ? '0 8px 30px rgba(0,0,0,0.25)' : '';
+  });
+}
+function syncRoutesDurationSelection(){
+  const val = filterDuration.value || 'all';
+  const dwrap = document.getElementById('routesDurations');
+  if(!dwrap) return;
+  Array.from(dwrap.children).forEach((btn,i)=>{
+    btn.style.opacity = (val === String(i)) ? 0.9 : 1;
+  });
+}
+
 /* ---------- MODALS, UI wiring ---------- */
 function openConfirmModal(){ confirmModal.style.display='flex'; }
 function closeConfirmModal(){ confirmModal.style.display='none'; }
@@ -881,13 +1022,11 @@ genBtn.addEventListener('click', ()=> {
   generateCreatePending();
 });
 
-/* search pilot input */
 pilotSearch.addEventListener('input', ()=> renderPilots());
 
-/* filters binding */
-filterAirline && filterAirline.addEventListener('change', ()=> renderRoutesPane());
+filterAirline && filterAirline.addEventListener('change', ()=> { renderRoutesPane(); renderRoutesControls(); });
 filterHub && filterHub.addEventListener('change', ()=> renderRoutesPane());
-filterDuration && filterDuration.addEventListener('change', ()=> renderRoutesPane());
+filterDuration && filterDuration.addEventListener('change', ()=> { renderRoutesPane(); renderRoutesControls(); });
 
 filterFleetAirline && filterFleetAirline.addEventListener('change', ()=> renderFleetList());
 filterFleetHub && filterFleetHub.addEventListener('change', ()=> renderFleetList());
@@ -986,6 +1125,11 @@ function renderAll(){
     });
   });
 
+  renderRoutesControls();
+  renderFleetControls();
+  syncRoutesAirlineSelection();
+  syncRoutesDurationSelection();
+
   if(!SESSION.pilotId){
     showGate();
     sessionBadge.textContent='Неавторизован';
@@ -1000,10 +1144,11 @@ function renderAll(){
     pilotNameEl.textContent = p.name || '—';
     const pb = document.getElementById('pilotBadge');
     if(pb) pb.querySelector('strong').textContent = p.name || '—';
+    const rp = document.getElementById('routesPilot');
+    if(rp) rp.textContent = p.name || '—';
   }
 
   setTimeout(()=>{ moveUnderlineTo(tabGenerate); },80);
-  // expose debug
   window._lh = {PILOTS,ROUTES,AIRLINES,FLEET,SESSION,FLEET_LOG};
 }
 
