@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — splash + tutorial + app</title>
+<title>Lufthansa Helper — splash (YouTube) + tutorial + app</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -221,7 +221,7 @@ body{
   width:60%; min-height:360px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
   background: linear-gradient(180deg, rgba(10,20,40,0.35), rgba(0,0,0,0.35));
 }
-.splash-media video{ width:100%; height:100%; object-fit:cover; display:block; }
+#yt-player{ width:100%; height:100%; }
 .splash-info{
   width:40%; padding:36px; display:flex; flex-direction:column; justify-content:center; gap:18px;
   backdrop-filter: blur(6px);
@@ -387,13 +387,11 @@ body{
   </div>
 </div>
 
-<!-- splash -->
+<!-- splash (YouTube player container) -->
 <div id="splash" class="splash-back" style="display:none;">
   <div class="splash-card" role="dialog" aria-modal="true" aria-label="Welcome">
     <div class="splash-media" id="splashMedia">
-      <video id="splashVideo" playsinline muted autoplay preload="auto" style="display:block;">
-        <source src="media/nyc.mp4" type="video/mp4">
-      </video>
+      <div id="yt-player"></div>
       <div id="videoFallback" class="video-fallback" style="display:none;">
         <div style="text-align:center;max-width:560px;padding:20px">
           <h3 style="margin:0 0 8px;font-weight:800;font-size:20px">Welcome flight preview</h3>
@@ -416,7 +414,7 @@ body{
   </div>
 </div>
 
-<!-- tutorial overlay (appears after splash Continue) -->
+<!-- tutorial overlay -->
 <div id="tour" class="tour-back" style="display:none;">
   <div class="tour-card" role="dialog" aria-modal="true" aria-label="Инструкция для пилотов">
     <div class="tour-step">
@@ -446,6 +444,9 @@ body{
     </div>
   </div>
 </div>
+
+<!-- YouTube IFrame API (added) -->
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
 /* ================= DATA & STATE ================= */
@@ -531,7 +532,6 @@ const btnDemoQuick = document.getElementById('btnDemoQuick');
 const loginCall = document.getElementById('loginCall');
 const loginPass = document.getElementById('loginPass');
 const splash = document.getElementById('splash');
-const splashVideo = document.getElementById('splashVideo');
 const videoFallback = document.getElementById('videoFallback');
 const btnContinue = document.getElementById('btnContinue');
 const btnSkipVideo = document.getElementById('btnSkipVideo');
@@ -545,6 +545,14 @@ const tourNext = document.getElementById('tourNext');
 const genBtn = document.getElementById('genBtn');
 const tabElements = document.querySelectorAll('.tab');
 const liquidUnderline = document.getElementById('liquidUnderline');
+
+/* ===== YouTube player settings (using provided link settings) =====
+   Video ID: 7S7smPw9EiE
+   Parameters: playlist=7S7smPw9EiE, autoplay=1, loop=1, start=40, iv_load_policy=3
+*/
+let ytPlayer = null;
+const YT_VIDEO_ID = '7S7smPw9EiE';
+const YT_AUTOMUTE = 1;
 
 /* tour content (steps) */
 const TOUR_STEPS = [
@@ -738,24 +746,21 @@ function renderSession(){
   }
 }
 
-/* ====== SPLASH & TOUR FLOW ====== */
+/* ====== SPLASH & TOUR & YouTube integration ====== */
 function openSplash(){
   splash.style.display = 'flex';
   appRoot.classList.add('app-blocked');
   document.querySelector('.container').classList.add('app-blocked');
   document.getElementById('appHero').classList.add('app-blocked');
 
-  // video readiness
-  const showFallback = ()=> {
-    try{ splashVideo.style.display = 'none'; }catch(e){}
-    videoFallback.style.display = 'flex';
-  };
-  splashVideo.oncanplay = ()=> {
-    videoFallback.style.display = 'none';
-    splashVideo.style.display = 'block';
-  };
-  splashVideo.onerror = showFallback;
-  setTimeout(()=> { if(splashVideo.readyState === 0) showFallback(); }, 600);
+  // If YT API didn't initialize yet, videoFallback will be shown after a short timeout
+  setTimeout(() => {
+    if(!ytPlayer){
+      try{ document.getElementById('videoFallback').style.display = 'flex'; }catch(e){}
+    } else {
+      try{ ytPlayer.playVideo(); }catch(e){}
+    }
+  }, 600);
 }
 
 function hideSplash(forceHide){
@@ -781,7 +786,6 @@ function hideTour(){
   document.getElementById('appHero').classList.remove('app-blocked');
 }
 
-/* tour navigation */
 function tourSetStep(i){
   const s = TOUR_STEPS[i];
   tourIcon.textContent = s.icon;
@@ -796,31 +800,63 @@ tourNext.addEventListener('click', ()=>{
     tourIndex++;
     tourSetStep(tourIndex);
   } else {
-    // finish tour
     hideTour();
   }
 });
 tourBack.addEventListener('click', ()=>{
   if(tourIndex>0){ tourIndex--; tourSetStep(tourIndex); }
 });
-tourSkip.addEventListener('click', ()=>{
-  // skip whole tour — close and unblock
-  hideTour();
-});
+tourSkip.addEventListener('click', ()=>{ hideTour(); });
 
-/* splash continue / skip behavior */
 btnContinue.addEventListener('click', ()=>{
-  try{ splashVideo.pause(); }catch(e){}
+  try{ if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); }catch(e){}
   hideSplash();
-  // open tutorial automatically after splash; first step can be skipped there
   openTour(0);
 });
 btnSkipVideo.addEventListener('click', ()=>{
-  try{ splashVideo.pause(); }catch(e){}
+  try{ if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); }catch(e){}
   hideSplash();
-  // if user skipped video, still offer tour but start minimized — here we open tour as well
   openTour(0);
 });
+
+/* YouTube API callback — creates player in #yt-player
+   Uses parameters from your provided embed:
+   playlist=7S7smPw9EiE, autoplay=1, loop=1, start=40, iv_load_policy=3
+*/
+function onYouTubeIframeAPIReady() {
+  try {
+    ytPlayer = new YT.Player('yt-player', {
+      videoId: YT_VIDEO_ID,
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        modestbranding: 1,
+        rel: 0,
+        mute: YT_AUTOMUTE,
+        playsinline: 1,
+        enablejsapi: 1,
+        loop: 1,
+        playlist: YT_VIDEO_ID,
+        start: 40,
+        iv_load_policy: 3
+      },
+      events: {
+        onReady: function(e){
+          try { e.target.playVideo(); } catch(err) {}
+        },
+        onStateChange: function(e){
+          // when video ends (should loop, but keep fallback)
+          if(e.data === YT.PlayerState.ENDED){
+            if(document.getElementById('splash').style.display === 'flex'){
+              hideSplash();
+              openTour(0);
+            }
+          }
+        }
+      }
+    });
+  } catch(err){}
+}
 
 /* ====== Reservation flow (kept) ====== */
 function findCandidateAircraftForRoute(route){
@@ -980,11 +1016,12 @@ function init(){
   showGateModal();
   splash.style.display = 'none';
   tour.style.display = 'none';
-  // video fallback handler
-  splashVideo.addEventListener('error', ()=> {
-    videoFallback.style.display = 'flex';
-    splashVideo.style.display = 'none';
-  });
+  // if YT API fails, show fallback after timeout
+  setTimeout(()=> {
+    if(!ytPlayer && document.getElementById('splash').style.display === 'flex'){
+      try{ document.getElementById('videoFallback').style.display = 'flex'; }catch(e){}
+    }
+  }, 1400);
 }
 init();
 </script>
