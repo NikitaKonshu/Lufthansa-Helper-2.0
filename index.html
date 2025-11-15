@@ -3,17 +3,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — polished + centered splash</title>
+<title>Lufthansa Helper — refined splash & instant auth</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-1:#03061a; --bg-2:#05283a; --text:#eaf4ff; --muted:rgba(234,244,255,0.68);
-  --accent-yellow:#ffd54a; --accent-yellow-2:#ffbf3a; --glass-border: rgba(255,255,255,0.06);
+  --accent-yellow:#ffd54a; --accent-yellow-2:#ffbf3a;
+  --glass-border: rgba(255,255,255,0.06);
   --primary-dark:#072022;
   font-family:Inter,system-ui,Arial,sans-serif; font-size:15px;
-  --glass-noise: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feBlend mode="overlay"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.08" fill="%23ffffff"/></svg>');
 }
-/* Reset */
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+/* Basic reset */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
@@ -21,32 +26,35 @@ body{
   background: linear-gradient(160deg,var(--bg-1),var(--bg-2));
   color:var(--text);
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  overflow-y:auto;
+  -webkit-font-smoothing:antialiased;
+  -webkit-overflow-scrolling:touch;
 }
 
-/* App root */
+/* App layout */
 .app-root{display:flex;justify-content:center;align-items:flex-start;padding:18px;min-height:100vh}
-
-/* Hero / glass panels */
 .container{width:100%;max-width:1280px}
+
+/* Hero card (liquid glass) */
 .hero{
   margin-top:28px;border-radius:16px;padding:18px;position:relative;overflow:visible;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)),
     linear-gradient(180deg, rgba(0,8,20,0.55), rgba(0,8,20,0.65));
   border: 1px solid var(--glass-border);
-  box-shadow: 0 20px 60px rgba(2,8,18,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-  backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%);
-  isolation:isolate;
+  box-shadow: 0 20px 60px rgba(2,8,18,0.6);
+  backdrop-filter: blur(10px) saturate(140%);
+  will-change: transform;
 }
-.hero::before{ content:''; position:absolute; inset:0; border-radius:16px; pointer-events:none; box-shadow: inset 0 1px 30px rgba(255,255,255,0.02), inset 0 -20px 60px rgba(0,0,0,0.3); }
 
-/* Header / tabs / controls */
+/* Header */
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{display:flex;gap:12px;align-items:center;min-width:0}
 .logo{width:60px;height:60px;border-radius:12px;background: linear-gradient(180deg,#062b34,#032029);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-yellow);font-size:18px;box-shadow:0 6px 20px rgba(0,0,0,0.45)}
 .title{font-weight:900}
 .subtitle{font-size:13px;color:var(--muted)}
 
+/* Tabs & controls */
 .tabs{display:flex;gap:10px;margin-top:14px;position:relative;flex-wrap:wrap}
 .tab{padding:10px 16px;border-radius:12px;font-weight:800;color:var(--text);background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;transition:transform .12s,box-shadow .12s}
 .tab.active{ transform:translateY(-4px); box-shadow: 0 18px 44px rgba(0,0,0,0.45)}
@@ -58,143 +66,71 @@ body{
 .durations{display:flex;gap:8px;flex-wrap:wrap}
 
 /* Panels */
-.panel{ padding:14px;border-radius:12px;margin-top:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), linear-gradient(180deg, rgba(3,7,18,0.70), rgba(3,7,18,0.72));
-  border:1px solid rgba(255,255,255,0.06);
-  box-shadow:0 30px 80px rgba(2,8,18,0.6);
-  backdrop-filter: blur(6px) saturate(130%);
-  position:relative;
-  isolation:isolate;
-}
-.panel::after{ content:''; position:absolute; inset:0;border-radius:12px; pointer-events:none; background-image: var(--glass-noise); opacity:0.05; mix-blend-mode:overlay; }
+.panel{ padding:14px;border-radius:12px;margin-top:12px;background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), linear-gradient(180deg, rgba(3,7,18,0.70), rgba(3,7,18,0.72));border:1px solid rgba(255,255,255,0.06);box-shadow:0 30px 80px rgba(2,8,18,0.6);backdrop-filter: blur(6px) saturate(130%);position:relative}
+.panel::after{ content:''; position:absolute; inset:0;border-radius:12px; pointer-events:none; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); opacity:0.04; mix-blend-mode:overlay; }
 
-/* Airline grid */
-.airline-grid{ margin-top:14px; display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:start; width:100%; min-width:0; max-height:520px; overflow:auto; padding:14px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); border:1px solid rgba(255,255,255,0.03); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
-.airline{ position:relative; display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow: 0 12px 36px rgba(0,0,0,0.45);cursor:pointer;transition:transform .18s,box-shadow .18s,filter .18s;}
-.airline:hover{ transform: translateY(-8px); box-shadow: 0 36px 90px rgba(0,0,0,0.6) }
-.airline .dot{ width:16px;height:16px;border-radius:50%;flex:0 0 16px;border:2px solid rgba(255,255,255,0.06) }
-.airline .meta{min-width:0}
-.airline .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.airline .code{font-size:12px;color:var(--muted)}
-
-/* SPLASH */
-.splash-back{ position:fixed; inset:0; z-index:11000; display:flex; align-items:center; justify-content:center; background: linear-gradient(160deg, rgba(1,6,18,0.96), rgba(2,8,22,0.97)); overflow:hidden; }
-.splash-gradient{ position:absolute; left:-20%; top:-20%; width:140%; height:140%; border-radius:20%; filter: blur(64px) saturate(140%); mix-blend-mode:screen; opacity:0.95; background: radial-gradient(40% 40% at 18% 22%, rgba(255,200,90,0.14), transparent 12%), radial-gradient(30% 30% at 80% 74%, rgba(0,170,255,0.08), transparent 18%), linear-gradient(110deg, rgba(255,160,60,0.08), rgba(30,130,255,0.04)); animation: gradFloat 16s ease-in-out infinite; }
-.splash-waves{ position:absolute; left:0; right:0; bottom:-6vh; height:46vh; z-index:11030; pointer-events:none; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1200 450"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="%23ffd54a" stop-opacity="0.12"/><stop offset="1" stop-color="%2300aaff" stop-opacity="0.06"/></linearGradient></defs><path d="M0,200 C200,320 400,80 600,200 C800,320 1000,80 1200,200 L1200,450 L0,450 Z" fill="url(%23lg)"/></svg>') center bottom / cover no-repeat; filter: blur(6px) saturate(120%); transform: translateZ(0); animation: waveShift 10s ease-in-out infinite alternate; }
-
-/* ---------- BUTTON STYLES ---------- */
+/* Buttons */
 .btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color: transparent; }
-.center-cta button{ font-weight:900; padding:14px 28px; border-radius:12px; border:0; cursor:pointer; background: linear-gradient(180deg,var(--accent-yellow),var(--accent-yellow-2)); color:var(--primary-dark); position:relative; overflow:hidden; box-shadow: 0 20px 60px rgba(255,165,40,0.12); transition: transform .18s ease, box-shadow .18s ease; }
-.btn-neutral{ padding:9px 12px; border-radius:12px; font-weight:800; color:var(--text); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 26px rgba(2,8,18,0.45); transition: transform .14s ease, box-shadow .14s ease, background .14s ease; }
-.btn-primary{ padding:10px 14px; border-radius:14px; font-weight:900; color:var(--primary-dark); background: linear-gradient(180deg, var(--accent-yellow), var(--accent-yellow-2)); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 18px 48px rgba(255,165,40,0.12); transition: transform .14s ease, box-shadow .14s ease, filter .14s ease; }
-.btn-ghost{ padding:8px 10px; border-radius:10px; font-weight:700; color:var(--muted); background: transparent; border: 1px dashed rgba(255,255,255,0.04); transition: color .12s, border-color .12s; }
+.btn-primary{ padding:10px 14px; border-radius:14px; font-weight:900; color:var(--primary-dark); background: linear-gradient(180deg, var(--accent-yellow), var(--accent-yellow-2)); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 18px 48px rgba(255,165,40,0.12); transition: transform .14s ease, box-shadow .14s ease;}
+.btn-neutral{ padding:9px 12px; border-radius:12px; font-weight:800; color:var(--text); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 26px rgba(2,8,18,0.45); }
+.btn-ghost{ padding:8px 10px; border-radius:10px; font-weight:700; color:var(--muted); background: transparent; border: 1px dashed rgba(255,255,255,0.04); }
 
-/* focus (accessibility) */
-button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
+/* Modal backdrop */
+.modal-back{ display:none; position:fixed; inset:0; z-index:13000; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:20px; transition: opacity .28s ease; }
+.modal{ width:420px; max-width:96%; border-radius:12px; padding:16px; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(5,10,18,0.92)); border:1px solid rgba(255,255,255,0.06); box-shadow:0 30px 80px rgba(0,0,0,0.6); backdrop-filter: blur(8px) saturate(120%); transform: translateY(6px); transition: transform .28s cubic-bezier(.2,.9,.2,1), opacity .28s ease; }
 
-/* ripple & spinner */
-.btn .ripple{ position:absolute; border-radius:50%; transform:scale(0); pointer-events:none; opacity:0.45; background:rgba(255,255,255,0.88); transition: transform 550ms cubic-bezier(.2,.9,.2,1), opacity 350ms ease; will-change: transform, opacity; mix-blend-mode: screen; }
-.btn:active{ transform: translateY(1px) scale(0.998); transition: transform 80ms; }
-.btn .btn-spinner{ display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; margin-right:10px; flex-shrink:0; }
-.btn .btn-spinner svg{ width:18px;height:18px; display:block; animation: btn-spin 900ms linear infinite; transform-origin: center center; }
-@keyframes btn-spin { from{ transform: rotate(0deg) } to{ transform: rotate(360deg) } }
-.btn[aria-disabled="true"], .btn:disabled{ opacity: 0.48; cursor: not-allowed; transform: none; box-shadow: none; pointer-events: none; }
-
-/* modal backdrop centered and layout fixed */
-.modal-back{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:12000;
-  background:rgba(0,0,0,0.6);
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-}
-
-/* modal card */
-.modal{
-  width:420px;
-  max-width:100%;
-  border-radius:12px;
-  padding:16px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(5,10,18,0.93));
-  border:1px solid rgba(255,255,255,0.06);
-  box-shadow:0 30px 80px rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px) saturate(120%);
-}
-
-/* small utility */
+/* Small utilities */
 .kv{font-size:13px;color:var(--muted)}
 .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text)}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
 
-/* responsive */
-@media(max-width:900px){
-  .center-block h2{ font-size:24px; }
-  .panel{ padding:12px }
-  .btn-primary{ padding:10px 12px; }
-}
+/* Splash / stage */
+.splash-back{ position:fixed; inset:0; z-index:14000; display:flex; align-items:center; justify-content:center; background: linear-gradient(160deg, rgba(1,6,18,0.98), rgba(2,8,22,0.98)); overflow:hidden; transition: opacity .52s cubic-bezier(.2,.9,.2,1), transform .52s cubic-bezier(.2,.9,.2,1); will-change: opacity, transform; }
+.splash-center{ position:relative; z-index:14010; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:28px; text-align:center; color:var(--text); transform: translateY(0); }
+.splash-glow{ position:absolute; width:520px; height:220px; left:50%; top:50%; transform:translate(-50%,-38%); border-radius:22px; background: radial-gradient(50% 40% at 50% 30%, rgba(255,200,80,0.12), transparent 30%), radial-gradient(30% 20% at 70% 70%, rgba(0,170,255,0.06), transparent 40%); filter: blur(36px) saturate(150%); pointer-events:none; opacity:0; transition: opacity .9s ease, transform 900ms cubic-bezier(.2,.9,.2,1); will-change: opacity, transform; }
+.splash-back.show-glow .splash-glow{ opacity:1; transform: translate(-50%,-36%); }
 
-/* --- Splash: center button, glow, particles (no logo grid) --- */
-.splash-center {
-  position:relative;
-  z-index:11050;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:auto;
-  padding:24px;
-  flex-direction:column;
-  text-align:center;
-}
-.center-block{ margin:0; display:flex; flex-direction:column; align-items:center; gap:18px; }
-.splash-glow{
-  position:absolute; width:420px; height:160px; left:50%; top:50%; transform:translate(-50%,-38%); border-radius:18px;
-  background: radial-gradient(50% 40% at 50% 30%, rgba(255,200,80,0.12), transparent 30%), radial-gradient(30% 20% at 70% 70%, rgba(0,170,255,0.06), transparent 40%);
-  filter: blur(32px) saturate(150%);
-  pointer-events:none; z-index:11045; opacity:0; transition:opacity .9s ease, transform 1200ms cubic-bezier(.2,.9,.2,1);
-}
-.splash-back.show-glow .splash-glow{ opacity:1; transform:translate(-50%,-36%); }
-
-.splash-center h2{ transform:translateY(12px) scale(0.996); opacity:0; transition: transform 720ms cubic-bezier(.2,.9,.2,1), opacity 720ms ease; letter-spacing: -0.6px; }
+/* Title */
+.splash-center h2{ margin:0; font-size:42px; font-weight:900; letter-spacing:-0.6px; transform: translateY(12px) scale(.996); opacity:0; transition: transform .72s cubic-bezier(.2,.9,.2,1), opacity .72s ease; text-shadow: 0 10px 36px rgba(0,0,0,0.5); }
 .splash-back.show-title .splash-center h2{ transform:translateY(0) scale(1); opacity:1; }
 
-/* liquid-glass minimal button */
-.btn-splash {
-  --glass-border: rgba(255,255,255,0.08);
-  display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  padding:10px 18px; border-radius:12px; cursor:pointer; user-select:none;
-  color: #fff; font-weight:900; font-size:15px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 30px rgba(2,8,18,0.55), inset 0 1px 0 rgba(255,255,255,0.02);
-  backdrop-filter: blur(8px) saturate(140%);
-  transition: transform 280ms cubic-bezier(.2,.9,.2,1), box-shadow 280ms ease, background 220ms ease;
-  position:relative; overflow:hidden; margin: 0 auto;
-}
-.btn-splash::before{
-  content:""; position:absolute; left:-40%; top:-40%; width:140%; height:140%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-  transform: rotate(-18deg) translateX(0); transition: transform 900ms cubic-bezier(.2,.9,.2,1), opacity 600ms ease;
-  opacity:0.7;
-}
-.btn-splash:hover{ transform: translateY(-6px) scale(1.01); box-shadow: 0 22px 64px rgba(0,120,255,0.10), 0 8px 32px rgba(0,0,0,0.6); }
-.btn-splash:active{ transform: translateY(-2px) scale(.998); }
-.btn-splash:focus{ outline: 3px solid rgba(255,210,80,0.12); outline-offset:4px; }
-.btn-splash .led{ width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,#ffd54a,#ffbf3a);box-shadow:0 6px 18px rgba(255,180,40,0.14); flex:0 0 8px; transform:translateZ(0); transition: transform 420ms ease, box-shadow 420ms ease; }
-.btn-splash:hover .led{ transform: translateY(-2px) scale(1.06); box-shadow:0 12px 36px rgba(255,180,40,0.22); }
+/* Subtitle */
+.splash-sub{ color:var(--muted); font-weight:600; font-size:14px; opacity:0; transform: translateY(8px); transition: transform .72s cubic-bezier(.2,.9,.2,1), opacity .72s ease; }
+.splash-back.show-sub .splash-sub{ opacity:1; transform:translateY(0); }
 
-.splash-particles{ position:absolute; inset:0; pointer-events:none; z-index:11040; mix-blend-mode:screen; opacity:0.9; }
+/* Particles canvas */
+.splash-particles{ position:absolute; inset:0; pointer-events:none; z-index:14005; mix-blend-mode:screen; opacity:0.95; filter: blur(0.6px) saturate(120%); }
 
-@keyframes gradFloat{0%{transform:translate3d(-6%,-4%,0)}50%{transform:translate3d(6%,4%,0)}100%{transform:translate3d(-6%,-4%,0)}}
-@keyframes waveShift{from{transform:translateY(6vh)}to{transform:translateY(0vh)}}
+/* Parallax soft lines */
+.splash-lines{ position:absolute; inset:0; z-index:14002; pointer-events:none; opacity:0.10; background-image:
+  radial-gradient(circle at 10% 10%, rgba(255,255,255,0.02) 0 2%, transparent 2%),
+  linear-gradient(90deg, rgba(255,255,255,0.02), transparent 40%, rgba(255,255,255,0.01));
+  transform: translateZ(0);
+}
+
+/* Minimal liquid-glass button centered */
+.btn-splash{ --glass-border: rgba(255,255,255,0.08); display:inline-flex; align-items:center; gap:10px; padding:12px 20px; border-radius:14px; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.008)); border:1px solid var(--glass-border); color:#fff; font-weight:900; font-size:15px; box-shadow: 0 20px 60px rgba(8,16,34,0.52), inset 0 1px 0 rgba(255,255,255,0.02); backdrop-filter: blur(8px) saturate(140%); transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s ease, opacity .22s ease; cursor:pointer; }
+.btn-splash .led{ width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,#ffd54a,#ffbf3a); box-shadow:0 6px 18px rgba(255,180,40,0.14); }
+.btn-splash:active{ transform: translateY(2px) scale(.997); }
+
+/* hiding splash (used on close) */
+.splash-hidden{ opacity:0; transform: translateY(-8px) scale(.997); pointer-events:none; }
+
+/* small responsive */
+@media(max-width:520px){
+  .splash-center h2{ font-size:26px; }
+  .btn-splash{ padding:10px 14px; font-size:14px; }
+  .splash-glow{ width:360px; height:140px; }
+}
+
+/* Accessible focus */
+button:focus{ outline: 3px solid rgba(255,210,80,0.12); outline-offset:4px }
 </style>
 </head>
 <body>
-<div id="appRoot" class="app-root">
+<div id="appRoot" class="app-root" aria-hidden="false">
   <div class="container">
-    <div id="appHero" class="hero">
+    <div id="appHero" class="hero" role="main" aria-label="Main app">
       <div class="header">
         <div class="brand">
           <div class="logo">LH</div>
@@ -290,25 +226,24 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
   </div>
 </div>
 
-<!-- Splash -->
-<div id="splash" class="splash-back">
-  <div class="splash-gradient g1"></div>
-  <div class="splash-gradient g2"></div>
-  <div class="splash-gradient g3"></div>
-  <div class="splash-waves"></div>
-
-  <div class="splash-center" role="dialog" aria-modal="true" aria-label="Welcome">
-    <div class="splash-glow"></div>
-    <div class="center-block">
-      <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
-      <div class="center-cta">
-        <button id="splashContinue" class="btn">Дальше</button>
-      </div>
+<!-- Enhanced Splash -->
+<div id="splash" class="splash-back" role="dialog" aria-modal="true" aria-label="Welcome overlay">
+  <div class="splash-lines" aria-hidden="true"></div>
+  <canvas id="splashParticles" class="splash-particles" aria-hidden="true"></canvas>
+  <div class="splash-center">
+    <div class="splash-glow" aria-hidden="true"></div>
+    <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
+    <div class="splash-sub">Демонстрационный интерфейс · выбор авиакомпаний и интервалов</div>
+    <div class="center-cta">
+      <button id="splashContinue" class="btn-splash" aria-label="Дальше">
+        <span class="led" aria-hidden="true"></span>
+        <span class="splash-label">Дальше</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Gate modal (центральный, обязательный пароль) -->
+<!-- Gate modal (mandatory password) -->
 <div id="gateModal" class="modal-back" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Вход">
     <div style="font-weight:900">Вход в систему</div>
@@ -337,11 +272,13 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
   </div>
 </div>
 
-<!-- Tour -->
-<div id="tour" class="modal-back" style="display:none;align-items:center;justify-content:center">
+<!-- Tour modal (instruction) -->
+<div id="tour" class="modal-back" style="display:none;align-items:center;justify-content:center" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true">
     <div style="font-weight:900">Краткая инструкция</div>
-    <div class="small kv" style="margin-top:8px">1) Выберите авиакомпанию; 2) Выберите интервал времени; 3) Нажмите СГЕНЕРИРОВАТЬ и подтвердите бронь.</div>
+    <div class="small kv" style="margin-top:8px">
+      1) Выберите авиакомпанию; 2) Выберите интервал времени; 3) Нажмите СГЕНЕРИРОВАТЬ; 4) Подтвердите бронь.
+    </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
       <button id="tourSkip" class="btn-neutral btn">Пропустить</button>
       <button id="tourDone" class="btn-primary btn">Готово</button>
@@ -349,8 +286,8 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
   </div>
 </div>
 
-<!-- Confirm -->
-<div id="confirmModal" class="modal-back" style="display:none;">
+<!-- Confirm modal -->
+<div id="confirmModal" class="modal-back" style="display:none;" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Подтвердить бронь">
     <div style="font-weight:900">Подтвердить рейс</div>
     <div id="confirmDetails" class="kv" style="margin-top:8px"></div>
@@ -362,7 +299,11 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
 </div>
 
 <script>
-/* ================= DATA & STATE ================= */
+/* ================== APP LOGIC (preserves auth / generate behavior) ================== */
+/* Minimal helpers, data and render functions are preserved from previous version.
+   Key changes: splash behavior + immediate open gateModal + tour after pressing Дальше.
+*/
+
 const CODEWORD = 'quickaccess2025';
 const SESSION_KEY = 'lh_force_auth_v1';
 const LOG_KEY = 'lh_fleet_log_v1';
@@ -395,16 +336,7 @@ function generateRoutesForAirlines(airlines){
       const to = baseAirports[(ai + i + 3) % baseAirports.length];
       const duration = 60 + (i*30) + (ai*15) + ((i%2)?20:0);
       const id = `${a.code}-${seq++}`;
-      out.push({
-        id,
-        airline: a.name,
-        airlineCode: a.code,
-        fromICAO: from,
-        toICAO: to,
-        fromCity: `City-${from}`,
-        toCity: `City-${to}`,
-        durationMinutes: duration
-      });
+      out.push({ id, airline: a.name, airlineCode: a.code, fromICAO: from, toICAO: to, fromCity: `City-${from}`, toCity: `City-${to}`, durationMinutes: duration });
     }
   });
   return out;
@@ -425,7 +357,6 @@ let PILOTS = [
 
 let FLEET_LOG = loadFromStorage(LOG_KEY, []);
 let CURRENT_FLIGHTS = loadFromStorage(CURRENT_FLIGHTS_KEY, []);
-
 let PENDING_RESERVATION = null;
 let SESSION = (function(){ try{ const s = sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
 
@@ -435,7 +366,9 @@ let searchQuery = '';
 
 /* DOM refs */
 const splash = document.getElementById('splash');
+const splashParticles = document.getElementById('splashParticles');
 const splashContinue = document.getElementById('splashContinue');
+const splashTitle = document.getElementById('splashTitle');
 const airGrid = document.getElementById('airGrid');
 const durWrap = document.getElementById('durations');
 const airSearch = document.getElementById('airSearch');
@@ -456,43 +389,38 @@ const genBtn = document.getElementById('genBtn');
 const tabElements = document.querySelectorAll('.tab');
 const liquidUnderline = document.getElementById('liquidUnderline');
 const currentFlightsEl = document.getElementById('currentFlights');
+const tourModal = document.getElementById('tour');
+const tourSkip = document.getElementById('tourSkip');
+const tourDone = document.getElementById('tourDone');
 
 /* helpers */
 function nowMs(){return Date.now();}
 function saveToStorage(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 function loadFromStorage(k, def){ try{ const s = localStorage.getItem(k); return s?JSON.parse(s):def; }catch(e){ return def; } }
-function log(msg){ FLEET_LOG.unshift({ts:nowMs(),msg}); saveToStorage(LOG_KEY,FLEET_LOG); renderAssignLog(); }
 function uid(prefix='id'){ return prefix+'_'+Math.random().toString(36).slice(2,9); }
+function log(msg){ FLEET_LOG.unshift({ts:nowMs(),msg}); saveToStorage(LOG_KEY,FLEET_LOG); renderAssignLog(); }
 
-/* ====== Render functions ====== */
+/* Renders (kept concise) */
 function renderDurations(){ durWrap.innerHTML=''; DURATIONS.forEach((d,i)=>{ const b=document.createElement('div'); b.className='time-pill btn'; b.dataset.idx=i; b.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><div style="width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),#ffbf4a)"></div><div><div class="label">${d.label}</div><div class="hint" style="font-size:12px;color:var(--muted)">Интервал</div></div></div>`; b.addEventListener('click', ()=>{ chosenDuration=(chosenDuration===i)?null:i; updateActiveUI(); renderLists(); }); if(chosenDuration===i) b.style.boxShadow='0 26px 64px rgba(255,175,40,0.28)'; durWrap.appendChild(b); }); }
-
 function renderAirGrid(){ airGrid.innerHTML=''; const filtered=AIRLINES.filter(a=>{ if(!searchQuery) return true; const q=searchQuery.toLowerCase(); return a.name.toLowerCase().includes(q)||(a.code&&a.code.toLowerCase().includes(q)); }); filtered.forEach(a=>{ const card=document.createElement('div'); card.className='airline'; card.dataset.airline=a.name; card.innerHTML=`<div class="dot" style="background:${a.color}"></div><div class="meta"><div class="name">${a.name}</div><div class="code">${a.code}</div></div>`; card.addEventListener('click', ()=>{ chosenAirline=(chosenAirline===a.name)?null:a.name; updateActiveUI(); renderLists(); placeUnderline(document.querySelector('.tab.active')); }); airGrid.appendChild(card); }); updateActiveUI(); }
-
 function renderRoutes(){ routesList.innerHTML=''; const list=ROUTES.filter(r=>{ if(chosenAirline&&r.airline!==chosenAirline) return false; if(chosenDuration!==null){ const d=DURATIONS[chosenDuration]; if(!(r.durationMinutes>=d.min&&r.durationMinutes<=d.max)) return false; } return true; }); if(!list.length){ routesList.innerHTML='<div class="kv">Нет направлений</div>'; return; } list.forEach(r=>{ const row=document.createElement('div'); row.className='route-item'; row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.padding='10px'; row.style.borderRadius='10px'; row.style.marginTop='8px'; row.style.background='linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))'; row.innerHTML=`<div><div style="font-weight:800">${r.fromICAO} → ${r.toICAO} · ${r.airlineCode}</div><div class="kv">${r.fromCity} → ${r.toCity}</div></div><div style="text-align:right"><div class="kv">${r.durationMinutes} мин</div><div style="margin-top:8px"><button class="btn-primary btn" data-route-id="${r.id}">Выбрать</button></div></div>`; routesList.appendChild(row); }); routesList.querySelectorAll('button[data-route-id]').forEach(b=>{ b.addEventListener('click', ()=>{ const id=b.getAttribute('data-route-id'); const route=ROUTES.find(x=>x.id===id); if(route) openConfirmFromRoute(route); }); }); }
-
 function renderFleet(){ fleetList.innerHTML=''; const list=FLEET.filter(a=>{ if(chosenAirline&&a.airline!==chosenAirline) return false; if(chosenDuration!==null){ const d=DURATIONS[chosenDuration]; if(a.maxFlightMinutes<d.min) return false; } return true; }); if(!list.length){ fleetList.innerHTML='<div class="kv">Нет самолётов</div>'; return; } list.forEach(a=>{ const pct=Math.min(100,Math.round((a.fuelMinutes/Math.max(a.maxFlightMinutes,300))*100)); const div=document.createElement('div'); div.className='route-item'; div.style.display='flex'; div.style.justifyContent='space-between'; div.style.alignItems='center'; div.style.marginTop='8px'; div.innerHTML=`<div><div style="font-weight:800">${a.id}</div><div class="kv">${a.airline} · ${a.type} · ${a.locationICAO}</div></div><div class="kv">${pct}% · ${a.fuelMinutes} мин</div>`; fleetList.appendChild(div); }); }
-
 function renderPilots(){ pilotListEl.innerHTML=''; const q=(pilotSearch.value||'').toLowerCase().trim(); PILOTS.filter(p=>!q||(p.name+' '+p.callSign).toLowerCase().includes(q)).forEach(p=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px'; row.innerHTML=`<div><strong>${p.name}</strong><div class="kv">${p.callSign} ${p.verified? '· Verified':''}</div></div>`; const b=document.createElement('button'); b.className='btn-neutral btn'; b.textContent='Войти'; b.addEventListener('click',()=>{ loginCall.value=p.callSign||''; loginPass.value=''; showGateModal(); }); row.appendChild(b); pilotListEl.appendChild(row); }); }
-
 function renderAssignLog(){ const el=document.getElementById('log'); el.innerHTML=''; if(!FLEET_LOG.length){ el.textContent='Пусто'; return; } FLEET_LOG.slice(-200).reverse().forEach(e=>{ const d=document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent=`${new Date(e.ts).toLocaleString()} — ${e.msg}`; el.appendChild(d); }); }
-
 function renderCurrentFlights(){ currentFlightsEl.innerHTML=''; if(!CURRENT_FLIGHTS.length){ currentFlightsEl.textContent='Нет текущих рейсов'; return; } CURRENT_FLIGHTS.forEach(f=>{ const el=document.createElement('div'); el.className='kv'; el.style.marginTop='8px'; el.innerHTML=`<div style="font-weight:800">${f.aircraftId} · ${f.airline}</div><div class="kv">${f.fromICAO}→${f.toICAO} · ${f.durationMinutes} мин · Пилот ${f.pilotCallsign}</div>`; currentFlightsEl.appendChild(el); }); }
 
-/* ====== Auth & session ====== */
-function showGateModal(){ gateModal.style.display='flex'; gateModal.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),50); }
+/* Session & auth (password required) */
+function showGateModal(){ gateModal.style.display='flex'; gateModal.setAttribute('aria-hidden','false'); gateModal.style.opacity='1'; gateModal.querySelector('.modal').style.opacity='1'; setTimeout(()=> loginCall.focus(),60); }
 function hideGateModal(){ gateModal.style.display='none'; gateModal.setAttribute('aria-hidden','true'); }
-
-btnLogin.addEventListener('click', async ()=> {
-  const cs = (loginCall.value||'').trim();
-  const pass = (loginPass.value||'').trim();
+btnLogin.addEventListener('click', async ()=>{
+  const cs = (loginCall.value||'').trim(); const pass = (loginPass.value||'').trim();
   if(!cs){ alert('Введите позывной'); loginCall.focus(); return; }
   if(!pass){ alert('Введите пароль или кодовое слово'); loginPass.focus(); return; }
   const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
   if(!p){ alert('Пилот не найден'); return; }
   setButtonLoading(btnLogin, true, {label:'Вход...'});
   try{
-    await new Promise(r=>setTimeout(r,700));
+    await new Promise(r=>setTimeout(r,600));
     if(pass === CODEWORD || pass === p.password){
       SESSION.pilotId = p.id; sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); renderSession();
       hideGateModal();
@@ -501,27 +429,17 @@ btnLogin.addEventListener('click', async ()=> {
       log(`Пилот ${p.callSign} вошёл в систему`);
     } else {
       alert('Неверный пароль');
-      loginPass.focus();
     }
-  } finally {
-    setButtonLoading(btnLogin, false);
-  }
+  } finally { setButtonLoading(btnLogin, false); }
 });
-
 btnDemoQuick.addEventListener('click', ()=>{ loginPass.value = CODEWORD; if(!loginCall.value.trim()) loginCall.value = PILOTS[0].callSign; btnLogin.click(); });
 
 openGateBtn.addEventListener('click', showGateModal);
 openGate2.addEventListener('click', showGateModal);
-
 logoutBtn.addEventListener('click', ()=>{ SESSION.pilotId = null; sessionStorage.removeItem(SESSION_KEY); renderSession(); showGateModal(); });
-
 function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {}; sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
 
-/* ====== Splash handling (centered button, no logo grid) ====== */
-function openSplash(){ splash.style.display = 'flex'; document.body.classList.add('splash-open'); }
-function hideSplash(){ splash.style.display = 'none'; document.body.classList.remove('splash-open'); }
-
-/* ====== Reservation flow ====== */
+/* Reservation flow kept (unchanged behavior) */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.maxFlightMinutes!=='number' || ac.maxFlightMinutes >= dur) && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -554,17 +472,7 @@ document.getElementById('confirmAccept').addEventListener('click', ()=> {
   ac.status='inFlight';
   ac.availableAt = nowMs() + (PENDING_RESERVATION.route.durationMinutes||120)*60000 + (ac.turnaround||0)*60000;
   delete ac.reservedToken; delete ac.reservedBy; delete ac.reservedUntil;
-  const flight = {
-    id: uid('flt'),
-    aircraftId: ac.id,
-    airline: ac.airline,
-    fromICAO: PENDING_RESERVATION.route.fromICAO,
-    toICAO: PENDING_RESERVATION.route.toICAO,
-    durationMinutes: PENDING_RESERVATION.route.durationMinutes,
-    pilotId: p.id,
-    pilotCallsign: p.callSign,
-    ts: nowMs()
-  };
+  const flight = { id: uid('flt'), aircraftId: ac.id, airline: ac.airline, fromICAO: PENDING_RESERVATION.route.fromICAO, toICAO: PENDING_RESERVATION.route.toICAO, durationMinutes: PENDING_RESERVATION.route.durationMinutes, pilotId: p.id, pilotCallsign: p.callSign, ts: nowMs() };
   CURRENT_FLIGHTS.unshift(flight);
   saveToStorage(CURRENT_FLIGHTS_KEY, CURRENT_FLIGHTS);
   FLEET_LOG.unshift({ts: nowMs(), event:'assign_confirmed', msg:`Рейс подтверждён ${flight.aircraftId} ${flight.fromICAO}->${flight.toICAO} пилот ${flight.pilotCallsign}`});
@@ -586,9 +494,8 @@ document.getElementById('confirmCancel').addEventListener('click', ()=> {
 /* periodic maintenance */
 setInterval(()=>{ const now=nowMs(); FLEET.forEach(ac=>{ if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil<=now){ ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.unshift({ts:now,msg:`Резервация истекла ${ac.id}`}); } if(ac.status==='inFlight' && ac.availableAt && ac.availableAt<=now){ ac.status='idle'; delete ac.availableAt; FLEET_LOG.unshift({ts:now,msg:`Самолёт вернулся в сервис ${ac.id}`}); } }); saveToStorage(LOG_KEY, FLEET_LOG); renderAssignLog(); renderFleet(); },1500);
 
-/* UI helpers & selection visuals */
+/* UI helpers */
 function updateActiveUI(){ Array.from(airGrid.children).forEach(card=>{ const name = card.getAttribute('data-airline'); if(name === chosenAirline){ card.style.boxShadow = `0 36px 120px ${hexToRgba((AIRLINES.find(x=>x.name===name)||{color:'#ffbf3a'}).color,0.14)}`; } else { card.style.boxShadow = ''; } }); Array.from(durWrap.children).forEach((b,idx)=>{ if(idx===chosenDuration) b.style.boxShadow='0 26px 64px rgba(255,175,40,0.28)'; else b.style.boxShadow=''; }); }
-
 function placeUnderline(tabEl){ if(!tabEl){ liquidUnderline.style.opacity='0'; return; } const parentRect = tabEl.parentElement.getBoundingClientRect(); const rect = tabEl.getBoundingClientRect(); liquidUnderline.style.left=(rect.left-parentRect.left)+'px'; liquidUnderline.style.width=rect.width+'px'; liquidUnderline.style.opacity='1'; }
 tabElements.forEach(tab=>{ tab.addEventListener('click', ()=>{ tabElements.forEach(t=>t.classList.remove('active')); tab.classList.add('active'); const target=tab.getAttribute('data-target'); ['panelGenerate','panelRoutes','panelFleet'].forEach(id=>{ const el=document.getElementById(id); if(!el) return; el.style.display=(id===target)?'block':'none'; }); genBtn.style.display=(target==='panelGenerate')?'inline-flex':'none'; requestAnimationFrame(()=>placeUnderline(tab)); }); });
 window.addEventListener('resize', ()=>{ const active=document.querySelector('.tab.active'); if(active) placeUnderline(active); });
@@ -605,168 +512,99 @@ genBtn.addEventListener('click', async () => {
     if(!pool.length){ alert('Нет маршрутов по текущим фильтрам'); return; }
     const route=pool[Math.floor(Math.random()*pool.length)];
     openConfirmFromRoute(route);
-  } finally {
-    setButtonLoading(genBtn,false);
-  }
+  } finally { setButtonLoading(genBtn,false); }
 });
 
-/* render lists */
+/* Render lists helper */
 function renderLists(){ renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); updateActiveUI(); renderAssignLog(); renderCurrentFlights(); }
 
-/* util */
+/* utilities */
 function hexToRgba(hex, a=1){ const h = hex.replace('#',''); const full = h.length===3?h.split('').map(c=>c+c).join(''):h; const num=parseInt(full,16); const r=(num>>16)&255,g=(num>>8)&255,b=num&255; return `rgba(${r}, ${g}, ${b}, ${a})`; }
 
-/* tour */
-const TOUR_STEPS = [{icon:'1', title:'Выбор авиакомпании', text:''},{icon:'2', title:'Выбор времени', text:''},{icon:'3', title:'Генерация и бронь', text:''}];
-let tourIndex=0;
-function openTour(startIndex=0){ tourIndex=startIndex||0; document.getElementById('tour').style.display='flex'; }
-document.getElementById('tourDone').addEventListener('click', ()=>{ if(tourIndex<TOUR_STEPS.length-1){ tourIndex++; } else { document.getElementById('tour').style.display='none'; } });
-document.getElementById('tourSkip').addEventListener('click', ()=>{ document.getElementById('tour').style.display='none'; });
+/* Tour (instruction) */
+function openTour(startIndex=0){ tourModal.style.display='flex'; tourModal.setAttribute('aria-hidden','false'); }
+tourDone.addEventListener('click', ()=>{ tourModal.style.display='none'; tourModal.setAttribute('aria-hidden','true'); });
+tourSkip.addEventListener('click', ()=>{ tourModal.style.display='none'; tourModal.setAttribute('aria-hidden','true'); });
 
-/* init */
-function init(){ renderLists(); const defaultTab=document.querySelector('.tab[data-target="panelGenerate"]'); if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); } renderSession(); openSplash(); }
-init();
-
-/* ================= Button polish utilities (ripple, spinner, loading) ================= */
+/* Button polish (ripple & loading) */
 function createRippleEl(){ const r=document.createElement('span'); r.className='ripple'; r.style.width=r.style.height='8px'; r.style.left='0px'; r.style.top='0px'; return r; }
-function attachRipple(btn){
-  if(!btn) return;
-  btn.classList.add('btn');
-  btn.addEventListener('pointerdown', function(ev){
-    if(btn.getAttribute('aria-disabled') === 'true' || btn.disabled) return;
-    const rect = btn.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 1.4;
-    let ripple = btn.querySelector('.ripple');
-    if(!ripple){ ripple = createRippleEl(); btn.prepend(ripple); }
-    ripple.style.width = ripple.style.height = size + 'px';
-    const x = ev.clientX - rect.left - size/2;
-    const y = ev.clientY - rect.top - size/2;
-    ripple.style.left = x + 'px';
-    ripple.style.top = y + 'px';
-    ripple.style.transform = 'scale(0)';
-    ripple.style.opacity = '0.45';
-    void ripple.offsetWidth;
-    ripple.style.transform = 'scale(1)';
-    ripple.style.transition = 'transform 550ms cubic-bezier(.2,.9,.2,1), opacity 420ms ease';
-    setTimeout(()=> { ripple.style.opacity = '0'; }, 420);
-  }, {passive:true});
-}
-function setButtonLoading(btn, isLoading, opts = {}){
-  if(!btn) return;
-  if(isLoading){
-    btn.setAttribute('aria-disabled','true'); btn.disabled = true;
-    if(!btn.querySelector('.btn-spinner')){
-      const spinnerWrap = document.createElement('span'); spinnerWrap.className = 'btn-spinner';
-      spinnerWrap.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="rgba(0,0,0,0.12)" stroke-width="3"/><path d="M22 12a10 10 0 0 1-10 10" stroke="rgba(0,0,0,0.36)" stroke-width="3" stroke-linecap="round"/></svg>';
-      btn.insertBefore(spinnerWrap, btn.firstChild);
-    }
-    if(opts.label){
-      if(!btn._origLabel) btn._origLabel = btn.querySelector('.btn-label') ? btn.querySelector('.btn-label').textContent : btn.textContent;
-      let lab = btn.querySelector('.btn-label');
-      if(!lab){ lab = document.createElement('span'); lab.className = 'btn-label'; btn.childNodes.forEach(n=>{ if(n.nodeType === Node.TEXT_NODE && n.textContent.trim()) n.remove(); }); btn.appendChild(lab); }
-      lab.textContent = opts.label;
-    }
-  } else {
-    btn.removeAttribute('aria-disabled'); btn.disabled = false;
-    const spinner = btn.querySelector('.btn-spinner'); if(spinner) spinner.remove();
-    if(btn._origLabel){ let lab = btn.querySelector('.btn-label'); if(lab) lab.textContent = btn._origLabel; else btn.textContent = btn._origLabel; delete btn._origLabel; }
-  }
-}
-function enhanceAllButtons(scope=document){
-  const sel = scope.querySelectorAll('.btn-primary, .btn-neutral, .btn-ghost, button.btn');
-  sel.forEach(b=>{
-    attachRipple(b);
-    if(!b.querySelector('.btn-label')){
-      const text = b.textContent.trim();
-      b.textContent = '';
-      const span = document.createElement('span'); span.className = 'btn-label'; span.textContent = text;
-      b.appendChild(span);
-    }
-  });
-}
-if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', ()=> enhanceAllButtons(document)); } else { enhanceAllButtons(document); }
+function attachRipple(btn){ if(!btn) return; btn.classList.add('btn'); btn.addEventListener('pointerdown', function(ev){ if(btn.getAttribute('aria-disabled') === 'true' || btn.disabled) return; const rect = btn.getBoundingClientRect(); const size = Math.max(rect.width, rect.height) * 1.4; let ripple = btn.querySelector('.ripple'); if(!ripple){ ripple = createRippleEl(); btn.prepend(ripple); } ripple.style.width = ripple.style.height = size + 'px'; const x = ev.clientX - rect.left - size/2; const y = ev.clientY - rect.top - size/2; ripple.style.left = x + 'px'; ripple.style.top = y + 'px'; ripple.style.transform = 'scale(0)'; ripple.style.opacity = '0.45'; void ripple.offsetWidth; ripple.style.transform = 'scale(1)'; ripple.style.transition = 'transform 550ms cubic-bezier(.2,.9,.2,1), opacity 420ms ease'; setTimeout(()=> { ripple.style.opacity = '0'; }, 420); }, {passive:true}); }
+function setButtonLoading(btn, isLoading, opts = {}){ if(!btn) return; if(isLoading){ btn.setAttribute('aria-disabled','true'); btn.disabled = true; if(!btn.querySelector('.btn-spinner')){ const spinnerWrap = document.createElement('span'); spinnerWrap.className = 'btn-spinner'; spinnerWrap.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="rgba(0,0,0,0.12)" stroke-width="3"/><path d="M22 12a10 10 0 0 1-10 10" stroke="rgba(0,0,0,0.36)" stroke-width="3" stroke-linecap="round"/></svg>'; btn.insertBefore(spinnerWrap, btn.firstChild); } if(opts.label){ if(!btn._origLabel) btn._origLabel = btn.querySelector('.btn-label') ? btn.querySelector('.btn-label').textContent : btn.textContent; let lab = btn.querySelector('.btn-label'); if(!lab){ lab = document.createElement('span'); lab.className = 'btn-label'; btn.childNodes.forEach(n=>{ if(n.nodeType === Node.TEXT_NODE && n.textContent.trim()) n.remove(); }); btn.appendChild(lab); } lab.textContent = opts.label; } } else { btn.removeAttribute('aria-disabled'); btn.disabled = false; const spinner = btn.querySelector('.btn-spinner'); if(spinner) spinner.remove(); if(btn._origLabel){ let lab = btn.querySelector('.btn-label'); if(lab) lab.textContent = btn._origLabel; else btn.textContent = btn._origLabel; delete btn._origLabel; } } }
+function enhanceAllButtons(scope=document){ const sel = scope.querySelectorAll('.btn-primary, .btn-neutral, .btn-ghost, .btn-splash, button.btn'); sel.forEach(b=>{ attachRipple(b); if(!b.querySelector('.btn-label')){ const text = b.textContent.trim(); b.textContent = ''; const span = document.createElement('span'); span.className = 'btn-label'; span.textContent = text; b.appendChild(span); } }); }
+document.addEventListener('DOMContentLoaded', ()=> enhanceAllButtons(document));
 
-/* helper: render session/pilots/logs initially */
-function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {}; sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
-renderPilots(); renderAssignLog(); renderCurrentFlights();
-</script>
-
-<!-- Splash enhancer JS (center button, optional particles, NO logo grid) -->
-<script>
+/* Splash particles (lightweight) */
 (function(){
-  const splash = document.getElementById('splash');
-  if(!splash) return;
-
-  // particles canvas (optional visual depth)
-  const canvas = document.createElement('canvas'); canvas.className='splash-particles'; splash.appendChild(canvas);
+  const canvas = splashParticles;
+  if(!canvas) return;
   const ctx = canvas.getContext && canvas.getContext('2d');
-  function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-
-  const particles = [];
-  const P_COUNT = Math.min(70, Math.floor((window.innerWidth*window.innerHeight)/120000));
-  for(let i=0;i<P_COUNT;i++){
-    particles.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height*0.45 + canvas.height*0.05,
-      r: Math.random()*1.8 + 0.6,
-      vx: (Math.random()-0.5)*0.14,
-      vy: -Math.random()*0.06 - 0.02,
-      alpha: Math.random()*0.6 + 0.12,
-      hue: 200 + Math.random()*60
-    });
-  }
+  function resize(){ canvas.width = window.innerWidth * devicePixelRatio; canvas.height = window.innerHeight * devicePixelRatio; canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; if(ctx) ctx.scale(devicePixelRatio, devicePixelRatio); }
+  resize(); window.addEventListener('resize', resize);
+  const particles = []; const MAX = Math.min(70, Math.floor((window.innerWidth*window.innerHeight)/140000));
+  for(let i=0;i<MAX;i++){ particles.push({ x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight*0.5 + 20, r: Math.random()*1.6+0.6, vx:(Math.random()-0.5)*0.12, vy:-Math.random()*0.04-0.01, a: Math.random()*0.6+0.08, hue: 200 + Math.random()*60 }); }
   let raf;
-  function drawParticles(){
+  function frame(){
     if(!ctx) return;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach(p=>{
       p.x += p.vx; p.y += p.vy;
-      if(p.y < -10 || p.x < -20 || p.x > canvas.width+20){
-        p.x = Math.random()*canvas.width;
-        p.y = canvas.height*0.65 + Math.random()*40;
-        p.vx = (Math.random()-0.5)*0.14;
-        p.vy = -Math.random()*0.06 - 0.02;
-        p.alpha = Math.random()*0.6 + 0.12;
-      }
+      if(p.y < -10 || p.x < -20 || p.x > window.innerWidth+20){ p.x = Math.random()*window.innerWidth; p.y = window.innerHeight*0.7 + Math.random()*40; p.vx=(Math.random()-0.5)*0.12; p.vy=-Math.random()*0.04-0.01; p.a=Math.random()*0.6+0.08; }
       ctx.beginPath();
       const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r*8);
-      g.addColorStop(0, `hsla(${p.hue},90%,65%,${p.alpha})`);
-      g.addColorStop(0.5, `hsla(${p.hue},90%,65%,${p.alpha*0.12})`);
-      g.addColorStop(1, `hsla(${p.hue},90%,65%,0)`);
-      ctx.fillStyle = g;
-      ctx.arc(p.x, p.y, p.r*6, 0, Math.PI*2);
-      ctx.fill();
+      g.addColorStop(0, `hsla(${p.hue}, 90%, 65%, ${p.a})`);
+      g.addColorStop(0.5, `hsla(${p.hue}, 90%, 65%, ${p.a*0.12})`);
+      g.addColorStop(1, `hsla(${p.hue}, 90%, 65%, 0)`);
+      ctx.fillStyle = g; ctx.arc(p.x, p.y, p.r*6, 0, Math.PI*2); ctx.fill();
     });
-    raf = requestAnimationFrame(drawParticles);
+    raf = requestAnimationFrame(frame);
   }
-
-  // staged reveal: glow -> title -> particles
-  setTimeout(()=> splash.classList.add('show-glow'), 120);
-  setTimeout(()=> splash.classList.add('show-title'), 380);
-  setTimeout(()=> { if(ctx) drawParticles(); }, 780);
-
-  // configure central button (no logos)
-  const btn = splash.querySelector('#splashContinue');
-  if(btn){
-    btn.classList.add('btn-splash');
-    btn.innerHTML = '<span class="led" aria-hidden="true"></span><span class="splash-label">Дальше</span>';
-    btn.addEventListener('click', ()=>{
-      btn.style.transform = 'scale(.995) translateY(2px)';
-      setTimeout(()=> btn.style.transform = '', 220);
-      splash.style.transition = 'opacity .45s ease, transform .45s ease';
-      splash.style.opacity = '0';
-      splash.style.transform = 'translateY(-6px) scale(.996)';
-      if(raf) cancelAnimationFrame(raf);
-      setTimeout(()=> { splash.style.display='none'; }, 460);
-    });
-  }
-
-  document.addEventListener('visibilitychange', ()=> {
-    if(document.hidden && raf){ cancelAnimationFrame(raf); raf = null; }
-    else if(!raf){ drawParticles(); }
-  });
+  setTimeout(()=>{ frame(); }, 220);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden && raf){ cancelAnimationFrame(raf); raf = null; } else if(!raf){ frame(); } });
 })();
+
+/* Splash staged reveal and seamless open->modal->tour flow */
+(function(){
+  // Stage reveal
+  setTimeout(()=> splash.classList.add('show-glow'), 120);
+  setTimeout(()=> splash.classList.add('show-title'), 420);
+  setTimeout(()=> splash.classList.add('show-sub'), 680);
+
+  // Close splash and open gate modal + tour sequence
+  const openGateSequence = async () => {
+    // hide splash (smooth)
+    splash.classList.add('splash-hidden');
+    // after animation complete, remove from flow
+    await new Promise(r=>setTimeout(r,520));
+    splash.style.display = 'none';
+    // open gate modal immediately (no jump)
+    showGateModal();
+    // small delay then open tour if checkbox on modal is checked
+    setTimeout(()=>{
+      if(document.getElementById('tourAfterLogin') && document.getElementById('tourAfterLogin').checked){
+        // open tour after a slight delay so modal has rendered
+        setTimeout(()=> openTour(0), 420);
+      }
+    }, 240);
+  };
+
+  // Splash button: smooth press -> sequence
+  splashContinue.addEventListener('click', ()=>{
+    // micro interaction
+    splashContinue.animate([{ transform:'scale(0.995) translateY(2px)' }, { transform:'scale(1)' }], { duration: 220, easing:'cubic-bezier(.2,.9,.2,1)' });
+    // immediately start open sequence
+    openGateSequence();
+  });
+
+  // If user dismisses splash via other code, ensure modals still behave
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ if(splash && splash.style.display !== 'none'){ splash.classList.add('splash-hidden'); setTimeout(()=> splash.style.display='none',520); } } });
+})();
+
+/* Init */
+function init(){ renderLists(); const defaultTab=document.querySelector('.tab[data-target="panelGenerate"]'); if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); } renderSession(); /* show splash already visible by default */ }
+init();
+
+/* Helper initial renders */
+renderPilots(); renderAssignLog(); renderCurrentFlights();
 </script>
 </body>
 </html>
