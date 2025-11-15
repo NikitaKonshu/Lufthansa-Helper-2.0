@@ -3,92 +3,147 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — splash from uploaded video (local) + full app</title>
+<title>Lufthansa Helper — full app with enhanced liquid splash</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-top:#031127; --bg-bot:#072b3a;
-  --muted:#9fc0d8; --text:#eaf4ff;
-  --accent-yellow:#ffd54a;
-  font-family:Inter,system-ui,Arial,sans-serif;
-  font-size:15px;
-  --glass-bg: rgba(255,255,255,0.03);
+  --bg-1:#031127; --bg-2:#072b3a; --muted:#9fc0d8; --text:#eaf4ff; --accent-yellow:#ffd54a;
+  font-family:Inter,system-ui,Arial,sans-serif; font-size:15px;
 }
+
 /* reset */
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg-top),var(--bg-bot));color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh;font-family:Inter,system-ui,Arial,sans-serif;}
+body{
+  margin:0;padding:0;
+  background:linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:var(--text); -webkit-font-smoothing:antialiased;
+  min-height:100vh; font-family:Inter,system-ui,Arial,sans-serif;
+}
+
+/* app root */
 .app-root{ display:flex; justify-content:center; align-items:flex-start; padding:18px; min-height:100vh; }
 
-/* hero + controls (kept) */
+/* hero (kept from full app) */
 .container{width:100%;max-width:1280px}
-.hero{ border-radius:16px;padding:16px;margin-top:28px;background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(2,8,18,0.06));border:1px solid rgba(255,255,255,0.05);box-shadow: 0 36px 120px rgba(2,8,18,0.7);backdrop-filter: blur(12px) saturate(120%); }
+.hero{
+  border-radius:16px;padding:16px;
+  margin-top:28px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(2,8,18,0.06));
+  border:1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 36px 120px rgba(2,8,18,0.7), inset 0 2px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(0);
+}
+
+/* header */
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{display:flex;gap:12px;align-items:center;min-width:0}
 .logo{width:60px;height:60px;border-radius:14px;background:linear-gradient(180deg,#0a3b3f,#042a2e);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-yellow);font-size:18px}
 .title{font-weight:900}
 .subtitle{font-size:13px;color:var(--muted)}
 
-/* buttons */
-.btn-neutral{ padding:8px 12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);color:var(--text);font-weight:700;cursor:pointer}
-.btn-primary{ padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,var(--accent-yellow),#ffbf3a);border:1px solid rgba(0,0,0,0.08);color:#072022;font-weight:900;cursor:pointer}
-
-/* airline grid + other UI kept minimal */
+/* tabs */
 .tabs{display:flex;gap:10px;margin-top:14px;position:relative;flex-wrap:wrap}
 .tab{padding:10px 16px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.02));cursor:pointer;font-weight:800;color:var(--text);transition:transform .12s,box-shadow .12s}
 .tab.active{ transform:translateY(-4px); box-shadow:0 20px 48px rgba(0,0,0,0.45) }
 .liquid-underline{ position:absolute; height:9px; bottom:-12px; border-radius:8px; background: linear-gradient(90deg,#ffd54a,#ffb84d); transition:left 220ms,width 220ms,opacity 220ms; box-shadow:0 12px 36px rgba(255,160,60,0.14); opacity:0; }
 
+/* controls */
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:240px}
 .durations{display:flex;gap:8px;flex-wrap:wrap}
 
-/* airline grid visuals */
+/* time pill (kept) */
+.time-pill{ display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,242,200,0.95));border: 1px solid rgba(255,195,40,0.18);box-shadow: inset 0 2px 8px rgba(255,235,170,0.04), 0 10px 28px rgba(0,0,0,0.28);color:#111; font-weight:800; cursor:pointer; transition:transform .14s;}
+.time-pill .label{ font-weight:900; color:#1b1b1b; font-size:15px; }
+.time-pill .hint{ font-size:12px; color:rgba(0,0,0,0.5); }
+
+/* airline grid */
 .airline-grid{ margin-top:14px; display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:start; width:100%; min-width:0; max-height:520px; overflow:auto; padding:14px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03)); border:1px solid rgba(255,255,255,0.03); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
-.airline{ position:relative; display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden; transition:transform .18s,box-shadow .18s,filter .18s; }
+.airline{ position:relative; display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;min-width:0;overflow:hidden; transition:transform .18s,box-shadow .18s,filter .18s;}
 .airline .dot{ width:16px;height:16px;border-radius:50%;flex:0 0 16px;border:2px solid rgba(255,255,255,0.06) }
 .airline .meta{min-width:0}
 .airline .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .airline .code{font-size:12px;color:var(--muted)}
 
-/* modals */
+/* panels, modals */
+.panel{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(0);min-width:0}
 .modal-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999}
 .modal{width:420px;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.04));border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);backdrop-filter:blur(8px)}
 .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
 .small{font-size:13px}
 
-/* splash: full-bleed using HTML5 video (file picker + drag/drop) */
-.splash-back{ position:fixed; inset:0; z-index:10050; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.55); }
-.splash-card{ width:100%; max-width:1600px; height:100vh; border-radius:0; overflow:hidden; display:block; background:#000; border:0; box-shadow:none; position:relative; }
+/* ================= SPLASH: enhanced liquid (multiple layers + canvas noise) ================= */
+.splash-back{
+  position:fixed; inset:0; z-index:11000; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(2,6,14,0.94), rgba(2,6,20,0.96));
+  overflow:hidden;
+}
 
-/* video covers full card */
-#splashVideo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; }
+/* container for animated layers */
+.splash-canvas{ position:absolute; inset:0; z-index:11010; overflow:hidden; }
 
-/* overlay center with controls */
-.splash-center{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-.splash-center .center-block{ pointer-events:auto; display:flex; flex-direction:column; align-items:center; gap:12px; background: rgba(0,0,0,0.28); padding:20px 28px; border-radius:12px; backdrop-filter: blur(6px); }
-.splash-center h2{ margin:0;font-size:36px;font-weight:900;color:#fff; text-align:center; }
-.splash-center .center-cta{ margin-top:4px; display:flex; gap:12px; }
-.splash-center .center-cta button{ font-weight:900; padding:14px 20px; border-radius:10px; border:0; cursor:pointer; background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; }
+/* layered blurred gradients, faster movement, more complexity */
+.splash-gradient{
+  position:absolute; left:-20%; top:-30%; width:140%; height:160%; border-radius:20%;
+  filter: blur(48px) saturate(140%); mix-blend-mode:screen; opacity:0.95;
+  background: radial-gradient(40% 40% at 20% 20%, rgba(255,200,80,0.12), transparent 12%),
+              radial-gradient(40% 40% at 80% 80%, rgba(0,160,255,0.08), transparent 18%),
+              linear-gradient(120deg, rgba(255,160,60,0.06), rgba(50,150,255,0.04));
+  animation: gradFloat 14s ease-in-out infinite;
+}
+.splash-gradient.g2{ transform: scale(1.08); filter: blur(64px) saturate(180%); opacity:0.9; animation-duration:20s; }
+.splash-gradient.g3{ transform: scale(.96); filter: blur(36px) saturate(120%); opacity:0.86; animation-duration:26s; }
 
-/* small control to pick video */
-.splash-controls{ position:absolute; left:12px; bottom:12px; display:flex; gap:8px; pointer-events:auto; }
-.splash-controls .btn{ padding:8px 10px; border-radius:8px; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); color:var(--text); cursor:pointer; }
+@keyframes gradFloat{
+  0%{ transform: translate3d(-6%, -3%, 0) rotate(-1deg) scale(1) }
+  50%{ transform: translate3d(6%, 4%, 0) rotate(2deg) scale(1.02) }
+  100%{ transform: translate3d(-6%, -3%, 0) rotate(-1deg) scale(1) }
+}
 
-/* drag overlay */
-.splash-drop-hint{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:10010; color:#fff; font-weight:800; font-size:20px; background: rgba(0,0,0,0.45); pointer-events:none; }
+/* SVG waves overlay with subtle movement (liquid edge) */
+.splash-waves{
+  position:absolute; left:0; right:0; bottom:-6vh; height:46vh; z-index:11030; pointer-events:none;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1200 450"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="%23ffd54a" stop-opacity="0.14"/><stop offset="1" stop-color="%2300aaff" stop-opacity="0.06"/></linearGradient></defs><path d="M0,200 C200,320 400,80 600,200 C800,320 1000,80 1200,200 L1200,450 L0,450 Z" fill="url(%23lg)"/></svg>') center bottom / cover no-repeat;
+  filter: blur(6px) saturate(130%); transform: translateZ(0); animation: waveShift 10s ease-in-out infinite alternate;
+}
+@keyframes waveShift{ from{ transform: translateY(6vh) } to{ transform: translateY(0vh) } }
 
-/* hide overflow while splash shown */
+/* canvas noise overlay for organic texture */
+.splash-noise{
+  position:absolute; inset:0; z-index:11040; pointer-events:none; mix-blend-mode:overlay; opacity:0.25;
+}
+
+/* center block: NO blur behind (clean text/button) */
+.splash-center{
+  position:relative; z-index:11050; display:flex; align-items:center; justify-content:center; pointer-events:auto; padding:24px;
+}
+.center-block{
+  background: transparent; color:var(--text); text-align:center; padding:0; border-radius:12px;
+}
+.center-block h2{ margin:0 0 18px 0; font-size:40px; font-weight:900; letter-spacing:0.2px; color:var(--text); text-shadow:0 8px 24px rgba(0,0,0,0.6) }
+.center-cta button{
+  font-weight:900; padding:14px 28px; border-radius:12px; border:0; cursor:pointer;
+  background: linear-gradient(180deg,var(--accent-yellow),#ffbf3a); color:#072022; position:relative; overflow:hidden;
+  box-shadow: 0 20px 60px rgba(255,165,40,0.12);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.center-cta button:hover{ transform: translateY(-5px); box-shadow: 0 30px 80px rgba(255,165,40,0.2); }
+.center-cta button::after{ content:''; position:absolute; left:-60%; top:-20%; width:50%; height:140%; background:linear-gradient(120deg, rgba(255,255,255,0.8), rgba(255,255,255,0.02)); transform:skewX(-18deg); transition:left .6s cubic-bezier(.2,.9,.2,1); opacity:0.9; }
+.center-cta button:hover::after{ left:140%; }
+
+/* small top controls (hidden but available) */
+.splash-top{ position:absolute; top:12px; right:12px; z-index:11060; pointer-events:auto; display:flex; gap:8px; }
+
+/* hide scroll when splash open */
 body.splash-open{ overflow:hidden; }
 
-/* tutorial */
-.tour-back{ display:none; position:fixed; inset:0; z-index:10060; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(2,6,14,0.84), rgba(2,6,20,0.9)); backdrop-filter: blur(6px) saturate(0.9); }
-.tour-card{ width:92%; max-width:760px; border-radius:12px; padding:20px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03)); border:1px solid rgba(255,255,255,0.04); }
-
+/* responsive */
 @media(max-width:900px){
-  .splash-center h2{ font-size:24px; }
-  .splash-center .center-block{ padding:14px; }
+  .center-block h2{ font-size:24px; }
+  .center-cta button{ padding:12px 18px; }
+  .splash-waves{ height:32vh }
 }
 </style>
 </head>
@@ -101,9 +156,10 @@ body.splash-open{ overflow:hidden; }
           <div class="logo">LH</div>
           <div>
             <div class="title">Lufthansa Helper</div>
-            <div class="subtitle">усиленное LED · liquid glass · принудительная авторизация</div>
+            <div class="subtitle">усиленное LED · liquid glass · демонстрация</div>
           </div>
         </div>
+
         <div style="display:flex;gap:10px;align-items:center">
           <div id="sessionBadge" class="kv">Неавторизован</div>
           <button id="openGateBtn" class="btn-neutral">Вход</button>
@@ -133,9 +189,9 @@ body.splash-open{ overflow:hidden; }
 
       <div id="airGrid" class="airline-grid" aria-live="polite"></div>
 
-      <div class="layout" style="display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px">
+      <div class="layout" style="display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px;min-width:0">
         <main>
-          <section id="panelGenerate" class="panel" style="padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(10px);">
+          <section id="panelGenerate" class="panel">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Генерация</div>
               <div class="kv">Нажмите СГЕНЕРИРОВАТЬ для демонстрации</div>
@@ -143,7 +199,7 @@ body.splash-open{ overflow:hidden; }
             <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и интервал времени</div>
           </section>
 
-          <section id="panelRoutes" class="panel" style="display:none;margin-top:12px;padding:14px;border-radius:12px;">
+          <section id="panelRoutes" class="panel" style="display:none;margin-top:12px">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Направления</div>
               <div class="kv">Список маршрутов по фильтрам</div>
@@ -151,7 +207,7 @@ body.splash-open{ overflow:hidden; }
             <div id="routesList" class="route-list"></div>
           </section>
 
-          <section id="panelFleet" class="panel" style="display:none;margin-top:12px;padding:14px;border-radius:12px;">
+          <section id="panelFleet" class="panel" style="display:none;margin-top:12px">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Флот</div>
               <div class="kv">Самолёты под фильтрами</div>
@@ -185,6 +241,41 @@ body.splash-open{ overflow:hidden; }
   </div>
 </div>
 
+<!-- SPLASH: enhanced liquid (no external video) -->
+<div id="splash" class="splash-back" style="display:flex;">
+  <div class="splash-canvas" aria-hidden="true">
+    <div class="splash-gradient g1" style="background:
+      radial-gradient(40% 40% at 18% 22%, rgba(255,200,90,0.14), transparent 12%),
+      radial-gradient(30% 30% at 80% 74%, rgba(0,170,255,0.08), transparent 18%),
+      linear-gradient(110deg, rgba(255,170,40,0.08), rgba(30,130,255,0.04));"></div>
+
+    <div class="splash-gradient g2" style="background:
+      radial-gradient(45% 45% at 70% 30%, rgba(255,120,140,0.06), transparent 12%),
+      linear-gradient(240deg, rgba(100,200,255,0.06), rgba(255,210,100,0.03));"></div>
+
+    <div class="splash-gradient g3" style="background:
+      radial-gradient(40% 40% at 40% 70%, rgba(80,200,180,0.06), transparent 12%),
+      linear-gradient(160deg, rgba(120,180,255,0.05), rgba(255,140,60,0.03));"></div>
+
+    <canvas id="noiseCanvas" class="splash-noise"></canvas>
+
+    <div class="splash-waves"></div>
+  </div>
+
+  <div class="splash-center" role="dialog" aria-modal="true" aria-label="Welcome">
+    <div class="center-block">
+      <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
+      <div class="center-cta">
+        <button id="splashContinue">Дальше</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="splash-top" style="display:none">
+    <button id="devBtn" class="btn-neutral">Dev</button>
+  </div>
+</div>
+
 <!-- forced login modal -->
 <div id="gateModal" class="modal-back" style="display:none;">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Вход">
@@ -214,41 +305,14 @@ body.splash-open{ overflow:hidden; }
   </div>
 </div>
 
-<!-- splash: HTML5 video (file picker + drag/drop) -->
-<div id="splash" class="splash-back" style="display:none;">
-  <div class="splash-card" role="dialog" aria-modal="true" aria-label="Welcome">
-    <!-- HTML5 video element. src will be set dynamically from uploaded file or ./media/intro.mp4 if exists -->
-    <video id="splashVideo" playsinline muted autoplay loop preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;"></video>
-
-    <div class="splash-center">
-      <div class="center-block">
-        <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
-        <div class="center-cta">
-          <button id="splashContinue">Дальше</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="splash-controls">
-      <button id="chooseVideoBtn" class="btn">Выбрать видео</button>
-      <button id="useDefaultBtn" class="btn">Использовать ./media/intro.mp4</button>
-      <input id="videoPicker" type="file" accept="video/*" style="display:none" />
-    </div>
-
-    <div id="dropHint" class="splash-drop-hint">Перетащите видео сюда</div>
-  </div>
-</div>
-
 <!-- tutorial overlay -->
-<div id="tour" class="tour-back" style="display:none;">
-  <div class="tour-card" role="dialog" aria-modal="true">
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="font-weight:900;font-size:18px">Краткая инструкция</div>
-      <div style="color:var(--muted)">1. Выберите авиакомпанию; 2. Выберите интервал времени; 3. Нажмите СГЕНЕРИРОВАТЬ и подтвердите бронь.</div>
-      <div style="display:flex;justify-content:flex-end;gap:8px">
-        <button id="tourSkip" class="btn-neutral">Пропустить инструкцию</button>
-        <button id="tourDone" class="btn-primary">Готово</button>
-      </div>
+<div id="tour" class="modal-back" style="display:none;align-items:center;justify-content:center">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Инструкция">
+    <div style="font-weight:900">Краткая инструкция</div>
+    <div class="small kv" style="margin-top:8px">1) Выберите авиакомпанию; 2) Выберите интервал времени; 3) Нажмите СГЕНЕРИРОВАТЬ и подтвердите бронь.</div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button id="tourSkip" class="btn-neutral">Пропустить</button>
+      <button id="tourDone" class="btn-primary">Готово</button>
     </div>
   </div>
 </div>
@@ -266,10 +330,9 @@ body.splash-open{ overflow:hidden; }
 </div>
 
 <script>
-/* ===================== App data & state (kept from previous full file) ===================== */
+/* ================= DATA & STATE (copied from your full app) ================= */
 const CODEWORD = 'quickaccess2025';
 const SESSION_KEY = 'lh_force_auth_v1';
-const VIDEO_SESSION_KEY = 'lh_splash_video_url';
 
 const DURATIONS = [
   {label:"1–2ч",min:60,max:120},{label:"2–3ч",min:120,max:180},{label:"3–4ч",min:180,max:240},
@@ -331,14 +394,6 @@ let chosenDuration = null;
 let searchQuery = '';
 
 /* dom refs */
-const splash = document.getElementById('splash');
-const splashVideo = document.getElementById('splashVideo');
-const chooseVideoBtn = document.getElementById('chooseVideoBtn');
-const useDefaultBtn = document.getElementById('useDefaultBtn');
-const videoPicker = document.getElementById('videoPicker');
-const dropHint = document.getElementById('dropHint');
-const splashContinue = document.getElementById('splashContinue');
-
 const appRoot = document.getElementById('appRoot');
 const appHero = document.getElementById('appHero');
 const airGrid = document.getElementById('airGrid');
@@ -357,6 +412,8 @@ const btnLogin = document.getElementById('btnLogin');
 const btnDemoQuick = document.getElementById('btnDemoQuick');
 const loginCall = document.getElementById('loginCall');
 const loginPass = document.getElementById('loginPass');
+const splash = document.getElementById('splash');
+const splashContinue = document.getElementById('splashContinue');
 const tour = document.getElementById('tour');
 const tourSkip = document.getElementById('tourSkip');
 const tourDone = document.getElementById('tourDone');
@@ -372,10 +429,10 @@ function uid(p='id'){ return p+'_'+Math.random().toString(36).slice(2,9); }
 function saveSession(){ try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); }catch(e){} }
 function log(msg){ const el=document.getElementById('log'); if(!el) return; const d=document.createElement('div'); d.className='kv'; d.textContent = `${new Date().toLocaleTimeString()} — ${msg}`; el.prepend(d); }
 
-/* ====== Render functions (condensed but intact) ====== */
+/* ====== RENDER FUNCTIONS (condensed) ====== */
 function renderDurations(){ durWrap.innerHTML=''; DURATIONS.forEach((d,i)=>{ const b=document.createElement('div'); b.className='time-pill'; b.dataset.idx=i; b.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><div class="badge" style="width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),#ffbf4a);box-shadow:0 8px 20px rgba(255,190,50,0.22)"></div><div><div class="label">${d.label}</div><div class="hint">Интервал</div></div></div>`; b.addEventListener('click', ()=>{ chosenDuration=(chosenDuration===i)?null:i; updateActiveUI(); renderLists(); }); if(chosenDuration===i) b.style.boxShadow='0 26px 64px rgba(255,175,40,0.28)'; durWrap.appendChild(b); }); }
 
-function renderAirGrid(){ airGrid.innerHTML=''; const filtered=AIRLINES.filter(a=>{ if(!searchQuery) return true; const q=searchQuery.toLowerCase(); return a.name.toLowerCase().includes(q)||(a.code&&a.code.toLowerCase().includes(q)); }); filtered.forEach(a=>{ const card=document.createElement('div'); card.className='airline'; card.setAttribute('data-airline',a.name); const glow=document.createElement('div'); glow.className='glow'; glow.style.background=`radial-gradient(60% 60% at 50% 40%, ${a.color}dd 0%, ${a.color}c0 10%, ${a.color}99 20%, transparent 46%)`; card.appendChild(glow); const shimmer=document.createElement('div'); shimmer.className='shimmer'; card.appendChild(shimmer); const dot=document.createElement('div'); dot.className='dot'; dot.style.background=a.color; const meta=document.createElement('div'); meta.className='meta'; const name=document.createElement('div'); name.className='name'; name.textContent=a.name; const code=document.createElement('div'); code.className='code'; code.textContent=a.code||''; meta.appendChild(name); meta.appendChild(code); card.appendChild(dot); card.appendChild(meta); card.addEventListener('click',()=>{ chosenAirline=(chosenAirline===a.name)?null:a.name; updateActiveUI(); renderLists(); }); airGrid.appendChild(card); }); updateActiveUI(); }
+function renderAirGrid(){ airGrid.innerHTML=''; const filtered=AIRLINES.filter(a=>{ if(!searchQuery) return true; const q=searchQuery.toLowerCase(); return a.name.toLowerCase().includes(q)||(a.code&&a.code.toLowerCase().includes(q)); }); filtered.forEach(a=>{ const card=document.createElement('div'); card.className='airline'; card.setAttribute('data-airline',a.name); const dot=document.createElement('div'); dot.className='dot'; dot.style.background=a.color; const meta=document.createElement('div'); meta.className='meta'; const name=document.createElement('div'); name.className='name'; name.textContent=a.name; const code=document.createElement('div'); code.className='code'; code.textContent=a.code||''; meta.appendChild(name); meta.appendChild(code); card.appendChild(dot); card.appendChild(meta); card.addEventListener('click',()=>{ chosenAirline=(chosenAirline===a.name)?null:a.name; updateActiveUI(); renderLists(); }); airGrid.appendChild(card); }); updateActiveUI(); }
 
 function renderRoutes(){ routesList.innerHTML=''; const list=ROUTES.filter(r=>{ if(chosenAirline&&r.airline!==chosenAirline) return false; if(chosenDuration!==null){ const d=DURATIONS[chosenDuration]; if(!(r.durationMinutes>=d.min&&r.durationMinutes<=d.max)) return false; } return true; }); if(!list.length){ routesList.innerHTML='<div class="kv">Нет направлений</div>'; return; } list.forEach(r=>{ const row=document.createElement('div'); row.className='route-item'; row.innerHTML=`<div style="min-width:0"><div style="font-weight:800">${esc(r.fromICAO)} → ${esc(r.toICAO)}</div><div class="kv">${esc(r.fromCity)} → ${esc(r.toCity)} · ${esc(r.airline)}</div></div><div class="kv">${r.durationMinutes} мин</div>`; row.addEventListener('click',()=>openConfirmFromRoute(r)); routesList.appendChild(row); }); }
 
@@ -383,114 +440,112 @@ function renderFleet(){ fleetList.innerHTML=''; const list=FLEET.filter(a=>{ if(
 
 function renderPilots(){ pilotListEl.innerHTML=''; const q=(pilotSearch.value||'').toLowerCase().trim(); PILOTS.filter(p=>!q||(p.name+' '+p.callSign).toLowerCase().includes(q)).forEach(p=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px'; row.innerHTML=`<div><strong>${esc(p.name)}</strong><div class="kv">${esc(p.callSign)} ${p.verified? '· Verified':''}</div></div>`; const b=document.createElement('button'); b.className='btn-neutral'; b.textContent='Войти'; b.addEventListener('click',()=>{ loginCall.value=p.callSign||''; loginPass.value=''; showGateModal(); }); row.appendChild(b); pilotListEl.appendChild(row); }); }
 
-/* ====== Auth & session (kept) ====== */
-function showGateModal(){ gateModal.style.display='flex'; appRoot.classList.add('app-blocked'); document.querySelector('.container').classList.add('app-blocked'); document.getElementById('appHero').classList.add('app-blocked'); setTimeout(()=> loginCall.focus(),50); }
-function hideGateModal(){ gateModal.style.display='none'; }
+/* ====== AUTH & SESSION (same flow) ====== */
+function showGateModal(){ gateModal.style.display = 'flex'; appRoot.classList.add('app-blocked'); document.querySelector('.container').classList.add('app-blocked'); document.getElementById('appHero').classList.add('app-blocked'); setTimeout(()=> loginCall.focus(),50); }
+function hideGateModal(){ gateModal.style.display = 'none'; }
 
-btnLogin.addEventListener('click', ()=>{ const cs=(loginCall.value||'').trim(); const pass=(loginPass.value||'').trim(); if(!cs){ alert('Введите позывной'); return; } const p=PILOTS.find(x=> (x.callSign||'').toLowerCase()===cs.toLowerCase()); if(!p){ alert('Пилот не найден'); return; } if(pass===CODEWORD||(p.password&&pass===p.password)){ SESSION.pilotId=p.id; saveSession(); renderSession(); gateModal.style.display='none'; if(document.getElementById('tourAfterLogin').checked){ openTour(0); } else { appRoot.classList.remove('app-blocked'); document.querySelector('.container').classList.remove('app-blocked'); document.getElementById('appHero').classList.remove('app-blocked'); } log(`Вошёл ${p.name}`); } else { alert('Неверный пароль'); } });
+btnLogin.addEventListener('click', ()=> {
+  const cs = (loginCall.value||'').trim();
+  const pass = (loginPass.value||'').trim();
+  if(!cs){ alert('Введите позывной'); return; }
+  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
+  if(!p){ alert('Пилот не найден'); return; }
+  if(pass === CODEWORD || (p.password && pass === p.password)){
+    SESSION.pilotId = p.id; saveSession();
+    renderSession();
+    gateModal.style.display = 'none';
+    if(document.getElementById('tourAfterLogin').checked){
+      openTour(0);
+    } else {
+      appRoot.classList.remove('app-blocked');
+      document.querySelector('.container').classList.remove('app-blocked');
+      document.getElementById('appHero').classList.remove('app-blocked');
+    }
+    log(`Вошёл ${p.name}`);
+  } else {
+    alert('Неверный пароль');
+  }
+});
 
-btnDemoQuick.addEventListener('click', ()=>{ const cs=(loginCall.value||'').trim(); if(!cs){ alert('Введите позывной для быстрого входа'); return; } const p=PILOTS.find(x=> (x.callSign||'').toLowerCase()===cs.toLowerCase()); if(!p){ alert('Пилот не найден'); return; } loginPass.value=CODEWORD; btnLogin.click(); });
+btnDemoQuick.addEventListener('click', ()=> {
+  const cs = (loginCall.value||'').trim();
+  if(!cs){ alert('Введите позывной для быстрого входа'); return; }
+  const p = PILOTS.find(x=> (x.callSign||'').toLowerCase() === cs.toLowerCase());
+  if(!p){ alert('Пилот не найден'); return; }
+  loginPass.value = CODEWORD;
+  btnLogin.click();
+});
 
 openGateBtn.addEventListener('click', showGateModal);
 openGate2.addEventListener('click', showGateModal);
 
-logoutBtn.addEventListener('click', ()=>{ SESSION.pilotId=null; saveSession(); renderSession(); hideSplash(true); showGateModal(); log('Вышел'); });
+logoutBtn.addEventListener('click', ()=>{
+  SESSION.pilotId = null; saveSession(); renderSession();
+  hideSplash(true);
+  showGateModal();
+  log('Вышел');
+});
 
-function renderSession(){ if(SESSION.pilotId){ const p=PILOTS.find(x=>x.id===SESSION.pilotId)||{}; sessionBadge.textContent=p.callSign?`Вошёл ${p.callSign}`:'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
-
-/* ====== Splash video management (upload / local file) ====== */
-
-/*
- Behavior:
- - If sessionStorage contains a saved blob URL under VIDEO_SESSION_KEY, use it.
- - Otherwise, user can click "Выбрать видео" to pick a local file ( File -> URL.createObjectURL ).
- - Or click "Использовать ./media/intro.mp4" to use a bundled file (if present on server).
- - Support drag & drop onto splash-card.
- - After user picks or default is loaded, splash plays; clicking "Дальше" pauses and opens login modal.
-*/
-
-function setSplashSourceFromUrl(url, persist=false){
-  try{
-    splashVideo.src = url;
-    // persist URL token to sessionStorage (not the file). For user-selected blobs we store the blob URL string for this session.
-    if(persist && typeof sessionStorage !== 'undefined'){
-      try{ sessionStorage.setItem(VIDEO_SESSION_KEY, url); }catch(e){}
-    }
-    // show splash and try to play
-    openSplash();
-    splashVideo.play().catch(()=>{ /* autoplay may be blocked */ });
-  }catch(e){
-    console.warn('setSplashSourceFromUrl error', e);
+function renderSession(){
+  if(SESSION.pilotId){
+    const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {};
+    sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл';
+    logoutBtn.style.display = 'inline-flex';
+    openGateBtn.style.display = 'none';
+  } else {
+    sessionBadge.textContent = 'Неавторизован';
+    logoutBtn.style.display = 'none';
+    openGateBtn.style.display = 'inline-flex';
   }
 }
 
-function clearSplashSource(){
-  try{
-    if(splashVideo){
-      splashVideo.pause();
-      splashVideo.removeAttribute('src');
-      splashVideo.load();
+/* ====== Splash flow: enhanced liquid with canvas noise ====== */
+const noiseCanvas = document.getElementById('noiseCanvas');
+let noiseCtx, noiseW, noiseH, noiseAnimId;
+
+/* create small granular noise pattern and animate subtle drift */
+function initNoiseCanvas(){
+  if(!noiseCanvas) return;
+  function resize(){
+    noiseCanvas.width = noiseCanvas.clientWidth || window.innerWidth;
+    noiseCanvas.height = noiseCanvas.clientHeight || window.innerHeight;
+    noiseW = noiseCanvas.width; noiseH = noiseCanvas.height;
+    noiseCtx = noiseCanvas.getContext('2d');
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const density = 0.6; // reduce noise density for performance (0..1)
+  function drawNoise(t){
+    if(!noiseCtx) return;
+    noiseCtx.clearRect(0,0,noiseW,noiseH);
+    const imageData = noiseCtx.createImageData(noiseW, noiseH);
+    const data = imageData.data;
+    // simple per-pixel low-density noise for organic film grain
+    for(let i=0; i<noiseW*noiseH; i+=Math.round(1/density)){
+      const idx = i*4;
+      const v = 180 + Math.floor(Math.sin((i+t*0.0005))*40); // subtle banding
+      data[idx] = v; data[idx+1] = v; data[idx+2] = v; data[idx+3] = 12; // low alpha
     }
-    try{ sessionStorage.removeItem(VIDEO_SESSION_KEY); }catch(e){}
-  }catch(e){}
+    noiseCtx.putImageData(imageData, 0, 0);
+    // overlay soft radial wash for movement
+    noiseCtx.fillStyle = 'rgba(255,255,255,0.02)';
+    const cx = noiseW*0.5 + Math.sin(t*0.00013)*noiseW*0.06;
+    const cy = noiseH*0.4 + Math.cos(t*0.00017)*noiseH*0.04;
+    noiseCtx.beginPath();
+    noiseCtx.ellipse(cx, cy, noiseW*0.6, noiseH*0.45, 0, 0, 2*Math.PI);
+    noiseCtx.fill();
+  }
+
+  function loop(t){
+    drawNoise(t);
+    noiseAnimId = requestAnimationFrame(loop);
+  }
+  noiseAnimId = requestAnimationFrame(loop);
 }
+initNoiseCanvas();
 
-function tryUseSavedSessionVideo(){
-  try{
-    const saved = sessionStorage.getItem(VIDEO_SESSION_KEY);
-    if(saved){
-      // test URL quickly (we can't validate CORS here) — set as source
-      setSplashSourceFromUrl(saved, false);
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-
-// Handler when user selects file via input
-videoPicker.addEventListener('change', (ev)=>{
-  const file = ev.target.files && ev.target.files[0];
-  if(!file) return;
-  const url = URL.createObjectURL(file);
-  // persist in session for duration of tab (sessionStorage holds the blob URL string)
-  setSplashSourceFromUrl(url, true);
-});
-
-// Choose video button opens file picker
-chooseVideoBtn.addEventListener('click', ()=> videoPicker.click());
-
-// Use default file in ./media/intro.mp4 (if you placed it in project)
-useDefaultBtn.addEventListener('click', ()=>{
-  // path relative to site root
-  const defaultUrl = './media/intro.mp4';
-  setSplashSourceFromUrl(defaultUrl, true);
-});
-
-// Drag & drop onto splash-card
-(function setupDragAndDrop(){
-  const card = document.querySelector('.splash-card');
-  if(!card) return;
-  let counter = 0;
-  card.addEventListener('dragenter', (e)=>{
-    e.preventDefault(); counter++;
-    dropHint.style.display = 'flex';
-  });
-  card.addEventListener('dragover', (e)=>{ e.preventDefault(); });
-  card.addEventListener('dragleave', (e)=>{ e.preventDefault(); counter--; if(counter<=0){ dropHint.style.display='none'; counter=0; }});
-  card.addEventListener('drop', (e)=>{
-    e.preventDefault();
-    counter=0;
-    dropHint.style.display='none';
-    const dt = e.dataTransfer;
-    if(!dt) return;
-    const file = dt.files && dt.files[0];
-    if(!file) return;
-    const url = URL.createObjectURL(file);
-    setSplashSourceFromUrl(url, true);
-  });
-})();
-
-// Splash open/hide helpers
+/* Splash open/close helpers */
 function openSplash(){
   splash.style.display = 'flex';
   document.body.classList.add('splash-open');
@@ -501,17 +556,20 @@ function openSplash(){
 function hideSplash(forceHide){
   splash.style.display = 'none';
   document.body.classList.remove('splash-open');
-  // app remains blocked until login/tour unlocking
 }
 
-// Splash continue: pause video and open login modal
+/* splash continue: close splash and open login (as before) */
 splashContinue.addEventListener('click', ()=>{
-  try{ splashVideo.pause(); }catch(e){}
-  hideSplash();
-  showGateModal();
+  try{ splash.style.transition = 'opacity .45s ease'; splash.style.opacity = '0'; }catch(e){}
+  setTimeout(()=> {
+    hideSplash();
+    showGateModal();
+    // stop noise animation for perf if needed
+    try{ cancelAnimationFrame(noiseAnimId); }catch(e){}
+  },420);
 });
 
-/* ====== Reservation flow (kept) ====== */
+/* ====== Reservation & fleet logic (kept unchanged) ====== */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.maxFlightMinutes!=='number' || ac.maxFlightMinutes >= dur) && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -552,79 +610,170 @@ document.getElementById('confirmCancel').addEventListener('click', ()=> {
 });
 
 /* ====== UI helpers & selection visuals ====== */
-function updateActiveUI(){ Array.from(airGrid.children).forEach(card=>{ const name = card.getAttribute('data-airline'); const glow = card.querySelector('.glow'); if(name === chosenAirline){ card.classList.add('selected'); const airline = AIRLINES.find(x=>x.name===name); const c = airline ? airline.color : '#ffbf3a'; card.style.setProperty('--selected-color', c); card.style.setProperty('--selected-color-shadow', hexToRgba(c,0.14)); if(glow) glow.style.opacity='0.86'; } else { card.classList.remove('selected'); if(glow) glow.style.opacity='0'; card.style.removeProperty('--selected-color'); card.style.removeProperty('--selected-color-shadow'); } }); Array.from(durWrap.children).forEach((b,idx)=>{ if(idx===chosenDuration) b.style.boxShadow='0 26px 64px rgba(255,175,40,0.28)'; else b.style.boxShadow=''; }); }
+function updateActiveUI(){
+  Array.from(airGrid.children).forEach(card=>{
+    const name = card.getAttribute('data-airline');
+    if(name === chosenAirline){
+      card.classList.add('selected');
+      const airline = AIRLINES.find(x=>x.name===name);
+      const c = airline ? airline.color : '#ffbf3a';
+      card.style.setProperty('--selected-color', c);
+      card.style.boxShadow = `0 36px 120px ${hexToRgba(c,0.14)}`;
+    } else {
+      card.classList.remove('selected');
+      card.style.boxShadow = '';
+    }
+  });
 
-/* tabs underline */
-function placeUnderline(tabEl){ if(!tabEl){ liquidUnderline.style.opacity='0'; return; } const parentRect = tabEl.parentElement.getBoundingClientRect(); const rect = tabEl.getBoundingClientRect(); liquidUnderline.style.left=(rect.left-parentRect.left)+'px'; liquidUnderline.style.width=rect.width+'px'; liquidUnderline.style.opacity='1'; }
-tabElements.forEach(tab=>{ tab.addEventListener('click', ()=>{ tabElements.forEach(t=>t.classList.remove('active')); tab.classList.add('active'); const target=tab.getAttribute('data-target'); ['panelGenerate','panelRoutes','panelFleet'].forEach(id=>{ const el=document.getElementById(id); if(!el) return; el.style.display=(id===target)?'block':'none'; }); genBtn.style.display=(target==='panelGenerate')?'inline-flex':'none'; requestAnimationFrame(()=>placeUnderline(tab)); }); });
-window.addEventListener('resize', ()=>{ const active=document.querySelector('.tab.active'); if(active) placeUnderline(active); });
+  Array.from(durWrap.children).forEach((b, idx)=>{
+    if(idx === chosenDuration) b.style.boxShadow = '0 26px 64px rgba(255,175,40,0.28)';
+    else b.style.boxShadow = '';
+  });
+}
+
+/* place underline */
+function placeUnderline(tabEl){
+  if(!tabEl){ liquidUnderline.style.opacity = '0'; return; }
+  const parentRect = tabEl.parentElement.getBoundingClientRect();
+  const rect = tabEl.getBoundingClientRect();
+  liquidUnderline.style.left = (rect.left - parentRect.left) + 'px';
+  liquidUnderline.style.width = rect.width + 'px';
+  liquidUnderline.style.opacity = '1';
+}
+
+/* tabs */
+tabElements.forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    tabElements.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.getAttribute('data-target');
+    ['panelGenerate','panelRoutes','panelFleet'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.style.display = (id === target) ? 'block' : 'none';
+    });
+    genBtn.style.display = (target === 'panelGenerate') ? 'inline-flex' : 'none';
+    requestAnimationFrame(()=> placeUnderline(tab));
+  });
+});
+window.addEventListener('resize', ()=> {
+  const active = document.querySelector('.tab.active');
+  if(active) placeUnderline(active);
+});
 
 /* interactions */
-airSearch.addEventListener('input', e=>{ searchQuery=e.target.value.trim(); renderAirGrid(); updateActiveUI(); });
+airSearch.addEventListener('input', e=>{ searchQuery = e.target.value.trim(); renderAirGrid(); updateActiveUI(); });
 document.getElementById('clearBtn').addEventListener('click', ()=>{ searchQuery=''; airSearch.value=''; chosenAirline=null; chosenDuration=null; renderLists(); updateActiveUI(); });
-genBtn.addEventListener('click', ()=>{ if(!SESSION.pilotId){ showGateModal(); return; } const pool=ROUTES.filter(r=>{ if(chosenAirline&&r.airline!==chosenAirline) return false; if(chosenDuration!==null){ const d=DURATIONS[chosenDuration]; if(!(r.durationMinutes>=d.min&&r.durationMinutes<=d.max)) return false; } return true; }); if(!pool.length){ alert('Нет маршрутов по текущим фильтрам'); return; } const route=pool[Math.floor(Math.random()*pool.length)]; openConfirmFromRoute(route); });
+
+genBtn.addEventListener('click', ()=> {
+  if(!SESSION.pilotId){ showGateModal(); return; }
+  const pool = ROUTES.filter(r=>{
+    if(chosenAirline && r.airline !== chosenAirline) return false;
+    if(chosenDuration!==null){ const d = DURATIONS[chosenDuration]; if(!(r.durationMinutes >= d.min && r.durationMinutes <= d.max)) return false; }
+    return true;
+  });
+  if(!pool.length){ alert('Нет маршрутов по текущим фильтрам'); return; }
+  const route = pool[Math.floor(Math.random()*pool.length)];
+  openConfirmFromRoute(route);
+});
 
 /* periodic maintenance */
-setInterval(()=>{ const now=nowMs(); FLEET.forEach(ac=>{ if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil<=now){ ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.push({ts:now,event:'reservation_expired',aircraft:ac.id}); } if(ac.status==='inFlight' && ac.availableAt && ac.availableAt<=now){ ac.status='idle'; if(ac.nextLocation) ac.locationICAO=ac.nextLocation; delete ac.availableAt; delete ac.nextLocation; FLEET_LOG.push({ts:now,event:'aircraft_available',aircraft:ac.id,location:ac.locationICAO}); } }); renderAssignLog(); renderFleet(); },1500);
+setInterval(()=>{
+  const now = nowMs();
+  FLEET.forEach(ac=>{
+    if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil <= now){
+      ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.push({ts:now,event:'reservation_expired',aircraft:ac.id});
+    }
+    if(ac.status==='inFlight' && ac.availableAt && ac.availableAt <= now){
+      ac.status='idle'; if(ac.nextLocation) ac.locationICAO = ac.nextLocation; delete ac.availableAt; delete ac.nextLocation; FLEET_LOG.push({ts:now,event:'aircraft_available',aircraft:ac.id,location:ac.locationICAO});
+    }
+  });
+  renderAssignLog(); renderFleet();
+},1500);
 
-/* logs and lists */
-function renderAssignLog(){ const el=document.getElementById('log'); el.innerHTML=''; if(!FLEET_LOG.length){ el.textContent='Пусто'; return; } FLEET_LOG.slice(-200).reverse().forEach(e=>{ const d=document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent=`${new Date(e.ts).toLocaleTimeString()} — ${e.event}${e.aircraft? ' '+e.aircraft: ''}${e.route? ' '+e.route: ''}`; el.appendChild(d); }); }
+/* render logs and lists */
+function renderAssignLog(){
+  const el = document.getElementById('log'); el.innerHTML = '';
+  if(!FLEET_LOG.length){ el.textContent = 'Пусто'; return; }
+  FLEET_LOG.slice(-200).reverse().forEach(e=>{
+    const d = document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleTimeString()} — ${e.event}${e.aircraft? ' ' + e.aircraft: ''}${e.route? ' ' + e.route: ''}`; el.appendChild(d);
+  });
+}
 
-function renderLists(){ renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); updateActiveUI(); renderAssignLog(); }
+function renderLists(){
+  renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); updateActiveUI(); renderAssignLog();
+}
 
 /* hex->rgba */
-function hexToRgba(hex,a=1){ const h=hex.replace('#',''); const full=h.length===3?h.split('').map(ch=>ch+ch).join(''):h; const num=parseInt(full,16); const r=(num>>16)&255, g=(num>>8)&255, b=num&255; return `rgba(${r}, ${g}, ${b}, ${a})`; }
+function hexToRgba(hex, a = 1){
+  const h = hex.replace('#','');
+  const full = h.length === 3 ? h.split('').map(ch=>ch+ch).join('') : h;
+  const num = parseInt(full, 16);
+  const r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
 
-/* tour */
+/* tour (kept) */
 const TOUR_STEPS = [
   {icon:'1', title:'Выбор авиакомпании', text:'Кликните любую авиакомпанию в списке — появится цветная лента слева, яркое свечение и метка «Выбран». Это показывает, что пилот выбрал авиакомпанию.'},
   {icon:'2', title:'Выбор времени', text:'Выберите желаемый интервал времени в панели времени. Пилы видны, объёмны и читаемы; выбранный интервал подсвечивается.'},
   {icon:'3', title:'Генерация и бронь', text:'Нажмите СГЕНЕРИРОВАТЬ; затем выберите маршрут и подтвердите бронь. Резервация отобразится в журнале.'}
 ];
-let tourIndex=0;
-function openTour(startIndex=0){ tourIndex=startIndex||0; tourSetStep(tourIndex); tour.style.display='flex'; appRoot.classList.add('app-blocked'); document.querySelector('.container').classList.add('app-blocked'); document.getElementById('appHero').classList.add('app-blocked'); }
-function hideTour(){ tour.style.display='none'; appRoot.classList.remove('app-blocked'); document.querySelector('.container').classList.remove('app-blocked'); document.getElementById('appHero').classList.remove('app-blocked'); }
-function tourSetStep(i){ const s=TOUR_STEPS[i]; document.getElementById('tourIcon').textContent=s.icon; document.getElementById('tourTitle').textContent=s.title; document.getElementById('tourText').textContent=s.text; document.getElementById('tourSkip').style.display='inline-flex'; document.getElementById('tourDone').textContent=(i<TOUR_STEPS.length-1)?'Дальше':'Завершить'; }
-document.getElementById('tourDone').addEventListener('click', ()=>{ if(tourIndex<TOUR_STEPS.length-1){ tourIndex++; tourSetStep(tourIndex); } else { hideTour(); appRoot.classList.remove('app-blocked'); document.querySelector('.container').classList.remove('app-blocked'); document.getElementById('appHero').classList.remove('app-blocked'); } });
-document.getElementById('tourSkip').addEventListener('click', ()=>{ hideTour(); appRoot.classList.remove('app-blocked'); document.querySelector('.container').classList.remove('app-blocked'); document.getElementById('appHero').classList.remove('app-blocked'); });
+let tourIndex = 0;
+
+function openTour(startIndex=0){
+  tourIndex = startIndex || 0;
+  tourSetStep(tourIndex);
+  tour.style.display = 'flex';
+  appRoot.classList.add('app-blocked');
+  document.querySelector('.container').classList.add('app-blocked');
+  document.getElementById('appHero').classList.add('app-blocked');
+}
+
+function hideTour(){
+  tour.style.display = 'none';
+  appRoot.classList.remove('app-blocked');
+  document.querySelector('.container').classList.remove('app-blocked');
+  document.getElementById('appHero').classList.remove('app-blocked');
+}
+
+function tourSetStep(i){
+  const s = TOUR_STEPS[i];
+  // we use minimal tour modal - content set here if needed
+  document.getElementById('tourDone').textContent = (i < TOUR_STEPS.length - 1) ? 'Дальше' : 'Завершить';
+}
+
+document.getElementById('tourDone').addEventListener('click', ()=>{
+  if(tourIndex < TOUR_STEPS.length - 1){
+    tourIndex++;
+    tourSetStep(tourIndex);
+  } else {
+    hideTour();
+    appRoot.classList.remove('app-blocked');
+    document.querySelector('.container').classList.remove('app-blocked');
+    document.getElementById('appHero').classList.remove('app-blocked');
+  }
+});
+tourSkip.addEventListener('click', ()=>{
+  hideTour();
+  appRoot.classList.remove('app-blocked');
+  document.querySelector('.container').classList.remove('app-blocked');
+  document.getElementById('appHero').classList.remove('app-blocked');
+});
 
 /* init */
 function init(){
   renderLists();
-  const defaultTab=document.querySelector('.tab[data-target="panelGenerate"]');
+  const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]');
   if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); }
   renderSession();
-  // try to use saved session video first, else show splash without source and prompt user to pick or use default
-  const used = tryUseSavedSessionVideo();
-  // open splash to prompt user even if no source loaded (user can pick)
   openSplash();
-  // if splashVideo has src and can autoplay, it will try to play
 }
 init();
 
-/* ====== Helper: try to fetch ./media/intro.mp4 exists (fast check) ====== */
-async function checkDefaultMediaExists(){
-  try{
-    const res = await fetch('./media/intro.mp4', { method:'HEAD' });
-    return res && res.ok;
-  }catch(e){ return false; }
-}
-// If user clicks "Использовать ./media/intro.mp4" and file doesn't exist, show alert
-useDefaultBtn.addEventListener('click', async ()=>{
-  try{
-    const ok = await checkDefaultMediaExists();
-    if(!ok){ alert('Файл ./media/intro.mp4 не найден на сервере. Положите ваш intro.mp4 в папку ./media/.'); return; }
-    // else handled by setSplashSourceFromUrl
-  }catch(e){}
-});
-
-/* ====== Optional: clear saved session blob when page unloads to avoid leaking large blobs ====== */
-window.addEventListener('beforeunload', ()=>{
-  try{
-    // if sessionStorage holds a blob: URL (startsWith blob:), revoke it
-    const maybe = sessionStorage.getItem(VIDEO_SESSION_KEY);
-    if(maybe && maybe.startsWith('blob:')){ try{ URL.revokeObjectURL(maybe); }catch(e){} }
-  }catch(e){}
+/* stop animations on unload to avoid leaks */
+window.addEventListener('beforeunload', ()=> {
+  try{ cancelAnimationFrame(noiseAnimId); }catch(e){}
 });
 </script>
 </body>
