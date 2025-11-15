@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — polished + full features</title>
+<title>Lufthansa Helper — polished + centered splash</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -136,33 +136,20 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
   .btn-primary{ padding:10px 12px; }
 }
 
-/* --- Splash: additional visual enhancements (liquid glass button, logos, particles) --- */
-.splash-back .splash-logo-grid{ position:absolute; inset:14% 6% auto 6%; height:22%; display:flex; gap:18px; align-items:center; justify-content:center; pointer-events:none; opacity:0.16; filter: blur(1px) saturate(120%); transform:translateY(6px); transition:opacity .9s ease, transform 900ms cubic-bezier(.2,.9,.2,1); }
-.splash-back.show-logos .splash-logo-grid{ opacity:0.26; transform:translateY(0); }
-
-.splash-logo{
-  font-weight:800; font-size:14px; color:rgba(255,255,255,0.9);
-  padding:8px 12px; border-radius:10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border:1px solid rgba(255,255,255,0.04);
-  backdrop-filter: blur(6px) saturate(130%);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-  transform: translateY(6px) scale(.98);
-  transition: transform 700ms cubic-bezier(.2,.9,.2,1), opacity 700ms ease;
-  opacity:.88;
+/* --- Splash: center button, glow, particles (no logo grid) --- */
+.splash-center {
+  position:relative;
+  z-index:11050;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:auto;
+  padding:24px;
+  flex-direction:column;
+  text-align:center;
 }
-.splash-logo:nth-child(1){ transition-delay:80ms }
-.splash-logo:nth-child(2){ transition-delay:160ms }
-.splash-logo:nth-child(3){ transition-delay:240ms }
-.splash-logo:nth-child(4){ transition-delay:320ms }
-.splash-logo:nth-child(5){ transition-delay:400ms }
-.splash-logo:nth-child(6){ transition-delay:480ms }
-
-.splash-back.show-logos .splash-logo{ transform: translateY(0) scale(1); }
-
-.splash-particles{ position:absolute; inset:0; pointer-events:none; z-index:11040; mix-blend-mode:screen; opacity:0.9; }
-
-.splash-center .splash-glow{
+.center-block{ margin:0; display:flex; flex-direction:column; align-items:center; gap:18px; }
+.splash-glow{
   position:absolute; width:420px; height:160px; left:50%; top:50%; transform:translate(-50%,-38%); border-radius:18px;
   background: radial-gradient(50% 40% at 50% 30%, rgba(255,200,80,0.12), transparent 30%), radial-gradient(30% 20% at 70% 70%, rgba(0,170,255,0.06), transparent 40%);
   filter: blur(32px) saturate(150%);
@@ -173,8 +160,8 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
 .splash-center h2{ transform:translateY(12px) scale(0.996); opacity:0; transition: transform 720ms cubic-bezier(.2,.9,.2,1), opacity 720ms ease; letter-spacing: -0.6px; }
 .splash-back.show-title .splash-center h2{ transform:translateY(0) scale(1); opacity:1; }
 
+/* liquid-glass minimal button */
 .btn-splash {
-  --glass-bg: rgba(255,255,255,0.04);
   --glass-border: rgba(255,255,255,0.08);
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
   padding:10px 18px; border-radius:12px; cursor:pointer; user-select:none;
@@ -184,7 +171,7 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
   box-shadow: 0 8px 30px rgba(2,8,18,0.55), inset 0 1px 0 rgba(255,255,255,0.02);
   backdrop-filter: blur(8px) saturate(140%);
   transition: transform 280ms cubic-bezier(.2,.9,.2,1), box-shadow 280ms ease, background 220ms ease;
-  position:relative; overflow:hidden;
+  position:relative; overflow:hidden; margin: 0 auto;
 }
 .btn-splash::before{
   content:""; position:absolute; left:-40%; top:-40%; width:140%; height:140%;
@@ -195,15 +182,10 @@ button:focus{ outline: 3px solid rgba(255,210,80,0.14); outline-offset:3px; }
 .btn-splash:hover{ transform: translateY(-6px) scale(1.01); box-shadow: 0 22px 64px rgba(0,120,255,0.10), 0 8px 32px rgba(0,0,0,0.6); }
 .btn-splash:active{ transform: translateY(-2px) scale(.998); }
 .btn-splash:focus{ outline: 3px solid rgba(255,210,80,0.12); outline-offset:4px; }
-
-.btn-splash:hover .splash-label{ animation: microShake 420ms ease; }
-@keyframes microShake{ 0%{ transform:translateY(0) } 20%{ transform:translateY(-1px) } 60%{ transform:translateY(0.4px) } 100%{ transform:translateY(0) } }
-
-.btn-splash .led{
-  width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,#ffd54a,#ffbf3a);box-shadow:0 6px 18px rgba(255,180,40,0.14);
-  flex:0 0 8px; transform:translateZ(0); transition: transform 420ms ease, box-shadow 420ms ease;
-}
+.btn-splash .led{ width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,#ffd54a,#ffbf3a);box-shadow:0 6px 18px rgba(255,180,40,0.14); flex:0 0 8px; transform:translateZ(0); transition: transform 420ms ease, box-shadow 420ms ease; }
 .btn-splash:hover .led{ transform: translateY(-2px) scale(1.06); box-shadow:0 12px 36px rgba(255,180,40,0.22); }
+
+.splash-particles{ position:absolute; inset:0; pointer-events:none; z-index:11040; mix-blend-mode:screen; opacity:0.9; }
 
 @keyframes gradFloat{0%{transform:translate3d(-6%,-4%,0)}50%{transform:translate3d(6%,4%,0)}100%{transform:translate3d(-6%,-4%,0)}}
 @keyframes waveShift{from{transform:translateY(6vh)}to{transform:translateY(0vh)}}
@@ -535,10 +517,9 @@ logoutBtn.addEventListener('click', ()=>{ SESSION.pilotId = null; sessionStorage
 
 function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {}; sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
 
-/* ====== Splash handling (existing hide behavior remains compatible) ====== */
+/* ====== Splash handling (centered button, no logo grid) ====== */
 function openSplash(){ splash.style.display = 'flex'; document.body.classList.add('splash-open'); }
 function hideSplash(){ splash.style.display = 'none'; document.body.classList.remove('splash-open'); }
-splashContinue.addEventListener('click', ()=>{ /* handled by enhancer as well */ });
 
 /* ====== Reservation flow ====== */
 function findCandidateAircraftForRoute(route){
@@ -710,19 +691,13 @@ function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id ===
 renderPilots(); renderAssignLog(); renderCurrentFlights();
 </script>
 
-<!-- Splash enhancer JS (particles, logos, staged reveal, minimalist liquid-glass button) -->
+<!-- Splash enhancer JS (center button, optional particles, NO logo grid) -->
 <script>
 (function(){
   const splash = document.getElementById('splash');
   if(!splash) return;
 
-  // logo grid
-  const logos = ['Lufthansa','Cargo','Austrian','Brussels','SunExpress','Condor','Swiss'];
-  const grid = document.createElement('div'); grid.className = 'splash-logo-grid';
-  logos.forEach((t)=>{ const l=document.createElement('div'); l.className='splash-logo'; l.textContent=t; grid.appendChild(l); });
-  splash.appendChild(grid);
-
-  // particles canvas
+  // particles canvas (optional visual depth)
   const canvas = document.createElement('canvas'); canvas.className='splash-particles'; splash.appendChild(canvas);
   const ctx = canvas.getContext && canvas.getContext('2d');
   function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -746,8 +721,7 @@ renderPilots(); renderAssignLog(); renderCurrentFlights();
     if(!ctx) return;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach(p=>{
-      p.x += p.vx;
-      p.y += p.vy;
+      p.x += p.vx; p.y += p.vy;
       if(p.y < -10 || p.x < -20 || p.x > canvas.width+20){
         p.x = Math.random()*canvas.width;
         p.y = canvas.height*0.65 + Math.random()*40;
@@ -767,13 +741,12 @@ renderPilots(); renderAssignLog(); renderCurrentFlights();
     raf = requestAnimationFrame(drawParticles);
   }
 
-  // staged reveal
+  // staged reveal: glow -> title -> particles
   setTimeout(()=> splash.classList.add('show-glow'), 120);
-  setTimeout(()=> splash.classList.add('show-logos'), 380);
-  setTimeout(()=> splash.classList.add('show-title'), 620);
+  setTimeout(()=> splash.classList.add('show-title'), 380);
   setTimeout(()=> { if(ctx) drawParticles(); }, 780);
 
-  // upgrade splash button
+  // configure central button (no logos)
   const btn = splash.querySelector('#splashContinue');
   if(btn){
     btn.classList.add('btn-splash');
@@ -788,14 +761,6 @@ renderPilots(); renderAssignLog(); renderCurrentFlights();
       setTimeout(()=> { splash.style.display='none'; }, 460);
     });
   }
-
-  // allow closing by existing flow: if other code hides splash, stop particles
-  const observer = new MutationObserver(()=> {
-    if(splash.style.display === 'none' || window.getComputedStyle(splash).opacity === '0'){
-      if(raf){ cancelAnimationFrame(raf); raf = null; }
-    }
-  });
-  observer.observe(splash, { attributes: true, attributeFilter: ['style','class'] });
 
   document.addEventListener('visibilitychange', ()=> {
     if(document.hidden && raf){ cancelAnimationFrame(raf); raf = null; }
