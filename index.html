@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — stable final</title>
+<title>Lufthansa Helper — final</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -53,14 +53,14 @@ body{
 .btn-neutral{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.04); }
 .ripple{ position:absolute; border-radius:50%; transform:scale(0); pointer-events:none; opacity:0.38; background:rgba(255,255,255,0.92); }
 
-/* Layers: splash on top while visible; modals above splash; confirm highest; inlineTour part of page below modals */
+/* Layers */
 .splash-back{ position:fixed; inset:0; z-index:15000; display:flex; align-items:center; justify-content:center; overflow:hidden; background: linear-gradient(180deg, rgba(0,6,18,0.95), rgba(2,14,30,0.98)); transition: opacity .52s, transform .52s; }
 .splash-hidden{ opacity:0; transform: translateY(-8px) scale(.996); pointer-events:none; }
 .modal-back{ display:flex !important; align-items:center; justify-content:center; position:fixed; inset:0; z-index:17000; background: rgba(0,0,0,0.56); padding:20px; transition: opacity .22s ease, visibility .22s ease; }
 .modal{ width:min(560px,94%); max-width:94%; border-radius:12px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(8,12,18,0.94)); border:1px solid rgba(255,255,255,0.06); box-shadow: 0 40px 120px rgba(0,0,0,0.6); }
 #confirmModal{ z-index:17500 !important; }
 
-/* Inline tour: part of doc flow, under splash and modals */
+/* Inline tour: part of doc flow under modals */
 #inlineTour { position:relative; z-index:12000; display:none; opacity:0; transform: translateY(8px); transition: opacity 260ms ease, transform 260ms ease; pointer-events:auto; }
 #inlineTour.show { display:block; opacity:1; transform: translateY(0); }
 
@@ -247,7 +247,8 @@ let CURRENT_FLIGHTS = JSON.parse(localStorage.getItem('lh_current_flights_v1')||
 
 let PENDING_RESERVATION = null;
 let PENDING_RESERVATION_TEMP = null;
-window.PENDING_RESERVATION_TEMP = PENDING_RESERVATION_TEMP; // expose for guard
+window.PENDING_RESERVATION_TEMP = PENDING_RESERVATION_TEMP;
+
 let SESSION = (function(){ try{ const s = sessionStorage.getItem('lh_force_auth_v1'); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
 window.SESSION = SESSION;
 
@@ -283,46 +284,57 @@ function nowMs(){return Date.now();}
 function saveToStorage(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 function uid(prefix='id'){ return prefix+'_'+Math.random().toString(36).slice(2,9); }
 
-/* ---- SECURITY GUARD: block direct confirm modal showing for unauthenticated users ---- */
-(function guardConfirmHard(){
-  const confirmEl = document.getElementById('confirmModal');
-  // Immediately hide if visible
-  if(confirmEl){ confirmEl.style.display='none'; confirmEl.setAttribute('aria-hidden','true'); }
-  // Provide safeShowConfirm(details) API to open confirm only if authenticated
-  window.safeShowConfirm = function(details){
-    try{
-      if(!window.SESSION || !window.SESSION.pilotId){
-        // store pending route details and open login modal
-        window.PENDING_RESERVATION_TEMP = window.PENDING_RESERVATION_TEMP || {};
-        if(details && details.route) window.PENDING_RESERVATION_TEMP.route = details.route;
-        const gate = document.getElementById('gateModal');
-        if(gate){ gate.style.display='flex'; gate.setAttribute('aria-hidden','false'); }
-        return false;
-      }
-      const confirmEl2 = document.getElementById('confirmModal');
-      if(confirmEl2){
-        const detailsEl = document.getElementById('confirmDetails');
-        if(detailsEl) detailsEl.textContent = details && details.text ? details.text : (details && details.route ? `${details.route.fromICAO}→${details.route.toICAO}` : '');
-        confirmEl2.style.display='flex'; confirmEl2.setAttribute('aria-hidden','false');
-        return true;
-      }
-    }catch(e){}
-    return false;
-  };
-  // Guard against accidental direct style changes using MutationObserver
-  if(confirmEl){
-    const mo = new MutationObserver(()=> {
-      const isVisible = confirmEl.style.display !== 'none' && confirmEl.getAttribute('aria-hidden') !== 'true';
-      if(isVisible && (!window.SESSION || !window.SESSION.pilotId)){
-        // hide and force login
-        confirmEl.style.display = 'none';
-        confirmEl.setAttribute('aria-hidden','true');
-        const gate = document.getElementById('gateModal');
-        if(gate){ gate.style.display='flex'; gate.setAttribute('aria-hidden','false'); }
-      }
-    });
-    mo.observe(confirmEl, { attributes:true, attributeFilter:['style','aria-hidden'] });
+/* ---- APP READY gating ---- */
+window.appReady = false;          // becomes true only after splash "Дальше"
+window._pendingOpenGate = false;  // someone tried to open gate before ready
+window._pendingOpenConfirm = false; // someone tried to open confirm before ready
+
+// safe gate show (replaced by guard below if needed)
+function _nativeShowGate(){
+  const g = document.getElementById('gateModal');
+  if(g){ g.style.display='flex'; g.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),70); }
+}
+window.showGateModal = function(){
+  if(!window.appReady){
+    window._pendingOpenGate = true;
+    return;
   }
+  _nativeShowGate();
+};
+
+// safe confirm (guarded)
+function _nativeSafeShowConfirm(details){
+  const c = document.getElementById('confirmModal');
+  if(!c) return false;
+  const detailsEl = document.getElementById('confirmDetails');
+  if(detailsEl) detailsEl.textContent = details && details.text ? details.text : (details && details.route ? `${details.route.fromICAO}→${details.route.toICAO}` : '');
+  c.style.display='flex'; c.setAttribute('aria-hidden','false');
+  return true;
+}
+window.safeShowConfirm = function(details){
+  if(!window.appReady){
+    window._pendingOpenConfirm = true;
+    window.PENDING_RESERVATION_TEMP = window.PENDING_RESERVATION_TEMP || {};
+    if(details && details.route) window.PENDING_RESERVATION_TEMP.route = details.route;
+    return false;
+  }
+  return _nativeSafeShowConfirm(details);
+};
+
+// guard: hide confirm if opened too early by other code
+(function confirmGuard(){
+  const confirmEl = document.getElementById('confirmModal');
+  if(!confirmEl) return;
+  confirmEl.style.display = confirmEl.style.display || 'none';
+  const mo = new MutationObserver(()=> {
+    const isVisible = confirmEl.style.display !== 'none' && confirmEl.getAttribute('aria-hidden') !== 'true';
+    if(isVisible && !window.appReady){
+      confirmEl.style.display='none';
+      confirmEl.setAttribute('aria-hidden','true');
+      window._pendingOpenConfirm = true;
+    }
+  });
+  mo.observe(confirmEl, { attributes:true, attributeFilter:['style','aria-hidden'] });
 })();
 
 /* render durations */
@@ -375,13 +387,14 @@ function renderRoutes(){
 function renderFleet(){ fleetList.innerHTML=''; FLEET.forEach(f=>{ const el=document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.alignItems='center'; el.style.marginTop='8px'; el.innerHTML=`<div style="font-weight:800">${f.id}</div><div class="kv">${f.airline} · ${f.type} · ${f.fuelMinutes || f.fuel} мин</div>`; fleetList.appendChild(el); }); }
 
 /* pilots, flights, log */
-function renderPilots(){ pilotListEl.innerHTML=''; PILOTS.forEach(p=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px'; row.innerHTML=`<div><strong>${p.name}</strong><div class="kv">${p.callSign} ${p.verified? '· Verified':''}</div></div>`; const b=document.createElement('button'); b.className='btn btn-neutral'; b.textContent='Войти'; b.addEventListener('click', ()=>{ loginCall.value = p.callSign; loginPass.value=''; showGateModal(); }); row.appendChild(b); pilotListEl.appendChild(row); }); }
+function renderPilots(){ pilotListEl.innerHTML=''; PILOTS.forEach(p=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px'; row.innerHTML=`<div><strong>${p.name}</strong><div class="kv">${p.callSign} ${p.verified? '· Verified':''}</div></div>`; const b=document.createElement('button'); b.className='btn btn-neutral'; b.textContent='Войти'; b.addEventListener('click', ()=>{ loginCall.value = p.callSign; loginPass.value=''; // ensure gate opens after splash if needed
+  if(!window.appReady){ window._pendingOpenGate = true; } showGateModal(); }); row.appendChild(b); pilotListEl.appendChild(row); }); }
 function renderCurrentFlights(){ currentFlightsEl.innerHTML=''; if(!CURRENT_FLIGHTS.length){ currentFlightsEl.textContent='Нет текущих рейсов'; return; } CURRENT_FLIGHTS.forEach(f=>{ const e=document.createElement('div'); e.className='kv'; e.style.marginTop='8px'; e.innerHTML=`<div style="font-weight:800">${f.aircraftId} · ${f.airline}</div><div class="kv">${f.fromICAO}→${f.toICAO} · ${f.durationMinutes} мин · Пилот ${f.pilotCallsign}</div>`; currentFlightsEl.appendChild(e); }); }
 function renderAssignLog(){ logEl.innerHTML=''; if(!FLEET_LOG.length){ logEl.textContent='Пусто'; return; } FLEET_LOG.slice(-200).reverse().forEach(e=>{ const d=document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleString()} — ${e.msg}`; logEl.appendChild(d); }); }
 
 /* session & modals */
-function showGateModal(){ gateModal.style.display='flex'; gateModal.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),70); }
-function hideGateModal(){ gateModal.style.display='none'; gateModal.setAttribute('aria-hidden','true'); }
+function showGateModal(){ if(!window.appReady){ window._pendingOpenGate = true; return; } const g = document.getElementById('gateModal'); if(g){ g.style.display='flex'; g.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),70); } }
+function hideGateModal(){ const g = document.getElementById('gateModal'); if(g){ g.style.display='none'; g.setAttribute('aria-hidden','true'); } }
 
 /* show inline tour after splash hidden */
 function showInlineTourWhenReady(){
@@ -432,8 +445,8 @@ btnLogin.addEventListener('click', async ()=>{
   setButtonLoading(btnLogin, false);
 });
 btnDemoQuick.addEventListener('click', ()=>{ loginCall.value = PILOTS[0].callSign; loginPass.value = CODEWORD; btnLogin.click(); });
-openGateBtn.addEventListener('click', showGateModal);
-openGate2.addEventListener('click', showGateModal);
+openGateBtn.addEventListener('click', ()=>{ showGateModal(); });
+openGate2.addEventListener('click', ()=>{ showGateModal(); });
 logoutBtn.addEventListener('click', ()=>{ SESSION.pilotId = null; sessionStorage.removeItem('lh_force_auth_v1'); renderSession(); showGateModal(); });
 
 function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {}; sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
@@ -458,6 +471,7 @@ function openConfirmFromRoute(route){
   if(!pilot){
     window.PENDING_RESERVATION_TEMP = window.PENDING_RESERVATION_TEMP || {};
     window.PENDING_RESERVATION_TEMP.route = route;
+    // request gate; will be opened when appReady
     showGateModal();
     return;
   }
@@ -471,7 +485,7 @@ function openConfirmFromRoute(route){
   candidate.reservedUntil = nowMs() + 120000;
   PENDING_RESERVATION = { token: candidate.reservedToken, aircraft: candidate, route, pilotId: pilot.id, expires: candidate.reservedUntil };
 
-  // Use safe API to show confirm
+  // Use safe API to open confirm (it will respect appReady)
   window.safeShowConfirm({ text: `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин · Пилот ${pilot.callSign}`, route });
 }
 
@@ -538,11 +552,35 @@ document.getElementById('genBtn').addEventListener('click', async ()=>{
 /* splash waves animation */
 (function animateWaves(){ const path = document.getElementById('wavePath'); if(!path) return; let t=0; function step(){ t += 0.008; const amp = 12; const d1 = `M0,160 C300,${160+Math.sin(t*1.2)*amp+60} 600,${160+Math.cos(t*0.7)*amp+40} 900,${160+Math.sin(t*0.5)*amp+60} C1200,${160+Math.cos(t*0.9)*amp+40} 1440,${80+Math.sin(t*0.3)*amp} 1440,80 L1440,320 L0,320 Z`; path.setAttribute('d', d1); requestAnimationFrame(step);} requestAnimationFrame(step); })();
 
-/* splash close -> hide then open gate */
+/* splash close -> mark app ready and open pending modals */
 splashContinue.addEventListener('click', ()=>{
   splash.classList.add('splash-hidden');
   setTimeout(()=>{ try{ splash.style.display='none'; }catch(e){} }, 520);
-  setTimeout(()=> showGateModal(), 380);
+
+  // mark ready
+  window.appReady = true;
+
+  // if someone tried to open gate earlier - show it now
+  if(window._pendingOpenGate){
+    window._pendingOpenGate = false;
+    setTimeout(()=>{ _nativeShowGate(); }, 120);
+  }
+
+  // if confirm was requested earlier - handle it now
+  if(window._pendingOpenConfirm){
+    window._pendingOpenConfirm = false;
+    // if a pending route exists - try to resume reservation (will check auth inside)
+    if(window.PENDING_RESERVATION_TEMP && window.PENDING_RESERVATION_TEMP.route){
+      const pendingRoute = window.PENDING_RESERVATION_TEMP.route;
+      // try to open confirm via normal flow
+      setTimeout(()=>{ openConfirmFromRoute(pendingRoute); }, 160);
+    } else {
+      setTimeout(()=>{ _nativeSafeShowConfirm(); }, 160);
+    }
+  }
+
+  // optionally auto-open gate after splash (commented out by default)
+  // setTimeout(()=> _nativeShowGate(), 380);
 });
 
 /* ripples & loading */
