@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — stable</title>
+<title>Lufthansa Helper — stable final</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -18,11 +18,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
-  min-height:100vh;
-  background: linear-gradient(160deg,var(--bg-1),var(--bg-2));
-  color:var(--text);
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-  overflow-y:auto;
+  min-height:100vh;background:linear-gradient(160deg,var(--bg-1),var(--bg-2));color:var(--text);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-y:auto;
 }
 
 /* Layout + visual */
@@ -32,39 +29,31 @@ body{
   background:
     linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
     linear-gradient(180deg, rgba(0,6,18,0.55), rgba(0,6,18,0.7));
-  border: 1px solid rgba(255,255,255,0.04);
-  box-shadow: 0 28px 100px rgba(2,8,18,0.6);
-  backdrop-filter: blur(10px) saturate(140%);
+  border:1px solid rgba(255,255,255,0.04); box-shadow:0 28px 100px rgba(2,8,18,0.6); backdrop-filter: blur(10px) saturate(140%);
 }
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .logo{ width:64px;height:64px;border-radius:14px; background: linear-gradient(180deg,#062b34,#032029); display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-yellow);font-size:18px; box-shadow: 0 10px 36px rgba(0,0,0,0.54), inset 0 1px 0 rgba(255,255,255,0.02); }
 .subtitle{font-size:13px;color:var(--muted)}
-
-/* Tabs */
 .tabs{display:flex;gap:10px;margin-top:14px;position:relative;flex-wrap:wrap}
 .tab{padding:10px 16px;border-radius:12px;font-weight:800;color:var(--text);background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));border:1px solid rgba(255,255,255,0.02);cursor:pointer;transition:transform .18s,box-shadow .18s}
 .tab.active{ transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.45)}
 .liquid-underline{ position:absolute; height:9px; bottom:-12px; border-radius:8px; background: linear-gradient(90deg,var(--accent-yellow),var(--accent-yellow-2)); transition:left 220ms,width 220ms,opacity 220ms; box-shadow:0 12px 36px rgba(255,160,60,0.14); opacity:0; }
 
-/* Controls */
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text);min-width:240px}
 .durations{display:flex;gap:8px;flex-wrap:wrap}
-
-/* Panels and grid */
 .panel{ padding:14px;border-radius:12px;margin-top:12px;background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.04);box-shadow:0 24px 80px rgba(2,8,18,0.45);backdrop-filter: blur(6px) saturate(130%); position:relative; }
 .airline-grid{ margin-top:14px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; width:100%; max-height:520px; overflow:auto; padding:14px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); border:1px solid rgba(255,255,255,0.03); }
 .airline{ position:relative; display:flex;gap:14px;align-items:center;padding:14px;border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.04)); border:1px solid rgba(255,255,255,0.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); cursor:pointer; transition: transform .22s, box-shadow .22s, filter .18s, background .18s; overflow:hidden; }
 .airline:hover{ transform: translateY(-8px) scale(1.016); box-shadow: 0 44px 110px rgba(0,0,0,0.6); filter:brightness(1.03); }
 .time-pill{ padding:8px 12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03)); border:1px solid rgba(255,255,255,0.04); cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:800; }
 
-/* Buttons, ripple */
 .btn{ display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border); background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01)); color:var(--text); font-weight:800; cursor:pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s; box-shadow: 0 10px 28px rgba(0,0,0,0.42); backdrop-filter: blur(8px) saturate(140%); }
 .btn-primary{ background: linear-gradient(180deg,var(--accent-yellow),var(--accent-yellow-2)); color:var(--primary-dark); border:1px solid rgba(0,0,0,0.08); box-shadow: 0 22px 64px rgba(255,170,40,0.12); }
 .btn-neutral{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.04); }
 .ripple{ position:absolute; border-radius:50%; transform:scale(0); pointer-events:none; opacity:0.38; background:rgba(255,255,255,0.92); }
 
-/* Layers: splash on top while visible, modals above splash; inline tour below modals */
+/* Layers: splash on top while visible; modals above splash; confirm highest; inlineTour part of page below modals */
 .splash-back{ position:fixed; inset:0; z-index:15000; display:flex; align-items:center; justify-content:center; overflow:hidden; background: linear-gradient(180deg, rgba(0,6,18,0.95), rgba(2,14,30,0.98)); transition: opacity .52s, transform .52s; }
 .splash-hidden{ opacity:0; transform: translateY(-8px) scale(.996); pointer-events:none; }
 .modal-back{ display:flex !important; align-items:center; justify-content:center; position:fixed; inset:0; z-index:17000; background: rgba(0,0,0,0.56); padding:20px; transition: opacity .22s ease, visibility .22s ease; }
@@ -75,7 +64,6 @@ body{
 #inlineTour { position:relative; z-index:12000; display:none; opacity:0; transform: translateY(8px); transition: opacity 260ms ease, transform 260ms ease; pointer-events:auto; }
 #inlineTour.show { display:block; opacity:1; transform: translateY(0); }
 
-/* small misc */
 .kv{font-size:13px;color:var(--muted)}
 .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.01);color:var(--text)}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
@@ -174,7 +162,6 @@ body{
         </aside>
       </div>
 
-      <!-- Inline instruction panel (part of page, under splash/modals) -->
       <section id="inlineTour" class="panel" aria-hidden="true">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div style="font-weight:900">Краткая инструкция</div>
@@ -244,7 +231,7 @@ body{
 </div>
 
 <script>
-/* ===== State & data ===== */
+/* ====== DATA & STATE ====== */
 const CODEWORD = 'quickaccess2025';
 const DURATIONS = [{label:"1–2ч",min:60,max:120},{label:"2–3ч",min:120,max:180},{label:"3–4ч",min:180,max:240},{label:"5–6ч",min:300,max:360},{label:"6–7ч",min:360,max:420},{label:"7–8ч",min:420,max:480},{label:"8–9ч",min:480,max:540},{label:"9–10ч",min:540,max:600},{label:"10+ч",min:600,max:99999}];
 const AIRLINES = [{name:"Lufthansa",code:"LH",color:"#1E6FFF"},{name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},{name:"Eurowings",code:"EW",color:"#8A4BFF"},{name:"Condor",code:"DE",color:"#FFD200"},{name:"Swiss",code:"LX",color:"#D81E5B"},{name:"Austrian",code:"OS",color:"#DA291C"},{name:"Brussels",code:"SN",color:"#003399"},{name:"SunExpress",code:"SX",color:"#FF8A3D"}];
@@ -259,8 +246,10 @@ let FLEET_LOG = JSON.parse(localStorage.getItem('lh_fleet_log_v1')||'[]');
 let CURRENT_FLIGHTS = JSON.parse(localStorage.getItem('lh_current_flights_v1')||'[]');
 
 let PENDING_RESERVATION = null;
-let PENDING_RESERVATION_TEMP = null; // temp holder when user must login first
+let PENDING_RESERVATION_TEMP = null;
+window.PENDING_RESERVATION_TEMP = PENDING_RESERVATION_TEMP; // expose for guard
 let SESSION = (function(){ try{ const s = sessionStorage.getItem('lh_force_auth_v1'); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
+window.SESSION = SESSION;
 
 let chosenAirline = null;
 let chosenDuration = null;
@@ -294,11 +283,54 @@ function nowMs(){return Date.now();}
 function saveToStorage(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 function uid(prefix='id'){ return prefix+'_'+Math.random().toString(36).slice(2,9); }
 
+/* ---- SECURITY GUARD: block direct confirm modal showing for unauthenticated users ---- */
+(function guardConfirmHard(){
+  const confirmEl = document.getElementById('confirmModal');
+  // Immediately hide if visible
+  if(confirmEl){ confirmEl.style.display='none'; confirmEl.setAttribute('aria-hidden','true'); }
+  // Provide safeShowConfirm(details) API to open confirm only if authenticated
+  window.safeShowConfirm = function(details){
+    try{
+      if(!window.SESSION || !window.SESSION.pilotId){
+        // store pending route details and open login modal
+        window.PENDING_RESERVATION_TEMP = window.PENDING_RESERVATION_TEMP || {};
+        if(details && details.route) window.PENDING_RESERVATION_TEMP.route = details.route;
+        const gate = document.getElementById('gateModal');
+        if(gate){ gate.style.display='flex'; gate.setAttribute('aria-hidden','false'); }
+        return false;
+      }
+      const confirmEl2 = document.getElementById('confirmModal');
+      if(confirmEl2){
+        const detailsEl = document.getElementById('confirmDetails');
+        if(detailsEl) detailsEl.textContent = details && details.text ? details.text : (details && details.route ? `${details.route.fromICAO}→${details.route.toICAO}` : '');
+        confirmEl2.style.display='flex'; confirmEl2.setAttribute('aria-hidden','false');
+        return true;
+      }
+    }catch(e){}
+    return false;
+  };
+  // Guard against accidental direct style changes using MutationObserver
+  if(confirmEl){
+    const mo = new MutationObserver(()=> {
+      const isVisible = confirmEl.style.display !== 'none' && confirmEl.getAttribute('aria-hidden') !== 'true';
+      if(isVisible && (!window.SESSION || !window.SESSION.pilotId)){
+        // hide and force login
+        confirmEl.style.display = 'none';
+        confirmEl.setAttribute('aria-hidden','true');
+        const gate = document.getElementById('gateModal');
+        if(gate){ gate.style.display='flex'; gate.setAttribute('aria-hidden','false'); }
+      }
+    });
+    mo.observe(confirmEl, { attributes:true, attributeFilter:['style','aria-hidden'] });
+  }
+})();
+
 /* render durations */
 function renderDurations(){
   durWrap.innerHTML='';
   DURATIONS.forEach((d,i)=>{
-    const b=document.createElement('div'); b.className='time-pill btn'; b.dataset.idx=i; b.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),var(--accent-yellow-2))"></div><div style="font-weight:800">${d.label}</div></div>`;
+    const b=document.createElement('div'); b.className='time-pill btn'; b.dataset.idx=i;
+    b.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),var(--accent-yellow-2))"></div><div style="font-weight:800">${d.label}</div></div>`;
     b.addEventListener('click', ()=>{ chosenDuration=(chosenDuration===i)?null:i; Array.from(durWrap.children).forEach((c,idx)=>c.classList.toggle('active', idx===chosenDuration)); renderLists(); });
     b.style.opacity='0'; b.style.transform='translateY(6px)';
     durWrap.appendChild(b);
@@ -312,7 +344,7 @@ function renderAirGrid(){
   const filtered = AIRLINES.filter(a=>{ if(!searchQuery) return true; const q=searchQuery.toLowerCase(); return a.name.toLowerCase().includes(q)||(a.code&&a.code.toLowerCase().includes(q)); });
   filtered.forEach((a,i)=>{
     const card=document.createElement('div'); card.className='airline'; card.dataset.airline=a.name; card.dataset.idx=i;
-    card.innerHTML = `<div class="dot" style="width:18px;height:18px;border-radius:50%;background:${a.color}"></div><div class="meta"><div class="name">${a.name}</div><div class="code">${a.code}</div></div><div class="led-accent" aria-hidden="true"></div>`;
+    card.innerHTML = `<div style="width:18px;height:18px;border-radius:50%;background:${a.color}"></div><div class="meta"><div class="name" style="font-weight:900">${a.name}</div><div class="code" style="font-size:12px;color:var(--muted)">${a.code}</div></div>`;
     if(chosenAirline===a.name){ card.classList.add('selected'); }
     card.style.animationDelay = (i*60) + 'ms';
     setTimeout(()=> card.classList.add('float'), 900 + (i%3)*80);
@@ -351,7 +383,7 @@ function renderAssignLog(){ logEl.innerHTML=''; if(!FLEET_LOG.length){ logEl.tex
 function showGateModal(){ gateModal.style.display='flex'; gateModal.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),70); }
 function hideGateModal(){ gateModal.style.display='none'; gateModal.setAttribute('aria-hidden','true'); }
 
-/* show inline tour only after splash hidden */
+/* show inline tour after splash hidden */
 function showInlineTourWhenReady(){
   if(!inlineTour) return;
   const splashEl = document.getElementById('splash');
@@ -382,16 +414,14 @@ btnLogin.addEventListener('click', async ()=>{
     renderSession();
     hideGateModal();
 
-    // After login: show inline tour if enabled, and resume pending reservation if any
+    // after login: show inline tour (if enabled) and resume pending reservation (if any)
     setTimeout(()=> {
       const show = document.getElementById('tourAfterLogin');
       if (show && show.checked) showInlineTourWhenReady();
 
-      // resume pending reservation that was attempted before login
-      if(PENDING_RESERVATION_TEMP && PENDING_RESERVATION_TEMP.route){
-        const pendingRoute = PENDING_RESERVATION_TEMP.route;
-        PENDING_RESERVATION_TEMP = null;
-        // continue reservation now that user is authenticated
+      if(window.PENDING_RESERVATION_TEMP && window.PENDING_RESERVATION_TEMP.route){
+        const pendingRoute = window.PENDING_RESERVATION_TEMP.route;
+        window.PENDING_RESERVATION_TEMP = null;
         openConfirmFromRoute(pendingRoute);
       }
     }, 260);
@@ -401,7 +431,6 @@ btnLogin.addEventListener('click', async ()=>{
   }
   setButtonLoading(btnLogin, false);
 });
-
 btnDemoQuick.addEventListener('click', ()=>{ loginCall.value = PILOTS[0].callSign; loginPass.value = CODEWORD; btnLogin.click(); });
 openGateBtn.addEventListener('click', showGateModal);
 openGate2.addEventListener('click', showGateModal);
@@ -409,7 +438,7 @@ logoutBtn.addEventListener('click', ()=>{ SESSION.pilotId = null; sessionStorage
 
 function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {}; sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
 
-/* inline tour close */
+/* inlineTour close */
 if (inlineTourClose) inlineTourClose.addEventListener('click', ()=>{ inlineTour.classList.remove('show'); inlineTour.setAttribute('aria-hidden','true'); document.getElementById('appHero').focus && document.getElementById('appHero').focus(); });
 
 /* reservation helpers */
@@ -423,11 +452,12 @@ function findCandidateAircraftForRoute(route){
   return cand[0];
 }
 
-/* OPEN CONFIRM: if not logged in -> prompt login and save temp */
+/* open confirm: if not logged in -> save temp and open login; else reserve and show confirm */
 function openConfirmFromRoute(route){
   const pilot = (SESSION.pilotId ? PILOTS.find(x=>x.id === SESSION.pilotId) : null);
   if(!pilot){
-    PENDING_RESERVATION_TEMP = { route };
+    window.PENDING_RESERVATION_TEMP = window.PENDING_RESERVATION_TEMP || {};
+    window.PENDING_RESERVATION_TEMP.route = route;
     showGateModal();
     return;
   }
@@ -441,8 +471,8 @@ function openConfirmFromRoute(route){
   candidate.reservedUntil = nowMs() + 120000;
   PENDING_RESERVATION = { token: candidate.reservedToken, aircraft: candidate, route, pilotId: pilot.id, expires: candidate.reservedUntil };
 
-  document.getElementById('confirmDetails').textContent = `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин · Пилот ${pilot.callSign}`;
-  document.getElementById('confirmModal').style.display='flex';
+  // Use safe API to show confirm
+  window.safeShowConfirm({ text: `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин · Пилот ${pilot.callSign}`, route });
 }
 
 /* confirm handlers */
@@ -463,14 +493,13 @@ document.getElementById('confirmAccept').addEventListener('click', ()=> {
   renderLists(); renderCurrentFlights(); renderAssignLog();
   alert('Рейс подтверждён и сохранён в журнале');
 });
-
 document.getElementById('confirmCancel').addEventListener('click', ()=> {
   if(PENDING_RESERVATION){ const token=PENDING_RESERVATION.token; FLEET.forEach(a=>{ if(a.reservedToken===token){ a.status='idle'; delete a.reservedBy; delete a.reservedToken; delete a.reservedUntil; FLEET_LOG.unshift({ts:nowMs(), msg:`Бронь отменена ${a.id}`}); } }); PENDING_RESERVATION=null; }
   document.getElementById('confirmModal').style.display='none';
   renderLists(); renderAssignLog();
 });
 
-/* maintenance */
+/* periodic maintenance */
 setInterval(()=>{ const now=nowMs(); FLEET.forEach(ac=>{ if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil<=now){ ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.unshift({ts:now,msg:`Резервация истекла ${ac.id}`}); } if(ac.status==='inFlight' && ac.availableAt && ac.availableAt<=now){ ac.status='idle'; delete ac.availableAt; FLEET_LOG.unshift({ts:now,msg:`Самолёт вернулся в сервис ${ac.id}`}); } }); saveToStorage('lh_fleet_log_v1', FLEET_LOG); renderAssignLog(); renderFleet(); }, 1500);
 
 /* UI helpers */
@@ -506,10 +535,10 @@ document.getElementById('genBtn').addEventListener('click', async ()=>{
   setButtonLoading(document.getElementById('genBtn'), false);
 });
 
-/* splash animations */
-(function animateWaves(){ const path = document.getElementById('wavePath'); if(!path) return; let t=0; function step(){ t += 0.008; const amp = 12; const d1 = `M0,160 C300,${160+Math.sin(t*1.2)*amp+60} 600,${160+Math.cos(t*0.7)*amp+40} 900,${160+Math.sin(t*0.5)*amp+60} C1200,${160+Math.cos(t*0.9)*amp+40} 1440,${80+Math.sin(t*0.3)*amp} 1440,80 L1440,320 L0,320 Z`; path.setAttribute('d', d1); requestAnimationFrame(step); } requestAnimationFrame(step); })();
+/* splash waves animation */
+(function animateWaves(){ const path = document.getElementById('wavePath'); if(!path) return; let t=0; function step(){ t += 0.008; const amp = 12; const d1 = `M0,160 C300,${160+Math.sin(t*1.2)*amp+60} 600,${160+Math.cos(t*0.7)*amp+40} 900,${160+Math.sin(t*0.5)*amp+60} C1200,${160+Math.cos(t*0.9)*amp+40} 1440,${80+Math.sin(t*0.3)*amp} 1440,80 L1440,320 L0,320 Z`; path.setAttribute('d', d1); requestAnimationFrame(step);} requestAnimationFrame(step); })();
 
-/* splash close: hide visually then remove after transition */
+/* splash close -> hide then open gate */
 splashContinue.addEventListener('click', ()=>{
   splash.classList.add('splash-hidden');
   setTimeout(()=>{ try{ splash.style.display='none'; }catch(e){} }, 520);
@@ -523,20 +552,6 @@ function setButtonLoading(btn,isLoading,opts={}){ if(!btn) return; if(isLoading)
 
 /* attach ripples */
 document.addEventListener('DOMContentLoaded', ()=> attachRippleForAll(document));
-
-/* guard: hide confirmModal when user not authenticated */
-(function guardConfirmVisibility(){
-  const confirmEl = document.getElementById('confirmModal');
-  const obs = new MutationObserver(()=> {
-    const isVisible = confirmEl && confirmEl.style.display !== 'none' && confirmEl.getAttribute('aria-hidden') !== 'true';
-    if(isVisible && !SESSION.pilotId){
-      confirmEl.style.display = 'none';
-      // ensure gate modal opens so user can sign in
-      showGateModal();
-    }
-  });
-  if(confirmEl) obs.observe(confirmEl, { attributes: true, attributeFilter: ['style', 'aria-hidden'] });
-})();
 
 /* init */
 function init(){ renderLists(); renderSession(); renderPilots(); renderAssignLog(); renderCurrentFlights(); const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]'); if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); } }
