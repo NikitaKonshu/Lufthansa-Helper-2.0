@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — final stable</title>
+<title>Lufthansa Helper — stable</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -14,13 +14,7 @@
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   font-size:15px;
 }
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  *{ animation-duration: 1ms !important; transition-duration: 1ms !important; }
-}
-
-/* Reset */
+@media (prefers-reduced-motion: reduce){ *{ animation-duration: 1ms !important; transition-duration: 1ms !important; } }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
@@ -31,13 +25,10 @@ body{
   overflow-y:auto;
 }
 
-/* Layout */
+/* Layout + visual */
 .app-root{display:flex;justify-content:center;align-items:flex-start;padding:20px;min-height:100vh}
 .container{width:100%;max-width:1280px}
-
-/* Hero */
-.hero{
-  margin-top:28px;border-radius:16px;padding:18px;position:relative;overflow:visible;
+.hero{ margin-top:28px;border-radius:16px;padding:18px;position:relative;overflow:visible;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
     linear-gradient(180deg, rgba(0,6,18,0.55), rgba(0,6,18,0.7));
@@ -45,17 +36,8 @@ body{
   box-shadow: 0 28px 100px rgba(2,8,18,0.6);
   backdrop-filter: blur(10px) saturate(140%);
 }
-
-/* Header */
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.brand{display:flex;gap:12px;align-items:center;min-width:0}
-.logo{
-  width:64px;height:64px;border-radius:14px;
-  background: linear-gradient(180deg,#062b34,#032029);
-  display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-yellow);font-size:18px;
-  box-shadow: 0 10px 36px rgba(0,0,0,0.54), inset 0 1px 0 rgba(255,255,255,0.02);
-}
-.title{font-weight:900}
+.logo{ width:64px;height:64px;border-radius:14px; background: linear-gradient(180deg,#062b34,#032029); display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-yellow);font-size:18px; box-shadow: 0 10px 36px rgba(0,0,0,0.54), inset 0 1px 0 rgba(255,255,255,0.02); }
 .subtitle{font-size:13px;color:var(--muted)}
 
 /* Tabs */
@@ -69,83 +51,35 @@ body{
 .search{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text);min-width:240px}
 .durations{display:flex;gap:8px;flex-wrap:wrap}
 
-/* Panels */
+/* Panels and grid */
 .panel{ padding:14px;border-radius:12px;margin-top:12px;background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.04);box-shadow:0 24px 80px rgba(2,8,18,0.45);backdrop-filter: blur(6px) saturate(130%); position:relative; }
-
-/* Airline grid */
 .airline-grid{ margin-top:14px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; width:100%; max-height:520px; overflow:auto; padding:14px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); border:1px solid rgba(255,255,255,0.03); }
-.airline{ position:relative; display:flex;gap:14px;align-items:center;padding:14px;border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.04)); border:1px solid rgba(255,255,255,0.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); cursor:pointer; transition: transform .22s, box-shadow .22s, filter .18s, background .18s; will-change: transform, box-shadow; overflow:hidden; }
+.airline{ position:relative; display:flex;gap:14px;align-items:center;padding:14px;border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.04)); border:1px solid rgba(255,255,255,0.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); cursor:pointer; transition: transform .22s, box-shadow .22s, filter .18s, background .18s; overflow:hidden; }
 .airline:hover{ transform: translateY(-8px) scale(1.016); box-shadow: 0 44px 110px rgba(0,0,0,0.6); filter:brightness(1.03); }
-.airline .dot{ width:18px;height:18px;border-radius:50%;flex:0 0 18px;border:2px solid rgba(255,255,255,0.06); box-shadow: 0 8px 30px rgba(0,0,0,0.5); transition: transform .28s, box-shadow .28s; }
-.airline .meta{min-width:0}
-.airline .name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
-.airline .code{font-size:12px;color:var(--muted)}
-.airline .led-accent{ position:absolute; right:12px; top:12px; width:10px; height:10px; border-radius:50%; background:linear-gradient(90deg,var(--accent-yellow),var(--accent-yellow-2)); box-shadow:0 10px 30px rgba(255,170,40,0.15); opacity:0; transform: scale(.85); transition: opacity .28s, transform .28s; }
+.time-pill{ padding:8px 12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03)); border:1px solid rgba(255,255,255,0.04); cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:800; }
 
-/* Selected */
-.airline.selected{ outline: 1px solid rgba(255,210,80,0.06); box-shadow: 0 44px 140px rgba(255,170,40,0.06); transform: translateY(-10px) scale(1.02); }
-.airline.selected .led-accent{ opacity:1; transform: scale(1.05); }
-
-/* Entrance animation persistent */
-@keyframes cardIn { from{ opacity:0; transform: translateY(18px) scale(.996) } to{ opacity:1; transform: translateY(0) scale(1) } }
-.airline[data-idx]{ animation-name: cardIn; animation-duration: 640ms; animation-fill-mode: both; animation-timing-function: cubic-bezier(.2,.9,.2,1); opacity:1 !important; }
-
-/* Float */
-@keyframes floaty { 0%{ transform: translateY(0) } 50%{ transform: translateY(-4px) } 100%{ transform: translateY(0) } }
-.airline.float{ animation: floaty 4200ms ease-in-out infinite; }
-
-/* Time pills */
-.time-pill{ padding:8px 12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03)); border:1px solid rgba(255,255,255,0.04); cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:800; transition: transform .18s, box-shadow .18s, background .18s; }
-.time-pill:hover{ transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 64px rgba(0,0,0,0.44); }
-.time-pill.active{ background: linear-gradient(90deg,var(--accent-yellow),var(--accent-yellow-2)); color:var(--primary-dark); box-shadow: 0 28px 84px rgba(255,170,40,0.12); transform: translateY(-8px) scale(1.03); }
-
-/* Panel transitions */
-.panel.hidden{ opacity:0; transform: translateY(8px) scale(.998); pointer-events:none; }
-
-/* Ripple */
-.ripple{ position:absolute; border-radius:50%; transform:scale(0); pointer-events:none; opacity:0.38; background:rgba(255,255,255,0.92); transition: transform 520ms cubic-bezier(.2,.9,.2,1), opacity 420ms ease; mix-blend-mode:screen; }
-
-/* Buttons */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);
-  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
-  color:var(--text); font-weight:800; cursor:pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.02);
-  backdrop-filter: blur(8px) saturate(140%);
-}
-.btn:active{ transform: translateY(2px) scale(.998); }
-.btn:focus{ outline: 3px solid rgba(255,210,80,0.12); outline-offset:4px; }
-
+/* Buttons, ripple */
+.btn{ display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border); background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01)); color:var(--text); font-weight:800; cursor:pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s; box-shadow: 0 10px 28px rgba(0,0,0,0.42); backdrop-filter: blur(8px) saturate(140%); }
 .btn-primary{ background: linear-gradient(180deg,var(--accent-yellow),var(--accent-yellow-2)); color:var(--primary-dark); border:1px solid rgba(0,0,0,0.08); box-shadow: 0 22px 64px rgba(255,170,40,0.12); }
 .btn-neutral{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.04); }
-.btn-ghost{ background: transparent; border:1px dashed rgba(255,255,255,0.04); color:var(--muted); }
+.ripple{ position:absolute; border-radius:50%; transform:scale(0); pointer-events:none; opacity:0.38; background:rgba(255,255,255,0.92); }
 
-/* Splash (on top while visible) */
+/* Layers: splash on top while visible, modals above splash; inline tour below modals */
 .splash-back{ position:fixed; inset:0; z-index:15000; display:flex; align-items:center; justify-content:center; overflow:hidden; background: linear-gradient(180deg, rgba(0,6,18,0.95), rgba(2,14,30,0.98)); transition: opacity .52s, transform .52s; }
 .splash-hidden{ opacity:0; transform: translateY(-8px) scale(.996); pointer-events:none; }
-.splash-center{ position:relative; z-index:15010; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:28px; text-align:center; color:var(--text); width:min(820px,94%); }
-.splash-waves{ position:absolute; left:0; right:0; bottom:0; height:36vh; z-index:15005; pointer-events:none; filter: blur(8px) saturate(120%); opacity:0.9; }
-.splash-clouds{ position:absolute; inset:8% 6% auto 6%; height:34%; z-index:15002; pointer-events:none; opacity:0.14; }
-
-/* Modals above splash */
 .modal-back{ display:flex !important; align-items:center; justify-content:center; position:fixed; inset:0; z-index:17000; background: rgba(0,0,0,0.56); padding:20px; transition: opacity .22s ease, visibility .22s ease; }
-.modal{ width:min(560px,94%); max-width:94%; border-radius:12px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(8,12,18,0.94)); border:1px solid rgba(255,255,255,0.06); box-shadow: 0 40px 120px rgba(0,0,0,0.6); transform:translateY(0); opacity:1; will-change: transform, opacity; }
+.modal{ width:min(560px,94%); max-width:94%; border-radius:12px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(8,12,18,0.94)); border:1px solid rgba(255,255,255,0.06); box-shadow: 0 40px 120px rgba(0,0,0,0.6); }
 #confirmModal{ z-index:17500 !important; }
 
-/* Inline tour panel: PART OF PAGE, UNDER splash and modal layers */
+/* Inline tour: part of doc flow, under splash and modals */
 #inlineTour { position:relative; z-index:12000; display:none; opacity:0; transform: translateY(8px); transition: opacity 260ms ease, transform 260ms ease; pointer-events:auto; }
 #inlineTour.show { display:block; opacity:1; transform: translateY(0); }
 
-/* Small */
+/* small misc */
 .kv{font-size:13px;color:var(--muted)}
 .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.01);color:var(--text)}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
-
-/* Responsive */
-@media(max-width:740px){
-  .airline-grid{ grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-  .splash-center h2{ font-size:26px; }
-}
+@media(max-width:740px){ .airline-grid{ grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); } }
 </style>
 </head>
 <body>
@@ -153,14 +87,13 @@ body{
   <div class="container">
     <div id="appHero" class="hero" role="main" aria-label="Main app" tabindex="-1">
       <div class="header">
-        <div class="brand">
+        <div style="display:flex;gap:12px;align-items:center">
           <div class="logo">LH</div>
           <div>
-            <div class="title">Lufthansa Helper</div>
-            <div class="subtitle">усиленное LED · liquid glass · демонстрация</div>
+            <div style="font-weight:900">Lufthansa Helper</div>
+            <div class="subtitle">демо · liquid glass · tactile</div>
           </div>
         </div>
-
         <div style="display:flex;gap:10px;align-items:center">
           <div id="sessionBadge" class="kv">Неавторизован</div>
           <button id="openGateBtn" class="btn btn-neutral">Вход</button>
@@ -181,7 +114,6 @@ body{
           <strong class="kv">Время</strong>
           <div id="durations" class="durations"></div>
         </div>
-
         <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
           <button id="clearBtn" class="btn btn-ghost">Сброс</button>
           <button id="genBtn" class="btn btn-primary"><span class="btn-label">СГЕНЕРИРОВАТЬ</span></button>
@@ -190,12 +122,12 @@ body{
 
       <div id="airGrid" class="airline-grid" aria-live="polite"></div>
 
-      <div class="layout" style="display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px;min-width:0">
+      <div style="display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px">
         <main>
           <section id="panelGenerate" class="panel">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Генерация</div>
-              <div class="kv">Нажмите СГЕНЕРИРОВАТЬ для демонстрации</div>
+              <div class="kv">Нажмите СГЕНЕРИРОВАТЬ</div>
             </div>
             <div id="generatedNote" style="margin-top:12px" class="kv">Выберите авиакомпанию и интервал времени</div>
           </section>
@@ -203,7 +135,7 @@ body{
           <section id="panelRoutes" class="panel hidden" style="display:block">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Направления</div>
-              <div class="kv">Список маршрутов по фильтрам</div>
+              <div class="kv">Список маршрутов</div>
             </div>
             <div id="routesList" style="margin-top:12px"></div>
           </section>
@@ -211,7 +143,7 @@ body{
           <section id="panelFleet" class="panel hidden" style="display:none">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Флот</div>
-              <div class="kv">Самолёты под фильтрами</div>
+              <div class="kv">Самолёты</div>
             </div>
             <div id="fleetList" style="margin-top:12px"></div>
           </section>
@@ -223,16 +155,14 @@ body{
               <div style="font-weight:900">Пилоты</div>
               <div class="kv">Demo</div>
             </div>
-            <div style="margin-top:8px">
-              <input id="pilotSearch" class="input" placeholder="Поиск пилота" />
-            </div>
+            <div style="margin-top:8px"><input id="pilotSearch" class="input" placeholder="Поиск пилота" /></div>
             <div id="pilotList" style="margin-top:8px"></div>
           </div>
 
           <div class="panel" style="margin-top:12px;padding:12px">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:900">Актуальные рейсы</div>
-              <div class="kv">Сохранены в локальном хранилище</div>
+              <div class="kv">Локально</div>
             </div>
             <div id="currentFlights" class="kv" style="margin-top:8px;max-height:160px;overflow:auto">Нет текущих рейсов</div>
             <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
@@ -244,7 +174,7 @@ body{
         </aside>
       </div>
 
-      <!-- Inline instruction panel (hidden by default) — part of page, under splash/modal layers -->
+      <!-- Inline instruction panel (part of page, under splash/modals) -->
       <section id="inlineTour" class="panel" aria-hidden="true">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div style="font-weight:900">Краткая инструкция</div>
@@ -273,15 +203,10 @@ body{
     <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style="width:100%;height:100%"><defs><linearGradient id="waveGrad" x1="0" x2="1"><stop offset="0" stop-color="#ffd54a" stop-opacity="0.10"/><stop offset="1" stop-color="#00aaff" stop-opacity="0.06"/></linearGradient></defs><path id="wavePath" d="M0,160 C300,240 600,80 900,160 C1200,240 1440,80 1440,80 L1440,320 L0,320 Z" fill="url(#waveGrad)"></path></svg>
   </div>
 
-  <div class="splash-center" role="document">
-    <h2 id="splashTitle">Welcome to Lufthansa Group</h2>
-    <div class="splash-sub">Демо интерфейс · выбор авиакомпаний и интервалов</div>
-    <div class="center-cta" style="width:100%;display:flex;justify-content:center">
-      <button id="splashContinue" class="btn btn-primary" aria-label="Дальше" style="min-width:160px; display:inline-flex; align-items:center; justify-content:center;">
-        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--accent-yellow),var(--accent-yellow-2));margin-right:8px;box-shadow:0 8px 26px rgba(255,170,40,0.12)"></span>
-        <span class="btn-label">Дальше</span>
-      </button>
-    </div>
+  <div class="splash-center" role="document" style="z-index:15010">
+    <h2 id="splashTitle" style="margin:0;font-size:32px">Welcome to Lufthansa Group</h2>
+    <div class="splash-sub">Демо интерфейс</div>
+    <div style="margin-top:18px"><button id="splashContinue" class="btn btn-primary">Дальше</button></div>
   </div>
 </div>
 
@@ -291,12 +216,8 @@ body{
     <div style="font-weight:900">Вход в систему</div>
     <div class="small kv" style="margin-top:8px">Введите позывной и пароль. Кодовое слово: <strong>quickaccess2025</strong></div>
 
-    <div class="row" style="margin-top:10px">
-      <input id="loginCall" class="input" placeholder="Позывной (callSign)" autocomplete="username" />
-    </div>
-    <div class="row">
-      <input id="loginPass" class="input" placeholder="Пароль или кодовое слово" type="password" autocomplete="current-password" />
-    </div>
+    <div class="row" style="margin-top:10px"><input id="loginCall" class="input" placeholder="Позывной (callSign)" autocomplete="username" /></div>
+    <div class="row"><input id="loginPass" class="input" placeholder="Пароль или кодовое слово" type="password" autocomplete="current-password" /></div>
 
     <div class="row" style="align-items:center;margin-top:12px">
       <input id="tourAfterLogin" type="checkbox" checked />
@@ -304,12 +225,8 @@ body{
     </div>
 
     <div style="display:flex;justify-content:space-between;gap:8px;margin-top:14px;align-items:center">
-      <div style="display:flex;gap:8px">
-        <button id="btnDemoQuick" class="btn btn-neutral" title="Быстрый вход (демо)">Быстрый вход</button>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button id="btnLogin" class="btn btn-primary">Войти</button>
-      </div>
+      <div><button id="btnDemoQuick" class="btn btn-neutral">Быстрый вход</button></div>
+      <div><button id="btnLogin" class="btn btn-primary">Войти</button></div>
     </div>
   </div>
 </div>
@@ -327,41 +244,22 @@ body{
 </div>
 
 <script>
-/* ===== Data & state ===== */
+/* ===== State & data ===== */
 const CODEWORD = 'quickaccess2025';
-const DURATIONS = [
-  {label:"1–2ч",min:60,max:120},{label:"2–3ч",min:120,max:180},{label:"3–4ч",min:180,max:240},
-  {label:"5–6ч",min:300,max:360},{label:"6–7ч",min:360,max:420},{label:"7–8ч",min:420,max:480},
-  {label:"8–9ч",min:480,max:540},{label:"9–10ч",min:540,max:600},{label:"10+ч",min:600,max:99999}
-];
-const AIRLINES = [
-  {name:"Lufthansa",code:"LH",color:"#1E6FFF"},
-  {name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},
-  {name:"Eurowings",code:"EW",color:"#8A4BFF"},
-  {name:"Condor",code:"DE",color:"#FFD200"},
-  {name:"Swiss",code:"LX",color:"#D81E5B"},
-  {name:"Austrian",code:"OS",color:"#DA291C"},
-  {name:"Brussels",code:"SN",color:"#003399"},
-  {name:"SunExpress",code:"SX",color:"#FF8A3D"}
-];
+const DURATIONS = [{label:"1–2ч",min:60,max:120},{label:"2–3ч",min:120,max:180},{label:"3–4ч",min:180,max:240},{label:"5–6ч",min:300,max:360},{label:"6–7ч",min:360,max:420},{label:"7–8ч",min:420,max:480},{label:"8–9ч",min:480,max:540},{label:"9–10ч",min:540,max:600},{label:"10+ч",min:600,max:99999}];
+const AIRLINES = [{name:"Lufthansa",code:"LH",color:"#1E6FFF"},{name:"Lufthansa Cargo",code:"G0",color:"#0A63D6"},{name:"Eurowings",code:"EW",color:"#8A4BFF"},{name:"Condor",code:"DE",color:"#FFD200"},{name:"Swiss",code:"LX",color:"#D81E5B"},{name:"Austrian",code:"OS",color:"#DA291C"},{name:"Brussels",code:"SN",color:"#003399"},{name:"SunExpress",code:"SX",color:"#FF8A3D"}];
 
 let ROUTES = []; (function(){ let seq=100; const base=["EDDF","EGLL","LFPG","LEBL","LSZH","KJFK","EHAM","EBBR","LIRF","LOWW","ENBR","EKCH","ESSA","LIMC"]; AIRLINES.forEach((a,ai)=>{ for(let i=0;i<5;i++){ const from=base[(ai+i)%base.length]; const to=base[(ai+i+3)%base.length]; const dur=60+(i*30)+(ai*15); ROUTES.push({ id:`${a.code}-${seq++}`, airline:a.name, airlineCode:a.code, fromICAO:from,toICAO:to,fromCity:'City-'+from,toCity:'City-'+to,durationMinutes:dur }); } }); })();
 
-let FLEET = [
-  {id:"LH-A320-01",airline:"Lufthansa",type:"A320",locationICAO:"EDDF",status:"idle",fuelMinutes:420,turnaround:35,reserveMargin:30},
-  {id:"LX-A320-01",airline:"Swiss",type:"A320",locationICAO:"EDDF",status:"idle",fuelMinutes:380,turnaround:35,reserveMargin:30},
-  {id:"DE-B767-01",airline:"Condor",type:"B767",locationICAO:"EDDF",status:"idle",fuelMinutes:780,turnaround:50,reserveMargin:60}
-];
+let FLEET = [{id:"LH-A320-01",airline:"Lufthansa",type:"A320",locationICAO:"EDDF",status:"idle",fuelMinutes:420,turnaround:35,reserveMargin:30},{id:"LX-A320-01",airline:"Swiss",type:"A320",locationICAO:"EDDF",status:"idle",fuelMinutes:380,turnaround:35,reserveMargin:30},{id:"DE-B767-01",airline:"Condor",type:"B767",locationICAO:"EDDF",status:"idle",fuelMinutes:780,turnaround:50,reserveMargin:60}];
 
-let PILOTS = [
-  {id:"pilot_ivan",name:"Ivan Petrov",callSign:"IPET",verified:true,password:"ivanpass"},
-  {id:"pilot_loui",name:"Loui Desulier",callSign:"FRENCH",verified:true,password:"louiSecret"}
-];
+let PILOTS = [{id:"pilot_ivan",name:"Ivan Petrov",callSign:"IPET",verified:true,password:"ivanpass"},{id:"pilot_loui",name:"Loui Desulier",callSign:"FRENCH",verified:true,password:"louiSecret"}];
 
 let FLEET_LOG = JSON.parse(localStorage.getItem('lh_fleet_log_v1')||'[]');
 let CURRENT_FLIGHTS = JSON.parse(localStorage.getItem('lh_current_flights_v1')||'[]');
 
 let PENDING_RESERVATION = null;
+let PENDING_RESERVATION_TEMP = null; // temp holder when user must login first
 let SESSION = (function(){ try{ const s = sessionStorage.getItem('lh_force_auth_v1'); return s?JSON.parse(s):{pilotId:null}; }catch(e){ return {pilotId:null}; } })();
 
 let chosenAirline = null;
@@ -391,12 +289,12 @@ const pilotListEl = document.getElementById('pilotList');
 const currentFlightsEl = document.getElementById('currentFlights');
 const logEl = document.getElementById('log');
 
-/* Helpers */
+/* helpers */
 function nowMs(){return Date.now();}
 function saveToStorage(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 function uid(prefix='id'){ return prefix+'_'+Math.random().toString(36).slice(2,9); }
 
-/* Render durations */
+/* render durations */
 function renderDurations(){
   durWrap.innerHTML='';
   DURATIONS.forEach((d,i)=>{
@@ -408,13 +306,13 @@ function renderDurations(){
   });
 }
 
-/* Render airlines */
+/* render airlines */
 function renderAirGrid(){
   airGrid.innerHTML='';
   const filtered = AIRLINES.filter(a=>{ if(!searchQuery) return true; const q=searchQuery.toLowerCase(); return a.name.toLowerCase().includes(q)||(a.code&&a.code.toLowerCase().includes(q)); });
   filtered.forEach((a,i)=>{
     const card=document.createElement('div'); card.className='airline'; card.dataset.airline=a.name; card.dataset.idx=i;
-    card.innerHTML = `<div class="dot" style="background:${a.color}"></div><div class="meta"><div class="name">${a.name}</div><div class="code">${a.code}</div></div><div class="led-accent" aria-hidden="true"></div>`;
+    card.innerHTML = `<div class="dot" style="width:18px;height:18px;border-radius:50%;background:${a.color}"></div><div class="meta"><div class="name">${a.name}</div><div class="code">${a.code}</div></div><div class="led-accent" aria-hidden="true"></div>`;
     if(chosenAirline===a.name){ card.classList.add('selected'); }
     card.style.animationDelay = (i*60) + 'ms';
     setTimeout(()=> card.classList.add('float'), 900 + (i%3)*80);
@@ -422,7 +320,6 @@ function renderAirGrid(){
       const was = card.classList.contains('selected');
       document.querySelectorAll('.airline.selected').forEach(c=>c.classList.remove('selected'));
       if(!was){ card.classList.add('selected'); chosenAirline=a.name; } else { chosenAirline=null; }
-      const led=card.querySelector('.led-accent'); if(led) led.animate([{ transform:'scale(1.4)', opacity:1 },{ transform:'scale(1)', opacity:1 }], { duration:320, easing:'cubic-bezier(.2,.9,.2,1)' });
       renderLists();
     });
     card.tabIndex=0; card.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' ') card.click(); });
@@ -431,7 +328,7 @@ function renderAirGrid(){
   });
 }
 
-/* Routes & Fleet */
+/* routes & fleet */
 function renderRoutes(){
   routesList.innerHTML='';
   const list = ROUTES.filter(r=>{ if(chosenAirline && r.airline!==chosenAirline) return false; if(chosenDuration!==null){ const d=DURATIONS[chosenDuration]; if(!(r.durationMinutes>=d.min&&r.durationMinutes<=d.max)) return false; } return true; });
@@ -445,37 +342,32 @@ function renderRoutes(){
 }
 function renderFleet(){ fleetList.innerHTML=''; FLEET.forEach(f=>{ const el=document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.alignItems='center'; el.style.marginTop='8px'; el.innerHTML=`<div style="font-weight:800">${f.id}</div><div class="kv">${f.airline} · ${f.type} · ${f.fuelMinutes || f.fuel} мин</div>`; fleetList.appendChild(el); }); }
 
-/* Pilots, flights, log */
+/* pilots, flights, log */
 function renderPilots(){ pilotListEl.innerHTML=''; PILOTS.forEach(p=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.marginTop='8px'; row.innerHTML=`<div><strong>${p.name}</strong><div class="kv">${p.callSign} ${p.verified? '· Verified':''}</div></div>`; const b=document.createElement('button'); b.className='btn btn-neutral'; b.textContent='Войти'; b.addEventListener('click', ()=>{ loginCall.value = p.callSign; loginPass.value=''; showGateModal(); }); row.appendChild(b); pilotListEl.appendChild(row); }); }
 function renderCurrentFlights(){ currentFlightsEl.innerHTML=''; if(!CURRENT_FLIGHTS.length){ currentFlightsEl.textContent='Нет текущих рейсов'; return; } CURRENT_FLIGHTS.forEach(f=>{ const e=document.createElement('div'); e.className='kv'; e.style.marginTop='8px'; e.innerHTML=`<div style="font-weight:800">${f.aircraftId} · ${f.airline}</div><div class="kv">${f.fromICAO}→${f.toICAO} · ${f.durationMinutes} мин · Пилот ${f.pilotCallsign}</div>`; currentFlightsEl.appendChild(e); }); }
 function renderAssignLog(){ logEl.innerHTML=''; if(!FLEET_LOG.length){ logEl.textContent='Пусто'; return; } FLEET_LOG.slice(-200).reverse().forEach(e=>{ const d=document.createElement('div'); d.className='kv'; d.style.marginTop='6px'; d.textContent = `${new Date(e.ts).toLocaleString()} — ${e.msg}`; logEl.appendChild(d); }); }
 
-/* Session & modals */
+/* session & modals */
 function showGateModal(){ gateModal.style.display='flex'; gateModal.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),70); }
 function hideGateModal(){ gateModal.style.display='none'; gateModal.setAttribute('aria-hidden','true'); }
 
-/* Helper: show inline tour only after splash hidden */
+/* show inline tour only after splash hidden */
 function showInlineTourWhenReady(){
   if(!inlineTour) return;
   const splashEl = document.getElementById('splash');
   const isSplashHidden = !splashEl || (splashEl.style.display === 'none' || splashEl.classList.contains('splash-hidden'));
   if(isSplashHidden){
-    inlineTour.classList.add('show');
-    inlineTour.setAttribute('aria-hidden','false');
-    inlineTour.scrollIntoView({ behavior:'smooth', block:'start' });
-    return;
+    inlineTour.classList.add('show'); inlineTour.setAttribute('aria-hidden','false'); inlineTour.scrollIntoView({ behavior:'smooth', block:'start' }); return;
   }
   const onHidden = ()=>{
-    splashEl.removeEventListener('transitionend', onHidden);
-    splashEl.removeEventListener('animationend', onHidden);
+    splashEl.removeEventListener('transitionend', onHidden); splashEl.removeEventListener('animationend', onHidden);
     setTimeout(()=>{ inlineTour.classList.add('show'); inlineTour.setAttribute('aria-hidden','false'); inlineTour.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
   };
-  splashEl.addEventListener('transitionend', onHidden);
-  splashEl.addEventListener('animationend', onHidden);
+  splashEl.addEventListener('transitionend', onHidden); splashEl.addEventListener('animationend', onHidden);
   setTimeout(()=>{ if(!inlineTour.classList.contains('show')) onHidden(); }, 700);
 }
 
-/* Login handler */
+/* login handler */
 btnLogin.addEventListener('click', async ()=>{
   const cs = (loginCall.value||'').trim(); const pass = (loginPass.value||'').trim();
   if(!cs){ alert('Введите позывной'); loginCall.focus(); return; }
@@ -489,11 +381,18 @@ btnLogin.addEventListener('click', async ()=>{
     sessionStorage.setItem('lh_force_auth_v1', JSON.stringify(SESSION));
     renderSession();
     hideGateModal();
-    // show inline tour only after successful login and if checkbox enabled
+
+    // After login: show inline tour if enabled, and resume pending reservation if any
     setTimeout(()=> {
       const show = document.getElementById('tourAfterLogin');
-      if (show && show.checked) {
-        showInlineTourWhenReady();
+      if (show && show.checked) showInlineTourWhenReady();
+
+      // resume pending reservation that was attempted before login
+      if(PENDING_RESERVATION_TEMP && PENDING_RESERVATION_TEMP.route){
+        const pendingRoute = PENDING_RESERVATION_TEMP.route;
+        PENDING_RESERVATION_TEMP = null;
+        // continue reservation now that user is authenticated
+        openConfirmFromRoute(pendingRoute);
       }
     }, 260);
   } else {
@@ -510,18 +409,10 @@ logoutBtn.addEventListener('click', ()=>{ SESSION.pilotId = null; sessionStorage
 
 function renderSession(){ if(SESSION.pilotId){ const p = PILOTS.find(x=>x.id === SESSION.pilotId) || {}; sessionBadge.textContent = p.callSign ? `Вошёл ${p.callSign}` : 'Вошёл'; logoutBtn.style.display='inline-flex'; openGateBtn.style.display='none'; } else { sessionBadge.textContent='Неавторизован'; logoutBtn.style.display='none'; openGateBtn.style.display='inline-flex'; } }
 
-/* Inline tour close handler */
-if (inlineTourClose) {
-  inlineTourClose.addEventListener('click', ()=> {
-    if (inlineTour) {
-      inlineTour.classList.remove('show');
-      inlineTour.setAttribute('aria-hidden','true');
-      document.getElementById('appHero').focus && document.getElementById('appHero').focus();
-    }
-  });
-}
+/* inline tour close */
+if (inlineTourClose) inlineTourClose.addEventListener('click', ()=>{ inlineTour.classList.remove('show'); inlineTour.setAttribute('aria-hidden','true'); document.getElementById('appHero').focus && document.getElementById('appHero').focus(); });
 
-/* Reservation helpers */
+/* reservation helpers */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -532,21 +423,29 @@ function findCandidateAircraftForRoute(route){
   return cand[0];
 }
 
+/* OPEN CONFIRM: if not logged in -> prompt login and save temp */
 function openConfirmFromRoute(route){
   const pilot = (SESSION.pilotId ? PILOTS.find(x=>x.id === SESSION.pilotId) : null);
-  if(!pilot){ showGateModal(); return; }
+  if(!pilot){
+    PENDING_RESERVATION_TEMP = { route };
+    showGateModal();
+    return;
+  }
+
   const candidate = findCandidateAircraftForRoute(route);
   if(!candidate){ alert('Нет подходящих самолётов с запасом топлива'); return; }
+
   candidate.status='reserved';
   candidate.reservedBy = pilot.id;
   candidate.reservedToken = pilot.id+':'+Date.now()+':'+Math.random().toString(36).slice(2,8);
   candidate.reservedUntil = nowMs() + 120000;
   PENDING_RESERVATION = { token: candidate.reservedToken, aircraft: candidate, route, pilotId: pilot.id, expires: candidate.reservedUntil };
+
   document.getElementById('confirmDetails').textContent = `${candidate.id} · ${candidate.airline} · ${route.fromICAO}→${route.toICAO} · ${route.durationMinutes} мин · Пилот ${pilot.callSign}`;
   document.getElementById('confirmModal').style.display='flex';
 }
 
-/* Confirm handlers */
+/* confirm handlers */
 document.getElementById('confirmAccept').addEventListener('click', ()=> {
   if(!PENDING_RESERVATION){ document.getElementById('confirmModal').style.display='none'; return; }
   const ac = FLEET.find(a=>a.reservedToken === PENDING_RESERVATION.token);
@@ -571,13 +470,13 @@ document.getElementById('confirmCancel').addEventListener('click', ()=> {
   renderLists(); renderAssignLog();
 });
 
-/* Periodic maintenance */
+/* maintenance */
 setInterval(()=>{ const now=nowMs(); FLEET.forEach(ac=>{ if(ac.status==='reserved' && ac.reservedUntil && ac.reservedUntil<=now){ ac.status='idle'; delete ac.reservedBy; delete ac.reservedToken; delete ac.reservedUntil; FLEET_LOG.unshift({ts:now,msg:`Резервация истекла ${ac.id}`}); } if(ac.status==='inFlight' && ac.availableAt && ac.availableAt<=now){ ac.status='idle'; delete ac.availableAt; FLEET_LOG.unshift({ts:now,msg:`Самолёт вернулся в сервис ${ac.id}`}); } }); saveToStorage('lh_fleet_log_v1', FLEET_LOG); renderAssignLog(); renderFleet(); }, 1500);
 
 /* UI helpers */
 function renderLists(){ renderAirGrid(); renderDurations(); renderRoutes(); renderFleet(); renderPilots(); renderAssignLog(); renderCurrentFlights(); }
 
-/* Tabs underline */
+/* tabs underline */
 const tabEls = document.querySelectorAll('.tab');
 const underline = document.getElementById('liquidUnderline');
 function placeUnderline(activeEl){
@@ -591,11 +490,11 @@ function placeUnderline(activeEl){
 tabEls.forEach(t=> t.addEventListener('click', ()=>{ tabEls.forEach(x=>x.classList.remove('active')); t.classList.add('active'); const target=t.dataset.target; ['panelGenerate','panelRoutes','panelFleet'].forEach(id=>{ const el=document.getElementById(id); if(!el) return; el.style.display = (id===target)?'block':'none'; el.classList.toggle('hidden', id!==target); }); placeUnderline(t); }));
 window.addEventListener('resize', ()=>{ const active=document.querySelector('.tab.active'); if(active) placeUnderline(active); });
 
-/* Search & clear */
+/* search & clear */
 airSearch.addEventListener('input', ()=>{ searchQuery = airSearch.value.trim(); renderAirGrid(); });
 document.getElementById('clearBtn').addEventListener('click', ()=>{ searchQuery=''; airSearch.value=''; chosenAirline=null; chosenDuration=null; Array.from(durWrap.children).forEach(c=>c.classList.remove('active')); renderLists(); });
 
-/* Gen button */
+/* gen button */
 document.getElementById('genBtn').addEventListener('click', async ()=>{
   if(!SESSION.pilotId){ showGateModal(); return; }
   setButtonLoading(document.getElementById('genBtn'), true, {label:'Генерация...'});
@@ -607,39 +506,39 @@ document.getElementById('genBtn').addEventListener('click', async ()=>{
   setButtonLoading(document.getElementById('genBtn'), false);
 });
 
-/* Splash waves animation */
-(function animateWaves(){
-  const path = document.getElementById('wavePath');
-  if(!path) return;
-  let t=0;
-  function step(){
-    t += 0.008;
-    const amp = 12;
-    const d1 = `M0,160 C300,${160+Math.sin(t*1.2)*amp+60} 600,${160+Math.cos(t*0.7)*amp+40} 900,${160+Math.sin(t*0.5)*amp+60} C1200,${160+Math.cos(t*0.9)*amp+40} 1440,${80+Math.sin(t*0.3)*amp} 1440,80 L1440,320 L0,320 Z`;
-    path.setAttribute('d', d1);
-    requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-})();
+/* splash animations */
+(function animateWaves(){ const path = document.getElementById('wavePath'); if(!path) return; let t=0; function step(){ t += 0.008; const amp = 12; const d1 = `M0,160 C300,${160+Math.sin(t*1.2)*amp+60} 600,${160+Math.cos(t*0.7)*amp+40} 900,${160+Math.sin(t*0.5)*amp+60} C1200,${160+Math.cos(t*0.9)*amp+40} 1440,${80+Math.sin(t*0.3)*amp} 1440,80 L1440,320 L0,320 Z`; path.setAttribute('d', d1); requestAnimationFrame(step); } requestAnimationFrame(step); })();
 
-/* Splash close -> open gate modal */
+/* splash close: hide visually then remove after transition */
 splashContinue.addEventListener('click', ()=>{
-  // hide visually
   splash.classList.add('splash-hidden');
-  // ensure splash removed after transition to allow inline tour to show under modals
   setTimeout(()=>{ try{ splash.style.display='none'; }catch(e){} }, 520);
   setTimeout(()=> showGateModal(), 380);
 });
 
-/* Ripple & loading helpers */
+/* ripples & loading */
 function createRippleEl(){ const r=document.createElement('span'); r.className='ripple'; r.style.width=r.style.height='8px'; r.style.left='0px'; r.style.top='0px'; return r; }
 function attachRippleForAll(scope=document){ const els = scope.querySelectorAll('.btn'); els.forEach(btn=>{ if(btn._rippleAttached) return; btn._rippleAttached=true; btn.addEventListener('pointerdown', function(ev){ if(btn.getAttribute('aria-disabled')==='true' || btn.disabled) return; let r = btn.querySelector('.ripple'); if(!r){ r = createRippleEl(); btn.prepend(r); } const rect = btn.getBoundingClientRect(); const size = Math.max(rect.width, rect.height)*1.4; r.style.width = r.style.height = size + 'px'; const x = ev.clientX - rect.left - size/2; const y = ev.clientY - rect.top - size/2; r.style.left = x + 'px'; r.style.top = y + 'px'; r.style.transform='scale(0)'; r.style.opacity='0.36'; void r.offsetWidth; r.style.transition='transform 480ms cubic-bezier(.2,.9,.2,1), opacity 360ms'; r.style.transform='scale(1)'; setTimeout(()=> r.style.opacity='0',420); }, {passive:true}); }); }
 function setButtonLoading(btn,isLoading,opts={}){ if(!btn) return; if(isLoading){ btn.setAttribute('aria-disabled','true'); btn.disabled=true; if(!btn.querySelector('.btn-spinner')){ const s=document.createElement('span'); s.className='btn-spinner'; s.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="10" stroke="rgba(0,0,0,0.12)" stroke-width="2" fill="none"/><path d="M22 12a10 10 0 0 1-10 10" stroke="rgba(0,0,0,0.36)" stroke-width="2" stroke-linecap="round" fill="none"/></svg>'; btn.prepend(s); } if(opts.label){ if(!btn._orig) btn._orig = btn.textContent; btn.textContent = ''; const span=document.createElement('span'); span.className='btn-label'; span.textContent = opts.label; btn.appendChild(span); } } else { btn.removeAttribute('aria-disabled'); btn.disabled=false; const sp=btn.querySelector('.btn-spinner'); if(sp) sp.remove(); if(btn._orig){ btn.textContent = btn._orig; delete btn._orig; } } }
 
-/* Attach ripples after DOM ready */
+/* attach ripples */
 document.addEventListener('DOMContentLoaded', ()=> attachRippleForAll(document));
 
-/* Init */
+/* guard: hide confirmModal when user not authenticated */
+(function guardConfirmVisibility(){
+  const confirmEl = document.getElementById('confirmModal');
+  const obs = new MutationObserver(()=> {
+    const isVisible = confirmEl && confirmEl.style.display !== 'none' && confirmEl.getAttribute('aria-hidden') !== 'true';
+    if(isVisible && !SESSION.pilotId){
+      confirmEl.style.display = 'none';
+      // ensure gate modal opens so user can sign in
+      showGateModal();
+    }
+  });
+  if(confirmEl) obs.observe(confirmEl, { attributes: true, attributeFilter: ['style', 'aria-hidden'] });
+})();
+
+/* init */
 function init(){ renderLists(); renderSession(); renderPilots(); renderAssignLog(); renderCurrentFlights(); const defaultTab = document.querySelector('.tab[data-target="panelGenerate"]'); if(defaultTab){ defaultTab.classList.add('active'); placeUnderline(defaultTab); } }
 init();
 </script>
