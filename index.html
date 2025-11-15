@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lufthansa Helper — inline instruction</title>
+<title>Lufthansa Helper — final stable</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -15,7 +15,7 @@
   font-size:15px;
 }
 
-/* Reduced motion */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
@@ -120,20 +120,20 @@ body{
 .btn-neutral{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.04); }
 .btn-ghost{ background: transparent; border:1px dashed rgba(255,255,255,0.04); color:var(--muted); }
 
-/* Splash */
+/* Splash (on top while visible) */
 .splash-back{ position:fixed; inset:0; z-index:15000; display:flex; align-items:center; justify-content:center; overflow:hidden; background: linear-gradient(180deg, rgba(0,6,18,0.95), rgba(2,14,30,0.98)); transition: opacity .52s, transform .52s; }
 .splash-hidden{ opacity:0; transform: translateY(-8px) scale(.996); pointer-events:none; }
 .splash-center{ position:relative; z-index:15010; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:28px; text-align:center; color:var(--text); width:min(820px,94%); }
 .splash-waves{ position:absolute; left:0; right:0; bottom:0; height:36vh; z-index:15005; pointer-events:none; filter: blur(8px) saturate(120%); opacity:0.9; }
 .splash-clouds{ position:absolute; inset:8% 6% auto 6%; height:34%; z-index:15002; pointer-events:none; opacity:0.14; }
 
-/* Modals center/z-index */
+/* Modals above splash */
 .modal-back{ display:flex !important; align-items:center; justify-content:center; position:fixed; inset:0; z-index:17000; background: rgba(0,0,0,0.56); padding:20px; transition: opacity .22s ease, visibility .22s ease; }
 .modal{ width:min(560px,94%); max-width:94%; border-radius:12px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(8,12,18,0.94)); border:1px solid rgba(255,255,255,0.06); box-shadow: 0 40px 120px rgba(0,0,0,0.6); transform:translateY(0); opacity:1; will-change: transform, opacity; }
 #confirmModal{ z-index:17500 !important; }
 
-/* Inline tour panel styles */
-#inlineTour { display:none; opacity:0; transform: translateY(8px); transition: opacity 260ms ease, transform 260ms ease; }
+/* Inline tour panel: PART OF PAGE, UNDER splash and modal layers */
+#inlineTour { position:relative; z-index:12000; display:none; opacity:0; transform: translateY(8px); transition: opacity 260ms ease, transform 260ms ease; pointer-events:auto; }
 #inlineTour.show { display:block; opacity:1; transform: translateY(0); }
 
 /* Small */
@@ -243,7 +243,8 @@ body{
           </div>
         </aside>
       </div>
-      <!-- Inline instruction panel (hidden by default) -->
+
+      <!-- Inline instruction panel (hidden by default) — part of page, under splash/modal layers -->
       <section id="inlineTour" class="panel" aria-hidden="true">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div style="font-weight:900">Краткая инструкция</div>
@@ -256,6 +257,7 @@ body{
           <button id="inlineTourClose" class="btn btn-neutral">Скрыть</button>
         </div>
       </section>
+
     </div>
   </div>
 </div>
@@ -452,6 +454,28 @@ function renderAssignLog(){ logEl.innerHTML=''; if(!FLEET_LOG.length){ logEl.tex
 function showGateModal(){ gateModal.style.display='flex'; gateModal.setAttribute('aria-hidden','false'); setTimeout(()=> loginCall.focus(),70); }
 function hideGateModal(){ gateModal.style.display='none'; gateModal.setAttribute('aria-hidden','true'); }
 
+/* Helper: show inline tour only after splash hidden */
+function showInlineTourWhenReady(){
+  if(!inlineTour) return;
+  const splashEl = document.getElementById('splash');
+  const isSplashHidden = !splashEl || (splashEl.style.display === 'none' || splashEl.classList.contains('splash-hidden'));
+  if(isSplashHidden){
+    inlineTour.classList.add('show');
+    inlineTour.setAttribute('aria-hidden','false');
+    inlineTour.scrollIntoView({ behavior:'smooth', block:'start' });
+    return;
+  }
+  const onHidden = ()=>{
+    splashEl.removeEventListener('transitionend', onHidden);
+    splashEl.removeEventListener('animationend', onHidden);
+    setTimeout(()=>{ inlineTour.classList.add('show'); inlineTour.setAttribute('aria-hidden','false'); inlineTour.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
+  };
+  splashEl.addEventListener('transitionend', onHidden);
+  splashEl.addEventListener('animationend', onHidden);
+  setTimeout(()=>{ if(!inlineTour.classList.contains('show')) onHidden(); }, 700);
+}
+
+/* Login handler */
 btnLogin.addEventListener('click', async ()=>{
   const cs = (loginCall.value||'').trim(); const pass = (loginPass.value||'').trim();
   if(!cs){ alert('Введите позывной'); loginCall.focus(); return; }
@@ -468,10 +492,8 @@ btnLogin.addEventListener('click', async ()=>{
     // show inline tour only after successful login and if checkbox enabled
     setTimeout(()=> {
       const show = document.getElementById('tourAfterLogin');
-      if (show && show.checked && inlineTour) {
-        inlineTour.classList.add('show');
-        inlineTour.setAttribute('aria-hidden','false');
-        inlineTour.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (show && show.checked) {
+        showInlineTourWhenReady();
       }
     }, 260);
   } else {
@@ -499,7 +521,7 @@ if (inlineTourClose) {
   });
 }
 
-/* Reservation */
+/* Reservation helpers */
 function findCandidateAircraftForRoute(route){
   const dur = Number(route.durationMinutes) || 0;
   const can = ac => ac.status==='idle' && (typeof ac.fuelMinutes==='number' && ac.fuelMinutes >= (dur + (ac.reserveMargin||30)));
@@ -602,9 +624,10 @@ document.getElementById('genBtn').addEventListener('click', async ()=>{
 
 /* Splash close -> open gate modal */
 splashContinue.addEventListener('click', ()=>{
-  splashContinue.animate([{ transform:'scale(.98)' },{ transform:'scale(1)' }], { duration:160, easing:'cubic-bezier(.2,.9,.2,1)' });
+  // hide visually
   splash.classList.add('splash-hidden');
-  setTimeout(()=>{ splash.style.display='none'; }, 420);
+  // ensure splash removed after transition to allow inline tour to show under modals
+  setTimeout(()=>{ try{ splash.style.display='none'; }catch(e){} }, 520);
   setTimeout(()=> showGateModal(), 380);
 });
 
