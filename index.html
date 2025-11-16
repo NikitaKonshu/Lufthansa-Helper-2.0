@@ -198,7 +198,7 @@ body.modal-open{ overflow:hidden; }
           </div>
         </section>
 
-        <!-- empty placeholder for dynamic pages (routes, fleet, flights, pilots) -->
+        <!-- динамические вкладки -->
         <div id="dynamicPages"></div>
 
         <!-- Local help block -->
@@ -336,7 +336,38 @@ const DURATIONS = [
   {label:"10+ часов", min:10}
 ];
 
-let ROUTES = []; (function(){ let seq=100; const base=["EDDF","EGLL","LFPG","LEBL","LSZH","KJFK","EHAM","LOWW"]; AIRLINES.forEach((a,ai)=>{ for(let i=0;i<5;i++){ const from=base[(ai*2+i)%base.length]; const to=base[(ai*2+i+2)%base.length]; const dur=75 + (i*20) + (ai*6); ROUTES.push({ id:`${a.code}-${seq++}`, airline:a.name, airlineCode:a.code, fromICAO:from, toICAO:to, fromCity:'City-'+from, toCity:'City-'+to, durationMinutes:dur }); } }); })();
+/* Новая генерация ROUTES:
+   - Для каждой авиакомпании создаём по одному направлению на каждую группу DURATIONS.
+   - Для интервалов с max рассчитываем случайное время в пределах [min, max] часов.
+   - Для "10+ часов" даём случайное время от min до min+6 часов (примерно 10-16 часов).
+*/
+let ROUTES = []; (function(){
+  const bases = ["EDDF","EGLL","LFPG","LEBL","LSZH","KJFK","EHAM","LOWW","LIRF","LEMD","UUEE"];
+  let seq = 1000;
+  AIRLINES.forEach((a, ai) => {
+    DURATIONS.forEach((d, di) => {
+      // pick from/to to vary, ensure not equal
+      const from = bases[(ai*2 + di) % bases.length];
+      const to = bases[(ai*2 + di + 3) % bases.length];
+      // durationMinutes: if max exists, pick between min and max hours; else pick min..min+6
+      let hours = d.max ? randInt(d.min, d.max) : randInt(d.min, d.min + 6);
+      // add small random minutes
+      const minutes = hours * 60 + randInt(0, 45);
+      ROUTES.push({
+        id: `${a.code}-${seq++}`,
+        airline: a.name,
+        airlineCode: a.code,
+        fromICAO: from,
+        toICAO: to,
+        fromCity: 'City-' + from,
+        toCity: 'City-' + to,
+        durationMinutes: minutes,
+        durationHoursDisplay: hours
+      });
+    });
+  });
+  function randInt(min, max){ return Math.floor(Math.random()*(max - min + 1)) + min; }
+})();
 
 let FLEET = []; (function(){ AIRLINES.forEach((a,ai)=>{ const types=["A320","A321","B737","A220","A330"]; for(let i=1;i<=2;i++){ FLEET.push({ id:`${a.code}-AC${String(i).padStart(2,'0')}`, airline:a.name, type:types[(ai+i)%types.length], locationICAO:i===1?"EDDF":"EGLL", status:"idle", fuelMinutes:420 + i*60, turnaround:20 + i*5, reserveMargin:30 }); } }); })();
 
@@ -711,8 +742,8 @@ openGateBtn.addEventListener('click', ()=> modalShow(document.getElementById('ga
 openInstructionBtn.addEventListener('click', ()=> modalShow(document.getElementById('instructionModal')));
 closeInstruction.addEventListener('click', ()=> modalHide(document.getElementById('instructionModal')));
 
-/* Filters panel open/close */
-openFiltersFleet && openFiltersFleet.addEventListener('click', ()=>{ populateFilterCompanies(); modalShow(document.getElementById('filterPanel')); });
+/* Filters panel open/close (openFiltersFleet may be undefined if removed) */
+if(openFiltersFleet) openFiltersFleet.addEventListener('click', ()=>{ populateFilterCompanies(); modalShow(document.getElementById('filterPanel')); });
 document.getElementById('applyFilters').addEventListener('click', ()=>{ filterCompany = filterCompanySelect.value; modalHide(document.getElementById('filterPanel')); if(currentPage==='routes') renderRoutesPage(); });
 document.getElementById('resetFilters').addEventListener('click', ()=>{ filterCompany = ''; chosenDurationIdx = null; document.querySelectorAll('.time-item').forEach(x=>x.style.outline='none'); filterCompanySelect.value=''; modalHide(document.getElementById('filterPanel')); if(currentPage==='routes') renderRoutesPage(); });
 
@@ -751,7 +782,7 @@ setInterval(()=>{
     if(ac.status==='inFlight' && ac.availableAt && ac.availableAt <= now){ ac.status='idle'; delete ac.availableAt; CONFIRMED_FLIGHTS.forEach(f=>{ if(f.aircraftId===ac.id && f.status==='inFlight'){ f.status='arrived'; f.arrivedAt = now; } }); if(SESSION.pilotId) localStorage.setItem(flightsKey(SESSION.pilotId), JSON.stringify(CONFIRMED_FLIGHTS)); }
   });
   // auto-refresh current pages only
-  if(currentPage==='fleet') { /* nothing heavy: rerender */ }
+  if(currentPage==='fleet') { /* nothing heavy: rerender when user opens */ }
   if(currentPage==='flights') renderFlightsList();
 }, 3000);
 
@@ -768,8 +799,6 @@ function continueFromSplash(){
   fresh.addEventListener('click', continueFromSplash, { passive:true });
   fresh.onclick = continueFromSplash;
 })();
-
-/* Tabs hookup already added above */
 
 /* Init */
 function init(){
