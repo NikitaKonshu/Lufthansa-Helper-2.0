@@ -160,6 +160,78 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 /* protect against long words/tables */
 .panel * { min-width: 0 !important; word-break: break-word; -webkit-hyphens: auto; hyphens: auto; }
 
+/* ===========================
+   PATCH: stable card layout (title/meta clamp + button zone)
+   =========================== */
+
+/* Keep cards aligned and stable */
+.card-grid { align-items: start; grid-auto-rows: 1fr; }
+.card-grid > * { display: flex; flex-direction: column; }
+
+/* Card internals: fixed-ish height, vertical layout */
+.route-card, .fleet-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 84px;
+  padding: 10px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* Title: single line, ellipsis */
+.route-card .title, .fleet-card .title {
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 1.15em;
+}
+
+/* Meta: up to 2 lines, clamp */
+.route-card .meta, .fleet-card .meta {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.2;
+  max-height: calc(1.2em * 2);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* Small note: clamp to 2 lines */
+.route-card .small-note, .fleet-card .small-note {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.15;
+  max-height: calc(1.15em * 2);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Button row stays visible and fixed at bottom of card */
+.route-card > div:last-child, .fleet-card > div:last-child {
+  margin-top: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+/* Slight adjustments for very narrow screens */
+@media (max-width:420px) {
+  .route-card, .fleet-card { min-height: 92px; }
+  .route-card .title, .fleet-card .title { font-size: 14px; white-space: nowrap; }
+  .route-card .meta, .fleet-card .meta { font-size: 12px; -webkit-line-clamp: 2; }
+}
+
 /* accessibility helpers */
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
 
@@ -725,7 +797,6 @@ function renderRoutesPage(){
   container.querySelector('#closeRoutesBtn').addEventListener('click', ()=> activatePage('home'));
 
   renderRoutesGrid();
-  // clamp layout after render
   if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
@@ -745,9 +816,9 @@ function renderRoutesGrid(){
   list.forEach(r=>{
     const durH = Math.round(r.durationMinutes/60);
     const node = document.createElement('div'); node.className='route-card';
-    node.innerHTML = `<div class="title">${r.fromICAO} → ${r.toICAO} · ${r.airlineCode}</div>
+    node.innerHTML = `<div><div class="title">${r.fromICAO} → ${r.toICAO} · ${r.airlineCode}</div>
       <div class="meta">${r.fromCity} → ${r.toCity} · ${durH} ч · ${r.airline}</div>
-      <div class="small-note">Длительность: примерно ${durH} ч ${r.durationMinutes%60} мин</div>
+      <div class="small-note">Длительность: примерно ${durH} ч ${r.durationMinutes%60} мин</div></div>
       <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-primary select-route" data-id="${r.id}">Выбрать</button></div>`;
     grid.appendChild(node);
   });
@@ -800,9 +871,10 @@ function renderFleetGroups(filterBy){
       const rep = representativeDurationForAircraft(f);
       const approx = rep ? `~${rep} ч` : '—';
       const card = document.createElement('div'); card.className='fleet-card'; card.style.marginBottom='8px';
-      card.innerHTML = `<div class="title">${f.id} · ${f.type}</div>
+      card.innerHTML = `<div><div class="title">${f.id} · ${f.type}</div>
         <div class="meta">${f.locationICAO} · Топливо: ${f.fuelMinutes} мин · Статус: ${f.status}</div>
-        <div class="small-note">Ориентировочное время полёта для этого самолёта: ${approx}</div>`;
+        <div class="small-note">Ориентировочное время полёта для этого самолёта: ${approx}</div></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-primary">Действие</button></div>`;
       list.appendChild(card);
     });
   });
