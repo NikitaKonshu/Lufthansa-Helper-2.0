@@ -460,20 +460,46 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
   SESSION.pilotId = null; renderSession(); showModal(gateModal);
 });
 
-/* ====== Tabs navigation (fixed, animated underline) ====== */
+/* ====== Tabs navigation (robust, with re-render) ====== */
 function activatePage(id){
+  // Reset all pages
   document.querySelectorAll('.page').forEach(p=>{
     p.classList.remove('active','enter');
     p.style.display='none';
-    p.style.opacity='0';
-    p.style.transform='translateY(14px) scale(.98)';
+    p.setAttribute('aria-hidden','true');
   });
+
+  // Activate target
   const el = document.getElementById('page-'+id);
   if(!el) return;
-  el.classList.add('active');
   el.style.display='block';
+  el.setAttribute('aria-hidden','false');
+  el.classList.add('active');
+
+  // Render content for target page
+  switch(id){
+    case 'home':
+      renderDurations();
+      renderAirlines();
+      break;
+    case 'routes':
+      renderRoutes();
+      break;
+    case 'fleet':
+      renderFleet();
+      break;
+    case 'pilots':
+      renderPilots();
+      break;
+    case 'log':
+      renderLog();
+      break;
+  }
+
+  // Animate enter
   requestAnimationFrame(()=>{ el.classList.add('enter'); });
 }
+
 function placeUnderline(el){
   const parentRect = tabs.getBoundingClientRect();
   const r = el.getBoundingClientRect();
@@ -481,18 +507,27 @@ function placeUnderline(el){
   underline.style.width = r.width + 'px';
   underline.style.opacity = '1';
 }
+
 tabs.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     tabs.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active'); placeUnderline(tab);
+    tab.classList.add('active');
+    placeUnderline(tab);
     activatePage(tab.dataset.page);
-  });
+  }, {passive:true});
+});
+
+window.addEventListener('load', ()=>{
+  const activeTab = tabs.querySelector('.tab.active') || tabs.querySelector('.tab[data-page="home"]');
+  if(activeTab){
+    placeUnderline(activeTab);
+    activatePage(activeTab.dataset.page);
+  }
 });
 window.addEventListener('resize', ()=>{
   const active = tabs.querySelector('.tab.active');
   if(active) placeUnderline(active);
 });
-setTimeout(()=>{ placeUnderline(tabs.querySelector('.tab.active')); }, 120);
 
 /* ====== Ripple effects ====== */
 function attachRipple(scope=document){
@@ -743,6 +778,9 @@ function init(){
   renderPilots();
   renderLog();
   attachRipple(document);
+
+  // Стартовая страница строго активируется после рендера
+  activatePage('home');
 }
 init();
 </script>
