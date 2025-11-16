@@ -290,21 +290,18 @@ html,body,.shell{overflow-x:hidden}
 </div>
 
 <!-- GATE modal -->
-<div id="gateModal" class="modal-backdrop" role="dialog" aria-hidden="true" aria-modal="true">
-  <div class="modal-card" role="document" aria-label="Вход">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div class="title">Вход</div>
-      <div class="subtitle" style="color:var(--muted)">Авторизация</div>
-    </div>
-    <div class="body" style="margin-top:12px">
-      <input id="loginCall" class="input-glass" placeholder="Позывной (callSign)" />
-      <input id="loginPass" class="input-glass" type="password" placeholder="Пароль" style="margin-top:10px" />
-    </div>
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
-      <button id="btnLogin" class="btn btn-primary" type="button">Войти</button>
-    </div>
+<div class="body" style="margin-top:12px">
+  <div style="margin-bottom:10px">
+    <label for="loginCall" style="display:block;font-weight:700;font-size:13px;color:var(--muted)">Позывной (callSign)</label>
+    <input id="loginCall" class="input-glass" placeholder="Позывной (callSign)" aria-label="Позывной (callSign)" />
+  </div>
+
+  <div style="margin-bottom:10px">
+    <label for="loginPass" style="display:block;font-weight:700;font-size:13px;color:var(--muted)">Пароль</label>
+    <input id="loginPass" class="input-glass" type="password" placeholder="Пароль" aria-label="Пароль" />
   </div>
 </div>
+
 
 <!-- INSTRUCTION modal -->
 <div id="instructionModal" class="modal-backdrop" role="dialog" aria-hidden="true" aria-modal="true">
@@ -954,5 +951,6 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
