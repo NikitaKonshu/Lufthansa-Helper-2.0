@@ -138,12 +138,33 @@ body.modal-open{ overflow:hidden; }
   mix-blend-mode: screen;
 }
 
+/* Mobile fit guarantee: ensure nothing overflows */
+html, body { overflow-x: hidden !important; max-width: 100%; }
+.shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
+@media (max-width: 768px) {
+  .card-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .airline-grid { display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
+  .airline { min-width: 160px; flex:0 0 auto; }
+  .panel { padding: 12px; margin: 8px 0; max-height: calc(100vh - 160px); overflow: auto; -webkit-overflow-scrolling:touch; }
+  .modal-card { max-height: 88vh; overflow:auto; -webkit-overflow-scrolling:touch; }
+  .time-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
+  .route-card, .fleet-card { min-width: 0; width: 100%; }
+}
+@media (max-width: 420px) {
+  :root { font-size: 15px; }
+  .input-glass { padding: 10px 12px; font-size:15px; }
+  .btn { padding:10px; font-size:14px; }
+  .airline { min-width: 140px; }
+}
+
+/* protect against long words/tables */
+.panel * { min-width: 0 !important; word-break: break-word; -webkit-hyphens: auto; hyphens: auto; }
+
 /* accessibility helpers */
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
-
 </style>
 </head>
 <body>
@@ -487,29 +508,90 @@ function releaseFocus(){
   if(lastFocusedBeforeModal && lastFocusedBeforeModal.focus) lastFocusedBeforeModal.focus();
 }
 
-/* ripple and wave: safe implementation (fixes white dot at top-left) */
-function attachRipple(scope=document){
-  const els = scope.querySelectorAll('.btn, .airline, .time-item, .route-card, .fleet-card');
-  els.forEach(el=>{
-    if(el._rip) return; el._rip=true;
-    el.addEventListener('pointerdown', ev=>{
-      if (ev.button && ev.button !== 0) return;
-      let r = el.querySelector('.ripple'); if(!r){ r=document.createElement('span'); r.className='ripple'; el.appendChild(r); }
-      const rect=el.getBoundingClientRect(); const size=Math.max(rect.width,rect.height)*1.6;
-      const x = ev.clientX - rect.left - size/2;
-      const y = ev.clientY - rect.top - size/2;
-      r.style.width = size+'px'; r.style.height = size+'px';
-      r.style.left = Math.max(Math.min(x, rect.width - size), 0) + 'px';
-      r.style.top = Math.max(Math.min(y, rect.height - size), 0) + 'px';
-      r.style.transition = 'none';
+/* ripple and wave: robust implementation (fixes white dot on mobile) */
+(function(){
+  function removeRipple(r){
+    if(!r) return;
+    r.style.transition = 'opacity 220ms, transform 260ms';
+    r.style.opacity = '0';
+    r.style.transform = 'scale(0)';
+    clearTimeout(r._rmT);
+    r._rmT = setTimeout(()=> { r.style.width = '0px'; r.style.height = '0px'; }, 300);
+  }
+  function createOrGetRipple(el){
+    let r = el.querySelector('.ripple');
+    if(!r){
+      r = document.createElement('span');
+      r.className = 'ripple';
+      r.style.position = 'absolute';
+      r.style.pointerEvents = 'none';
+      r.style.borderRadius = '50%';
       r.style.transform = 'scale(0)';
-      r.style.opacity = '.28';
-      requestAnimationFrame(()=>{ r.style.transition = 'transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms'; r.style.transform='scale(1)'; setTimeout(()=> r.style.opacity='0',280); });
-      clearTimeout(r._rmT);
-      r._rmT = setTimeout(()=>{ r.style.transform='scale(0)'; r.style.opacity='0'; },700);
-    }, {passive:true});
-  });
-}
+      r.style.opacity = '0';
+      r.style.willChange = 'transform, opacity, left, top';
+      el.appendChild(r);
+    }
+    return r;
+  }
+  function attachRipple(scope=document){
+    const els = scope.querySelectorAll('.btn, .airline, .time-item, .route-card, .fleet-card');
+    els.forEach(el=>{
+      if(el._ripAttached) return;
+      el._ripAttached = true;
+
+      el.addEventListener('pointerdown', function(ev){
+        if(ev.button && ev.button !== 0) return;
+        const r = createOrGetRipple(el);
+        const rect = el.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.6;
+        const x = ev.clientX - rect.left - size/2;
+        const y = ev.clientY - rect.top - size/2;
+        r.style.width = size + 'px';
+        r.style.height = size + 'px';
+        r.style.left = Math.max(Math.min(x, rect.width - size), 0) + 'px';
+        r.style.top = Math.max(Math.min(y, rect.height - size), 0) + 'px';
+        r.style.transition = 'none';
+        r.style.transform = 'scale(0)';
+        r.style.opacity = '.28';
+        try { if (ev.target && ev.target.setPointerCapture) ev.target.setPointerCapture(ev.pointerId); } catch(e){}
+        requestAnimationFrame(()=> {
+          r.style.transition = 'transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms';
+          r.style.transform = 'scale(1)';
+          clearTimeout(r._fadeT);
+          r._fadeT = setTimeout(()=> { r.style.opacity = '0'; }, 300);
+        });
+        clearTimeout(r._rmT);
+        r._rmT = setTimeout(()=> removeRipple(r), 900);
+        el._lastRipple = r;
+      }, {passive:true});
+
+      el.addEventListener('pointerup', function(ev){
+        const r = el._lastRipple || el.querySelector('.ripple');
+        if(r) removeRipple(r);
+        try { if (ev.target && ev.target.releasePointerCapture) ev.target.releasePointerCapture(ev.pointerId); } catch(e){}
+      });
+      el.addEventListener('pointercancel', function(ev){
+        const r = el._lastRipple || el.querySelector('.ripple');
+        if(r) removeRipple(r);
+        try { if (ev.target && ev.target.releasePointerCapture) ev.target.releasePointerCapture(ev.pointerId); } catch(e){}
+      });
+
+      // ensure tapend/touchcancel globally clears stray ripples on some mobile browsers
+      if(!document._rippleGlobalHandlers){
+        document._rippleGlobalHandlers = true;
+        ['touchend','touchcancel','pointerup','pointercancel'].forEach(evt=>{
+          document.addEventListener(evt, function(){
+            document.querySelectorAll('.ripple').forEach(r=> removeRipple(r));
+          }, {capture:true, passive:true});
+        });
+      }
+    });
+  }
+  window.attachRipple = attachRipple;
+  attachRipple(document);
+  const moRip = new MutationObserver(()=> attachRipple(document));
+  moRip.observe(document.body, { childList:true, subtree:true });
+})();
 
 /* ============================
    RENDER / INTERACTION
@@ -643,6 +725,8 @@ function renderRoutesPage(){
   container.querySelector('#closeRoutesBtn').addEventListener('click', ()=> activatePage('home'));
 
   renderRoutesGrid();
+  // clamp layout after render
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
 function renderRoutesGrid(){
@@ -675,6 +759,7 @@ function renderRoutesGrid(){
     });
   });
   attachRipple(grid);
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
 /* FLEET page */
@@ -697,6 +782,7 @@ function renderFleetPage(){
   renderAirlineList(fleetAir, filterCompany);
   container.querySelector('#closeFleetBtn').addEventListener('click', ()=> activatePage('home'));
   renderFleetGroups(filterCompany);
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
 function renderFleetGroups(filterBy){
@@ -721,6 +807,7 @@ function renderFleetGroups(filterBy){
     });
   });
   attachRipple(groups);
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
 /* FLIGHTS */
@@ -730,6 +817,7 @@ function renderFlightsPage(){
   dynamicPages.appendChild(container);
   container.querySelector('#closeFlightsBtn').addEventListener('click', ()=> activatePage('home'));
   renderFlightsList();
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 function renderFlightsList(){
   const listEl = document.getElementById('flightsList'); listEl.innerHTML = '';
@@ -745,6 +833,7 @@ function renderFlightsList(){
     b.addEventListener('click', ()=>{ const f=CONFIRMED_FLIGHTS[idx]; if(!f) return; if(action==='view') openFlightDetail(f, idx); if(action==='arrived') markFlightArrived(idx); if(action==='cancel') cancelFlight(idx); });
   });
   attachRipple(listEl);
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
 /* PILOTS */
@@ -761,6 +850,7 @@ function renderPilotsPage(){
   });
   list.querySelectorAll('.quick-login').forEach(b=> b.addEventListener('click', ()=>{ quickLoginAsPilot(b.dataset.id); }));
   attachRipple(list);
+  if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
 /* Flight detail modal actions */
@@ -962,10 +1052,10 @@ function continueFromSplash(){ try{ if(splashEl){ splashEl.style.display='none';
 (function attachSplashHandler(){ const btn = document.getElementById('splashContinue'); if(!btn) return; btn.replaceWith(btn.cloneNode(true)); const fresh = document.getElementById('splashContinue'); fresh.addEventListener('click', continueFromSplash, { passive:true }); fresh.onclick = continueFromSplash; })();
 
 /* Init */
-function init(){ initDurations(); renderAirlines(); populateFilterCompanies(); attachRipple(document); attachGlobalHandlers(); updateMobileNavActive(); }
+function init(){ initDurations(); renderAirlines(); populateFilterCompanies(); attachRipple(document); attachGlobalHandlers(); updateMobileNavActive(); if(window.clampLayoutForMobile) window.clampLayoutForMobile(); }
 init();
 
-/* mutation observer */
+/* mutation observer for ripple/attachments */
 const mo = new MutationObserver(()=> attachRipple(document));
 mo.observe(document.body,{childList:true,subtree:true});
 
@@ -985,6 +1075,31 @@ function attachGlobalHandlers(){
 /* prevent accidental horizontal overflow */
 window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX = 'hidden'; document.body.style.overflowX = 'hidden'; });
 
+/* ============================
+   JS patch: clamp layout for mobile dynamic content
+   ============================ */
+(function(){
+  function clampWidths(root){
+    (root || document).querySelectorAll('.card-grid, .panel, .airline, .route-card, .fleet-card, #dynamicPages').forEach(el=>{
+      if(!(el instanceof HTMLElement)) return;
+      el.style.maxWidth = '100%';
+      el.style.boxSizing = 'border-box';
+      el.style.minWidth = '0';
+    });
+  }
+  window.clampLayoutForMobile = clampWidths;
+  window.addEventListener('load', ()=> {
+    clampWidths(document);
+    const visiblePanel = document.querySelector('#dynamicPages .panel, .panel[style*="display:block"]');
+    if(visiblePanel && window.innerWidth <= 768) visiblePanel.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  const moClamp = new MutationObserver((mutations)=>{
+    let saw = false;
+    mutations.forEach(m=>{ if(m.addedNodes && m.addedNodes.length) saw = true; });
+    if(saw) clampWidths(document);
+  });
+  moClamp.observe(document.body, {childList:true, subtree:true});
+})();
 </script>
 </body>
 </html>
