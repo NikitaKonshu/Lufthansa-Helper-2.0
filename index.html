@@ -62,28 +62,24 @@ body.modal-open{ overflow:hidden; }
 
 /* Lists & cards */
 .airline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px}
-.airline{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .12s;overflow:hidden}
+.airline{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .12s;overflow:hidden;position:relative}
 .brand-dot{width:12px;height:12px;border-radius:3px;flex:0 0 12px}
 .airline .name{font-weight:800;color:var(--text);font-size:14px}
 .airline .meta{font-size:12px;color:var(--muted)}
 .code-pill{margin-left:auto;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.12);border:1px solid rgba(255,255,255,0.03);font-weight:800;font-family:ui-monospace,monospace}
 .airline:hover{transform:translateY(-3px)}
-.airline.selected{outline:2px solid rgba(255,190,60,0.12);transform:translateY(-4px)}
+.airline.selected{outline:2px solid rgba(255,190,40,0.12);transform:translateY(-4px)}
 
 /* cards */
 .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:12px}
-.route-card, .fleet-card{padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03)}
-.route-card .title, .fleet-card .title{font-weight:900;color:var(--text)}
-.route-card .meta, .fleet-card .meta{color:var(--muted);font-size:13px;margin-top:6px}
-.small-note{color:var(--muted);font-size:13px;margin-top:6px}
+.route-card, .fleet-card{padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);position:relative;overflow:hidden}
 
 /* time-item */
 .time-item{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(0,0,0,0.02));color:var(--text);font-weight:800;transition:all 220ms var(--ease-soft);position:relative;overflow:hidden;font-size:14px}
-.time-item.selected{ color:#06141e; background:linear-gradient(180deg,var(--accent),var(--accent2)); box-shadow:0 26px 90px rgba(255,170,40,0.12);transform:translateY(-4px)}
-.time-item .wave{position:absolute;border-radius:50%;transform:scale(0);opacity=0.18;background:radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.04) 40%, transparent 60%);pointer-events:none;transition:transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms}
+.time-item.selected{ color:#06141e; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 26px 90px rgba(255,170,40,0.12);transform:translateY(-4px)}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:10px;border:1px solid transparent;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));color:var(--text);font-weight:800;cursor:pointer;font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:10px;border:1px solid transparent;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));color:var(--text);font-weight:800;cursor:pointer;font-size:14px;position:relative;overflow:hidden}
 .btn-primary{background: linear-gradient(180deg, var(--accent), var(--accent2));color:#06141e}
 .btn-secondary{background: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92));color: var(--text)}
 .btn-ghost{background: transparent;color: var(--text);border: 1px solid rgba(255,255,255,0.06)}
@@ -94,7 +90,7 @@ body.modal-open{ overflow:hidden; }
   position:fixed;inset:0;z-index:17000;
   background:rgba(0,0,0,0.56);
   align-items:center;justify-content:center;padding:18px;
-  pointer-events:none; /* don't intercept clicks when hidden */
+  pointer-events:none;
   transition:opacity .18s ease;
 }
 .modal-card{width:min(820px,96%);max-height:86vh;overflow:auto;border-radius:12px;padding:16px;background:linear-gradient(180deg, rgba(20,28,38,0.98), rgba(10,14,20,0.98));border:1px solid var(--glass-border);box-shadow:0 40px 140px rgba(0,0,0,0.6);color:var(--text);transform:translateY(6px);opacity:0;transition:transform 260ms var(--ease-soft),opacity 220ms var(--ease-soft)}
@@ -113,13 +109,41 @@ body.modal-open{ overflow:hidden; }
 .mobile-nav .nav-btn{ flex:1; padding:10px 6px; border-radius:10px; font-weight:800; font-size:13px; color:var(--text); background:transparent; border:1px solid rgba(255,255,255,0.04); }
 .mobile-nav .nav-btn.active{ background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06141e; box-shadow:0 14px 40px rgba(0,0,0,0.45); transform:translateY(-2px); }
 
+/* Prevent overflow and ensure single column on small screens */
 @media(max-width:720px){
   .mobile-nav{ display:flex; }
-  /* отступ у контейнера снизу чтобы навбат не перекрывал контент */
   .container{ padding-bottom:80px; }
-  /* не скрывать вкладки полностью, если хочешь — можно убрать */
   .tabs{ display:none; }
+  .card-grid{ grid-template-columns: 1fr !important; }
+  .route-card, .fleet-card { padding:10px; }
 }
+
+/* ===== Ripple fix: ensure parents anchor and clip ripple ===== */
+.btn, .airline, .time-item, .route-card, .fleet-card {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ripple element */
+.ripple {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0.28;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.06) 30%, transparent 60%);
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms;
+  will-change: transform, opacity, left, top;
+  mix-blend-mode: screen;
+}
+
+/* accessibility helpers */
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+
 </style>
 </head>
 <body>
@@ -209,7 +233,7 @@ body.modal-open{ overflow:hidden; }
   </div>
 </div>
 
-<!-- Mobile bottom navigation -->
+<!-- Mobile bottom navigation (hidden on desktop by default) -->
 <div class="mobile-nav" id="mobileNav" aria-hidden="false">
   <button class="nav-btn" data-page="home" id="navHome">Главная</button>
   <button class="nav-btn" data-page="routes" id="navRoutes">Направления</button>
@@ -227,7 +251,7 @@ body.modal-open{ overflow:hidden; }
     </div>
 
     <div class="body" style="margin-top:12px">
-      <label style="font-weight:700;font-size:13px">Авиакомпания</label>
+      <label for="filterCompany" style="font-weight:700;font-size:13px">Авиакомпания</label>
       <select id="filterCompany" class="input-glass" style="margin-top:8px">
         <option value="">Все</option>
       </select>
@@ -259,7 +283,7 @@ body.modal-open{ overflow:hidden; }
   </div>
 </div>
 
-<!-- GATE modal -->
+<!-- GATE modal (labels fixed for accessibility) -->
 <div id="gateModal" class="modal-backdrop" role="dialog" aria-hidden="true" aria-modal="true">
   <div class="modal-card" role="document" aria-label="Вход">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -267,8 +291,15 @@ body.modal-open{ overflow:hidden; }
       <div class="subtitle" style="color:var(--muted)">Авторизация</div>
     </div>
     <div class="body" style="margin-top:12px">
-      <input id="loginCall" class="input-glass" placeholder="Позывной (callSign)" />
-      <input id="loginPass" class="input-glass" type="password" placeholder="Пароль" style="margin-top:10px" />
+      <div style="margin-bottom:10px">
+        <label for="loginCall" style="display:block;font-weight:700;font-size:13px;color:var(--muted)">Позывной (callSign)</label>
+        <input id="loginCall" class="input-glass" placeholder="Позывной (callSign)" aria-label="Позывной (callSign)" />
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label for="loginPass" style="display:block;font-weight:700;font-size:13px;color:var(--muted)">Пароль</label>
+        <input id="loginPass" class="input-glass" type="password" placeholder="Пароль" aria-label="Пароль" />
+      </div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
       <button id="btnLogin" class="btn btn-primary" type="button">Войти</button>
@@ -308,7 +339,7 @@ body.modal-open{ overflow:hidden; }
 
 <script>
 /* ============================
-   ДАННЫЕ
+   ДАННЫЕ (как прежде)
    ============================ */
 const AIRLINES = [
   {name:"Swiss International Air Lines",code:"LX",colorA:"#D81E5B",colorB:"#C1144A"},
@@ -456,27 +487,26 @@ function releaseFocus(){
   if(lastFocusedBeforeModal && lastFocusedBeforeModal.focus) lastFocusedBeforeModal.focus();
 }
 
-/* ripple and wave */
+/* ripple and wave: safe implementation (fixes white dot at top-left) */
 function attachRipple(scope=document){
   const els = scope.querySelectorAll('.btn, .airline, .time-item, .route-card, .fleet-card');
   els.forEach(el=>{
     if(el._rip) return; el._rip=true;
     el.addEventListener('pointerdown', ev=>{
-      let r = el.querySelector('.ripple'); if(!r){ r=document.createElement('span'); r.className='ripple'; r.style.position='absolute'; r.style.borderRadius='50%'; r.style.pointerEvents='none'; r.style.background='rgba(255,255,255,0.9)'; el.prepend(r); }
+      if (ev.button && ev.button !== 0) return;
+      let r = el.querySelector('.ripple'); if(!r){ r=document.createElement('span'); r.className='ripple'; el.appendChild(r); }
       const rect=el.getBoundingClientRect(); const size=Math.max(rect.width,rect.height)*1.6;
-      r.style.width=size+'px'; r.style.height=size+'px';
-      r.style.left=(ev.clientX-rect.left-size/2)+'px'; r.style.top=(ev.clientY-rect.top-size/2)+'px';
-      r.style.transform='scale(0)'; r.style.opacity='.28'; r.style.transition='transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms';
-      requestAnimationFrame(()=> r.style.transform='scale(1)');
-      setTimeout(()=> r.style.opacity='0',420);
-
-      if(el.classList.contains('time-item')){
-        let w = el.querySelector('.wave'); if(!w){ w = document.createElement('span'); w.className='wave'; el.prepend(w); w.style.width='20px'; w.style.height='20px'; }
-        const rect2 = el.getBoundingClientRect(); const x = ev.clientX - rect2.left; const y = ev.clientY - rect2.top;
-        w.style.left = (x - 10) + 'px'; w.style.top = (y - 10) + 'px'; w.style.transform = 'scale(0)'; w.style.opacity = '0.18';
-        requestAnimationFrame(()=> w.style.transform='scale(12)');
-        setTimeout(()=> w.style.opacity='0',420);
-      }
+      const x = ev.clientX - rect.left - size/2;
+      const y = ev.clientY - rect.top - size/2;
+      r.style.width = size+'px'; r.style.height = size+'px';
+      r.style.left = Math.max(Math.min(x, rect.width - size), 0) + 'px';
+      r.style.top = Math.max(Math.min(y, rect.height - size), 0) + 'px';
+      r.style.transition = 'none';
+      r.style.transform = 'scale(0)';
+      r.style.opacity = '.28';
+      requestAnimationFrame(()=>{ r.style.transition = 'transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms'; r.style.transform='scale(1)'; setTimeout(()=> r.style.opacity='0',280); });
+      clearTimeout(r._rmT);
+      r._rmT = setTimeout(()=>{ r.style.transform='scale(0)'; r.style.opacity='0'; },700);
     }, {passive:true});
   });
 }
@@ -501,7 +531,7 @@ function initDurations(){
   attachRipple(document);
 }
 
-/* Reusable airline list with delegation - prevents re-binding issues */
+/* Reusable airline list with delegation */
 function renderAirlineList(container, selectedName){
   container.innerHTML = '';
   const q = (document.getElementById('airSearchMain').value||'').trim().toLowerCase();
