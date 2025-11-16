@@ -1,0 +1,65 @@
+/* theme.css */
+
+/* Цветовая палитра */
+:root {
+  --bg-1: #0a0f1c;
+  --bg-2: #1a2238;
+  --accent: #4af0ff;
+  --accent2: #7d5fff;
+  --glass-border: rgba(255,255,255,0.08);
+  --text: #f0f8ff;
+  --muted: rgba(240,248,255,0.7);
+}
+
+/* Фон */
+body {
+  background: radial-gradient(800px at 20% 20%, rgba(74,240,255,0.08), transparent 40%),
+              radial-gradient(600px at 80% 0%, rgba(125,95,255,0.12), transparent 40%),
+              linear-gradient(160deg, var(--bg-1), var(--bg-2));
+}
+
+/* Панели и карточки */
+.panel, .route-card, .fleet-card {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.panel:hover, .route-card:hover, .fleet-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(74,240,255,0.15);
+}
+
+/* Кнопки */
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: #06141e;
+  transition: all .3s ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 20px var(--accent2);
+  transform: translateY(-2px);
+}
+
+/* Вкладки */
+.tab {
+  transition: all .25s ease;
+}
+.tab.active {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(125,95,255,0.25);
+}
+
+/* Ripple эффект */
+.ripple {
+  animation: rippleEffect .6s ease-out forwards;
+}
+@keyframes rippleEffect {
+  from { transform: scale(0); opacity: 0.4; }
+  to { transform: scale(2.5); opacity: 0; }
+}
+
+/* Hover glow для карточек */
+.airline:hover, .fleet-card:hover, .route-card:hover {
+  box-shadow: 0 0 20px rgba(74,240,255,0.25);
+}
