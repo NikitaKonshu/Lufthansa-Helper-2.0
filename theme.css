@@ -1,65 +1,177 @@
-/* theme.css */
-
-/* Цветовая палитра */
+/* ===== Neon Glass theme (без изменений логики) ===== */
+/* Палитра и базовые переменные */
 :root {
-  --bg-1: #0a0f1c;
-  --bg-2: #1a2238;
-  --accent: #4af0ff;
-  --accent2: #7d5fff;
-  --glass-border: rgba(255,255,255,0.08);
-  --text: #f0f8ff;
-  --muted: rgba(240,248,255,0.7);
+  --bg-1: #0a0f1c;         /* глубокий синий */
+  --bg-2: #151c2e;         /* темнее для градиента */
+  --text: #eaf4ff;         /* основной текст */
+  --muted: rgba(234,244,255,0.72);
+  --muted-weak: rgba(234,244,255,0.54);
+
+  --accent: #48e5ff;       /* холодный неон */
+  --accent2: #7b5cff;      /* фиолетовый неон */
+  --accent-ink: #06141e;   /* текст на акценте */
+
+  --glass-bg: rgba(255,255,255,0.045);
+  --glass-bg-strong: rgba(255,255,255,0.075);
+  --glass-border: rgba(255,255,255,0.10);
+  --shadow: 0 30px 120px rgba(0,0,0,0.5);
+  --lift: 0 10px 30px rgba(0,0,0,0.35);
+
+  --ease-soft: cubic-bezier(.16,.84,.35,1);
+  --ease-snap: cubic-bezier(.2,.9,.2,1);
 }
 
-/* Фон */
+/* Фон со светящимися пятнами */
 body {
-  background: radial-gradient(800px at 20% 20%, rgba(74,240,255,0.08), transparent 40%),
-              radial-gradient(600px at 80% 0%, rgba(125,95,255,0.12), transparent 40%),
-              linear-gradient(160deg, var(--bg-1), var(--bg-2));
+  background:
+    radial-gradient(900px 600px at 12% 12%, rgba(72,229,255,0.12), transparent 38%),
+    radial-gradient(700px 500px at 88% 8%, rgba(123,92,255,0.12), transparent 34%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2));
 }
 
-/* Панели и карточки */
-.panel, .route-card, .fleet-card {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(12px);
+/* Корпус */
+.shell {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
   border: 1px solid var(--glass-border);
-  transition: transform .3s ease, box-shadow .3s ease;
-}
-.panel:hover, .route-card:hover, .fleet-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(74,240,255,0.15);
+  box-shadow: var(--shadow);
 }
 
-/* Кнопки */
-.btn-primary {
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  color: #06141e;
-  transition: all .3s ease;
+/* Верхняя панель: аккуратное стекло */
+.topbar {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
 }
-.btn-primary:hover {
-  box-shadow: 0 0 20px var(--accent2);
+
+/* Логотип */
+.logo {
+  color: var(--accent);
+  background: linear-gradient(180deg, #0c2234, #081827);
+  box-shadow: inset 0 0 18px rgba(72,229,255,0.12);
+}
+
+/* Вкладки: более выразительные, но не кричащие */
+.tab {
+  background: var(--glass-bg);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform .18s var(--ease-soft), box-shadow .22s var(--ease-soft), background .22s;
+}
+.tab:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(72,229,255,0.18);
+}
+.tab.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: var(--accent-ink);
+  box-shadow: 0 14px 40px rgba(123,92,255,0.28);
   transform: translateY(-2px);
 }
 
-/* Вкладки */
-.tab {
-  transition: all .25s ease;
+/* Панели и карточки — настоящий liquid glass */
+.panel,
+.route-card,
+.fleet-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px) saturate(110%);
+  transition: transform .22s var(--ease-soft), box-shadow .22s var(--ease-soft), border-color .22s;
 }
-.tab.active {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(125,95,255,0.25);
+.panel:hover,
+.route-card:hover,
+.fleet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--lift), 0 0 24px rgba(72,229,255,0.12);
+  border-color: rgba(255,255,255,0.16);
 }
 
-/* Ripple эффект */
+/* Мягкие разделители и подписи */
+.small-note,
+.panel .note,
+.subtitle { color: var(--muted-weak); }
+
+/* Кнопки: объёмные, но быстрые */
+.btn {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform .18s var(--ease-soft), box-shadow .22s var(--ease-soft), background .22s;
+  will-change: transform;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 10px 34px rgba(0,0,0,0.36); }
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: var(--accent-ink);
+  border: none;
+  box-shadow: 0 12px 36px rgba(123,92,255,0.24);
+}
+.btn-primary:hover { box-shadow: 0 18px 46px rgba(123,92,255,0.32); transform: translateY(-2px); }
+
+.btn-secondary {
+  background: linear-gradient(180deg, rgba(10,22,36,0.92), rgba(6,16,26,0.96));
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Интерактивные «пилюли» времени */
+.time-item {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.05));
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform .16s var(--ease-soft), box-shadow .2s var(--ease-soft), background .2s;
+}
+.time-item:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(72,229,255,0.14); }
+.time-item.selected {
+  color: var(--accent-ink);
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow: 0 20px 60px rgba(123,92,255,0.28);
+}
+
+/* Карточки авиакомпаний */
+.airline {
+  background: var(--glass-bg);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.airline:hover { box-shadow: 0 10px 30px rgba(72,229,255,0.16); }
+.airline.selected { outline: 2px solid rgba(123,92,255,0.22); }
+
+/* Бейдж‑код */
+.code-pill {
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Модалки — стеклянные листы */
+.modal-card {
+  background: linear-gradient(180deg, rgba(16,22,34,0.96), rgba(10,14,22,0.96));
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 40px 140px rgba(0,0,0,0.6);
+}
+
+/* Ripple: более чистый и быстрый */
 .ripple {
-  animation: rippleEffect .6s ease-out forwards;
+  position: absolute !important;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.10) 40%, transparent 60%);
+  transform: scale(0);
+  animation: rippleGlass .6s var(--ease-snap) forwards;
 }
-@keyframes rippleEffect {
-  from { transform: scale(0); opacity: 0.4; }
-  to { transform: scale(2.5); opacity: 0; }
+@keyframes rippleGlass {
+  0% { transform: scale(0); opacity: 0.40; }
+  60% { transform: scale(1.8); opacity: 0.16; }
+  100% { transform: scale(2.6); opacity: 0; }
 }
 
-/* Hover glow для карточек */
+/* Hover glow: аккуратное свечение без шума */
 .airline:hover, .fleet-card:hover, .route-card:hover {
-  box-shadow: 0 0 20px rgba(74,240,255,0.25);
+  box-shadow: 0 0 20px rgba(72,229,255,0.20);
+}
+
+/* Мобильные карточки чуть «воздушнее» */
+@media(max-width:480px){
+  .panel, .route-card, .fleet-card { border-radius: 12px; }
+  .btn { border-radius: 12px; }
+  .time-item { border-radius: 12px; }
 }
