@@ -833,8 +833,11 @@ let ROUTES = []; (function(){
 let FLEET = []; (function(){ const types=["A320","A321","B737","A220","A330","B787","A350"]; AIRLINES.forEach((a,ai)=>{ for(let i=1;i<=2;i++){ FLEET.push({ id:`${a.code}-AC${String(i).padStart(2,'0')}`, airline:a.name, type:types[(ai+i)%types.length], locationICAO:i===1?"EDDF":"EGLL", status:"idle", fuelMinutes:420 + i*60, turnaround:20 + i*5, reserveMargin:30 }); } }); })();
 
 let PILOTS = [
-  {id:"pilot_ivan",name:"Ivan Petrov",callSign:"IPET",verified:true,password:"ivanpass"},
+  {id:"pilot_ivan",name:"Nikita Konshu",callSign:"IPET",verified:true,password:"ivanpass"},
   {id:"pilot_loui",name:"Loui Desulier",callSign:"FRENCH",verified:true,password:"louiSecret"}
+  {id:"pilot_artem",name:"Artem Solovyev",callSign:"SU001",verified:true,password:"artemSecret"}
+  {id:"pilot_loui",name:"NoName",callSign:"NoCallSign",verified:true,password:"louiSecret"}
+  {id:"pilot_loui",name:"NoName",callSign:"NoCallSign",verified:true,password:"louiSecret"}
 ];
 
 let SESSION = { pilotId:null };
@@ -1568,6 +1571,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
