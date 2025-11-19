@@ -554,6 +554,62 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 #aircraftDetailModal .modal-card { max-width: 520px; padding:14px; }
 #aircraftDetailModal .body { font-size:14px; color:var(--text); }
 #aircraftDetailModal .body strong { color:var(--muted); font-weight:700; margin-right:6px; }
+  /* ====== FIX: убрать "прыжки" кнопок и стабилизировать компоновку карточек ====== */
+
+/* 1) Запретить transform, который меняет поток макета — используем box-shadow/outline для выделения */
+.tab.active,
+.time-item.selected,
+.duration-item.selected,
+.duration-item:active,
+.time-item:active {
+  transform: none !important;
+  /* оставляем визуальную подсветку через тень/фон, не смещая элемент */
+  box-shadow: 0 16px 48px rgba(255,170,40,0.10) !important;
+}
+
+/* 2) Стабильная зона для кнопок в карточках — обеспечим фиксированную минимальную ширину и постоянный flex */
+.route-card > div:last-child,
+.fleet-card > div:last-child {
+  display:flex !important;
+  gap:8px !important;
+  align-items:center !important;
+  justify-content:flex-end !important; /* по умолчанию правый край */
+  min-height:44px;                       /* фиксируем высоту зоны кнопок, чтобы не прыгала карточка */
+  box-sizing:border-box;
+}
+
+/* 3) Делаем кнопки одинаковыми по ширине и не даём им "расти" при выделении */
+.route-card .btn, .fleet-card .btn, .card-grid .btn {
+  min-width: 92px;      /* подбирай значение под твой дизайн */
+  padding:8px 10px;
+  flex: 0 0 auto;       /* не растут и не сжимаются по контейнеру */
+}
+
+/* 4) На мобильных: если кнопок несколько — перенести их в перенос (wrap) вместо сжатия */
+@media (max-width: 920px) {
+  .route-card > div:last-child,
+  .fleet-card > div:last-child {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap:8px !important;
+  }
+  .route-card .btn, .fleet-card .btn { min-width: 44%; } /* две кнопки в ряд удобно на мобилке */
+}
+
+/* 5) Защита от изменения ширины при появлении box-shadow/outline (боксы не влияют на flow) */
+.tab, .time-item, .duration-item, .btn {
+  will-change: box-shadow, background-color;
+  /* убрать переходы ширины/translate, оставляем плавность цвета/тени */
+  transition: background-color 180ms ease, box-shadow 220ms ease, color 160ms ease;
+}
+
+/* 6) Если используется translateY на .selected в других местах — конкретно отменяем для карточек */
+.route-card .time-item.selected, .fleet-card .time-item.selected {
+  transform: none !important;
+}
+
+/* 7) Защититься от резких изменений inline-style (редкий случай) */
+[style*="transform: translateY"] { transform: none !important; }
 </style>
 </head>
 <body>
@@ -1569,6 +1625,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
