@@ -672,58 +672,6 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     </div>
   </div>
 </div>
-<!-- fleet: новые шаблонные HTML -->
-<section id="page-fleet" class="panel">
-  <div class="two-col">
-    <aside class="col-left">
-      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
-      <div id="fleetAirList" style="min-height:60px"></div>
-    </aside>
-
-    <main class="col-right">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="min-width:0">
-          <div style="font-weight:900">Флот</div>
-          <div style="color:var(--muted);margin-top:6px">Показывается по авиакомпаниям. В карточке указан ориентировочное время полёта</div>
-        </div>
-        <div>
-          <button id="closeFleetBtn" class="btn btn-ghost">Закрыть</button>
-        </div>
-      </div>
-
-      <div id="fleetGroups" style="margin-top:12px"></div>
-    </main>
-  </div>
-</section>
-  <!-- routes: новые шаблонные HTML -->
-<section id="page-routes" class="panel">
-  <div class="two-col">
-    <aside class="col-left">
-      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
-      <div id="routesAirList" style="min-height:60px"></div>
-
-      <div style="font-weight:900;margin-top:14px;margin-bottom:8px">Фильтры времени</div>
-      <div id="routesDurList" class="small-note"></div>
-    </aside>
-
-    <main class="col-right">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <div style="min-width:0">
-          <div style="font-weight:900">Направления</div>
-          <div style="color:var(--muted);margin-top:6px">Карточки маршрутов. Фильтр по авиакомпаниям и времени</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <select id="localCompanyFilter" class="input-glass" style="min-width:200px"><option value="">Все авиакомпании</option></select>
-          <button id="closeRoutesBtn" class="btn btn-ghost">Закрыть</button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <div id="routesGrid" class="card-grid"></div>
-      </div>
-    </main>
-  </div>
-</section>
 <!-- FLIGHT DETAIL modal -->
 <div id="flightDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
   <div class="modal-card" role="document" aria-label="Детали рейса">
@@ -1128,24 +1076,34 @@ function representativeDurationForAircraft(ac){
 function renderRoutesPage(){
   const container = document.createElement('section'); container.className='panel'; container.id='page-routes';
   container.innerHTML = `
-    <div style="display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:start">
-      <div>
-        <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
-        <div id="routesAirList" style="min-height:60px"></div>
-        <div style="font-weight:900;margin-top:14px;margin-bottom:8px">Фильтры времени</div>
-        <div id="routesDurList" class="small-note"></div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-          <div style="min-width:0"><div style="font-weight:900">Направления</div><div style="color:var(--muted);margin-top:6px">Карточки маршрутов. Фильтр по авиакомпаниям и времени</div></div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="localCompanyFilter" class="input-glass" style="min-width:200px"><option value="">Все авиакомпании</option></select>
-            <button id="closeRoutesBtn" class="btn btn-ghost">Закрыть</button>
-          </div>
+   <section id="page-routes" class="panel">
+  <div class="two-col">
+    <aside class="col-left">
+      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
+      <div id="routesAirList" style="min-height:60px"></div>
+
+      <div style="font-weight:900;margin-top:14px;margin-bottom:8px">Фильтры времени</div>
+      <div id="routesDurList" class="small-note"></div>
+    </aside>
+
+    <main class="col-right">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div style="min-width:0">
+          <div style="font-weight:900">Направления</div>
+          <div style="color:var(--muted);margin-top:6px">Карточки маршрутов. Фильтр по авиакомпаниям и времени</div>
         </div>
-        <div style="margin-top:12px" id="routesGrid" class="card-grid"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="localCompanyFilter" class="input-glass" style="min-width:200px"><option value="">Все авиакомпании</option></select>
+          <button id="closeRoutesBtn" class="btn btn-ghost">Закрыть</button>
+        </div>
       </div>
-    </div>
+
+      <div style="margin-top:12px">
+        <div id="routesGrid" class="card-grid"></div>
+      </div>
+    </main>
+  </div>
+</section>
   `;
   dynamicPages.appendChild(container);
 
@@ -1201,16 +1159,28 @@ function renderRoutesGrid(){
 function renderFleetPage(){
   const container = document.createElement('section'); container.className='panel'; container.id='page-fleet';
   container.innerHTML = `
-    <div style="display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:start">
-      <div>
-        <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
-        <div id="fleetAirList" style="min-height:60px"></div>
+ <section id="page-fleet" class="panel">
+  <div class="two-col">
+    <aside class="col-left">
+      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
+      <div id="fleetAirList" style="min-height:60px"></div>
+    </aside>
+
+    <main class="col-right">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="min-width:0">
+          <div style="font-weight:900">Флот</div>
+          <div style="color:var(--muted);margin-top:6px">Показывается по авиакомпаниям. В карточке указан ориентировочное время полёта</div>
+        </div>
+        <div>
+          <button id="closeFleetBtn" class="btn btn-ghost">Закрыть</button>
+        </div>
       </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center"><div style="min-width:0"><div style="font-weight:900">Флот</div><div style="color:var(--muted);margin-top:6px">Показывается по авиакомпаниям. В карточке указан ориентировочное время полёта</div></div><div><button id="closeFleetBtn" class="btn btn-ghost">Закрыть</button></div></div>
-        <div id="fleetGroups" style="margin-top:12px"></div>
-      </div>
-    </div>
+
+      <div id="fleetGroups" style="margin-top:12px"></div>
+    </main>
+  </div>
+</section>
   `;
   dynamicPages.appendChild(container);
   const fleetAir = container.querySelector('#fleetAirList');
@@ -1539,6 +1509,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
