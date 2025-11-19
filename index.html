@@ -484,6 +484,72 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
   /* уменьшаем внешние отступы внутри страниц для экономии места */
   #page-routes .panel, #page-fleet .panel { padding-left:10px !important; padding-right:10px !important; }
 }
+  /* ---------- Layout helper and mobile safety ---------- */
+.two-col {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 12px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+.two-col > * { box-sizing: border-box; }
+
+/* Колонки внутри (универсальные размеры) */
+.col-left { min-width: 0; }
+.col-right { min-width: 0; }
+
+/* Card lists: ensure they behave as single-column on small widths */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; align-items: start; }
+
+/* Mobile overrides */
+@media (max-width: 920px) {
+  .two-col {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Форсировать колонки маршрутов/флота в single column */
+  #routesGrid.card-grid,
+  #routesGrid,
+  #fleetGroups,
+  #fleetGroups .fleet-list,
+  #page-routes .card-grid,
+  #page-fleet .card-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 10px !important;
+  }
+
+  /* Убедиться, что карточки не вылазят за ширину и корректно переносят текст */
+  .route-card, .fleet-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  .route-card .title, .fleet-card .title { white-space: normal !important; word-break:break-word; }
+  .route-card .meta, .fleet-card .meta { -webkit-line-clamp: 2 !important; display: -webkit-box !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+
+  /* Кнопочная зона в карточке — переносим и даём больше места */
+  .route-card > div:last-child, .fleet-card > div:last-child {
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* Расширяем селекты и фильтры на всю ширину */
+  #localCompanyFilter, #filterCompany { width: 100% !important; box-sizing: border-box; }
+
+  /* Padding / container adjustments to avoid clipping */
+  .container { padding-left: 10px !important; padding-right: 10px !important; }
+  .panel { padding-left: 10px !important; padding-right: 10px !important; }
+
+  /* Список авиакомпаний оставляем как было (без изменений) */
+  /* Примечание: .airline-grid не трогаем */
+}
 </style>
 </head>
 <body>
@@ -606,7 +672,58 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     </div>
   </div>
 </div>
+<!-- fleet: новые шаблонные HTML -->
+<section id="page-fleet" class="panel">
+  <div class="two-col">
+    <aside class="col-left">
+      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
+      <div id="fleetAirList" style="min-height:60px"></div>
+    </aside>
 
+    <main class="col-right">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="min-width:0">
+          <div style="font-weight:900">Флот</div>
+          <div style="color:var(--muted);margin-top:6px">Показывается по авиакомпаниям. В карточке указан ориентировочное время полёта</div>
+        </div>
+        <div>
+          <button id="closeFleetBtn" class="btn btn-ghost">Закрыть</button>
+        </div>
+      </div>
+
+      <div id="fleetGroups" style="margin-top:12px"></div>
+    </main>
+  </div>
+</section>
+  <!-- routes: новые шаблонные HTML -->
+<section id="page-routes" class="panel">
+  <div class="two-col">
+    <aside class="col-left">
+      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
+      <div id="routesAirList" style="min-height:60px"></div>
+
+      <div style="font-weight:900;margin-top:14px;margin-bottom:8px">Фильтры времени</div>
+      <div id="routesDurList" class="small-note"></div>
+    </aside>
+
+    <main class="col-right">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div style="min-width:0">
+          <div style="font-weight:900">Направления</div>
+          <div style="color:var(--muted);margin-top:6px">Карточки маршрутов. Фильтр по авиакомпаниям и времени</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="localCompanyFilter" class="input-glass" style="min-width:200px"><option value="">Все авиакомпании</option></select>
+          <button id="closeRoutesBtn" class="btn btn-ghost">Закрыть</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div id="routesGrid" class="card-grid"></div>
+      </div>
+    </main>
+  </div>
+</section>
 <!-- FLIGHT DETAIL modal -->
 <div id="flightDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
   <div class="modal-card" role="document" aria-label="Детали рейса">
@@ -1422,6 +1539,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
