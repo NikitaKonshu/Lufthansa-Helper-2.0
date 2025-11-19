@@ -550,6 +550,10 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
   /* Список авиакомпаний оставляем как было (без изменений) */
   /* Примечание: .airline-grid не трогаем */
 }
+  /* Aircraft detail tweaks */
+#aircraftDetailModal .modal-card { max-width: 520px; padding:14px; }
+#aircraftDetailModal .body { font-size:14px; color:var(--text); }
+#aircraftDetailModal .body strong { color:var(--muted); font-weight:700; margin-right:6px; }
 </style>
 </head>
 <body>
@@ -741,7 +745,20 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     </div>
   </div>
 </div>
-
+<!-- AIRCRAFT DETAIL modal -->
+<div id="aircraftDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
+  <div class="modal-card" role="document" aria-label="Детали самолёта">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="title" id="airDetailTitle">Самолёт</div>
+      <div class="subtitle" id="airDetailStatus"></div>
+    </div>
+    <div class="body" id="airDetailBody" style="margin-top:10px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button id="closeAircraftDetail" class="btn btn-secondary" type="button">Закрыть</button>
+    </div>
+  </div>
+</div>
+  
 <script>
 /* ============================
    ДАННЫЕ (как прежде)
@@ -1208,14 +1225,56 @@ function renderFleetGroups(filterBy){
       card.innerHTML = `<div><div class="title">${f.id} · ${f.type}</div>
         <div class="meta">${f.locationICAO} · Топливо: ${f.fuelMinutes} мин · Статус: ${f.status}</div>
         <div class="small-note">Ориентировочное время полёта для этого самолёта: ${approx}</div></div>
-        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-primary">Действие</button></div>`;
+        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-primary">Узнать больше</button></div>`;
       list.appendChild(card);
     });
   });
   attachRipple(groups);
   if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
+// Открыть модалку с деталями самолёта
+function openAircraftDetail(aircraftId){
+  const ac = FLEET.find(x => x.id === aircraftId);
+  if(!ac){
+    alert('Самолёт не найден');
+    return;
+  }
 
+  // Заголовок и статус
+  document.getElementById('airDetailTitle').textContent = `${ac.id} · ${ac.type}`;
+  document.getElementById('airDetailStatus').textContent = ac.status ? ac.status : '';
+
+  // Основное содержимое — настраивай, что нужно показывать
+  document.getElementById('airDetailBody').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div><strong>Авиакомпания:</strong> ${ac.airline}</div>
+      <div><strong>Тип:</strong> ${ac.type}</div>
+      <div><strong>Позиция:</strong> ${ac.locationICAO}</div>
+      <div><strong>Топливо:</strong> ${ac.fuelMinutes} мин</div>
+      <div><strong>Turnaround:</strong> ${ac.turnaround || '—'} мин</div>
+      <div><strong>Запас (reserve margin):</strong> ${ac.reserveMargin || '—'} мин</div>
+      <div><strong>Статус подробный:</strong> ${ac.statusDetail || '—'}</div>
+      <div style="margin-top:6px;color:var(--muted)"><small>ID записи: ${ac.id}</small></div>
+    </div>`;
+
+  // показываем модалку
+  modalShow(document.getElementById('aircraftDetailModal'));
+}
+
+// Закрытие
+document.getElementById('closeAircraftDetail')?.addEventListener('click', ()=>{
+  modalHide(document.getElementById('aircraftDetailModal'));
+});
+
+// Делегирование кликов по кнопкам "Узнать больше" (работает при динамическом рендере)
+document.addEventListener('click', function(e){
+  const btn = e.target.closest && e.target.closest('.more-info');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  if(!id) return;
+  openAircraftDetail(id);
+});
+  
 /* FLIGHTS */
 function renderFlightsPage(){
   const container = document.createElement('section'); container.className='panel'; container.id='page-flights';
@@ -1509,6 +1568,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
