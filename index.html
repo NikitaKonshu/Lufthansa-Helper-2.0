@@ -410,6 +410,81 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+  /* MOBILE OPTIMIZATION for Routes & Fleet */
+@media (max-width:920px) {
+  /* общая сетка страниц: одна колонка */
+  #page-routes > .panel > div,
+  #page-fleet > .panel > div {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* динамически создаваемые контейнеры (safeguard) */
+  #page-routes .card-grid,
+  #page-fleet #fleetGroups,
+  #page-fleet .fleet-list,
+  #page-routes #routesGrid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* авиакомпании превращаем в горизонтальную полосу с прокруткой */
+  #routesAirList, #fleetAirList, .airline-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    align-items: flex-start;
+  }
+  #routesAirList .airline, #fleetAirList .airline, .airline-grid .airline {
+    min-width: 150px;
+    flex: 0 0 auto;
+  }
+
+  /* side panel становится full width and flows above */
+  .layout-grid { grid-template-columns: 1fr !important; gap:10px !important; }
+  .side-panel {
+    order: -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  /* карточки — больше высота и touch-friendly кнопки */
+  .route-card, .fleet-card {
+    min-height: 92px !important;
+    padding: 12px !important;
+    gap: 10px !important;
+  }
+  .route-card > div:last-child, .fleet-card > div:last-child {
+    justify-content: space-between !important;
+    gap: 8px;
+  }
+  .route-card .title, .fleet-card .title { font-size: 15px !important; }
+  .route-card .meta, .fleet-card .meta { font-size: 13px !important; }
+
+  /* кнопки — крупнее, легче нажимать */
+  .btn { padding: 10px 12px !important; font-size: 15px !important; border-radius:10px !important; }
+
+  /* фильтры/селекты — растягиваем под ширину */
+  #localCompanyFilter, #filterCompany {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* рейсы пилота — список в одну колонку и читаемость */
+  #flightsList .route-card { width: 100% !important; display:flex; flex-direction:column; }
+
+  /* безопасное скроллирование и застёжка на iOS */
+  .panel, .card-grid, #dynamicPages, .airline-grid { -webkit-overflow-scrolling: touch; }
+
+  /* убрать боковые отступы у контейнеров, чтобы ничего не отрубалось при небольших экранах */
+  .container { padding-left: 10px !important; padding-right: 10px !important; }
+}
 </style>
 </head>
 <body>
@@ -1348,4 +1423,5 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
