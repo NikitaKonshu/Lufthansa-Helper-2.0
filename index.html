@@ -648,6 +648,47 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
   .route-card > div:last-child { justify-content:flex-start !important; flex-wrap:wrap; }
   .route-card .btn { min-width:44%; }
 }
+  /* Мобильный фикс: запрещаем смещения и фиксируем блок кнопок */
+@media (max-width: 920px) {
+  /* Зона кнопок: гарантируем стабильный поток и перенос, но без сдвигов */
+  .route-card > div:last-child,
+  .fleet-card > div:last-child,
+  .card-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* всегда предсказуемо слева */
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Кнопки не меняют ширину/transform при активном состоянии */
+  .route-card .btn,
+  .fleet-card .btn,
+  .card-actions .btn {
+    min-width: 44% !important;    /* две кнопки в ряд */
+    max-width: 100% !important;
+    padding: 8px 10px !important;
+    flex: 0 0 auto !important;
+    box-sizing: border-box !important;
+    transition: background-color .18s ease, box-shadow .22s ease !important;
+    transform: none !important;
+  }
+
+  /* Если где-то добавляют translate/transform — нейтрализуем */
+  .route-card .btn[style*="transform"],
+  .route-card .btn:hover[style*="transform"],
+  .route-card .btn:active[style*="transform"] {
+    transform: none !important;
+  }
+
+  /* Отключаем изменение justify-content у родителя при изменении классов */
+  .route-card, .fleet-card {
+    /* принудительно задаём поведение, чтобы JS не менял выравнивание */
+    --force-actions-justify: flex-start;
+  }
+}
 </style>
 </head>
 <body>
@@ -1663,6 +1704,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
