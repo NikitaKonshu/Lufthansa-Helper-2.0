@@ -124,3 +124,47 @@
 
 /* accessibility */
 .app-ui .visually-hidden { position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); }
+/* ======= FIX: вернуть видимые золотые кнопки ======= */
+/* Скопируй и вставь в конец <style> или в app-ui.css */
+
+/* Scoped: кнопки внутри app-ui (предпочтительно) */
+.app-ui .btn {
+  border: none;
+  color: #06141e;
+  background: linear-gradient(180deg, #f6d16a, #d9a017);
+  box-shadow: 0 8px 28px rgba(165,102,10,0.16), inset 0 1px 0 rgba(255,255,255,0.32);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  min-width: 120px;
+  transition: transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s ease, filter .18s ease;
+}
+
+/* Hover / active (desktop) */
+.app-ui .btn:hover { transform: translateY(-2px); filter: saturate(1.04); box-shadow: 0 14px 38px rgba(165,102,10,0.22); }
+.app-ui .btn:active { transform: translateY(0); box-shadow: 0 6px 12px rgba(0,0,0,0.38); }
+
+/* Secondary variant (neutral) */
+.app-ui .btn-secondary {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.02));
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 8px 12px;
+}
+
+/* Ensure mobile sizing (keeps two buttons per row) */
+@media (max-width: 920px) {
+  .app-ui .btn { min-width: 44% !important; padding: 9px 10px !important; }
+  .app-ui .btn-secondary { min-width: 44% !important; }
+}
+
+/* Fallback for areas not wrapped in .app-ui (safe, low specificity) */
+.btn.btn-primary {
+  color: #06141e;
+  background: linear-gradient(180deg, #f6d16a, #d9a017);
+  box-shadow: 0 8px 22px rgba(165,102,10,0.12);
+}
+
+/* Make sure neutralizers don't hide color inside .app-ui */
+.app-ui [style*="transform"] { transform: none !important; } /* keep existing safety */
+
