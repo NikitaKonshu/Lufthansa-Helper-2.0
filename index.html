@@ -1701,9 +1701,21 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
   });
   moClamp.observe(document.body, {childList:true, subtree:true});
 })();
+  if(window.innerWidth <= 920){
+  document.addEventListener('click', function mobileSelectGuard(e){
+    const b = e.target.closest && e.target.closest('.route-card .btn, .route-card .select-route');
+    if(!b) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    b.classList.toggle('selected');
+    // не вызывать ререндер — это только для диагностики; убери позже
+    setTimeout(()=>{ b.classList.toggle('selected'); }, 1200);
+  }, true);
+}
 </script>
 </body>
 </html>
+
 
 
 
