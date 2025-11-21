@@ -16,7 +16,6 @@
   --ease-soft:cubic-bezier(.16,.84,.35,1);
   font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   font-size:16px;
-  /* compact tuning */
   --gap-base:8px;
   --panel-pad:10px;
   --card-gap:8px;
@@ -36,7 +35,7 @@ body{
 }
 body.modal-open{ overflow:hidden; }
 
-/* Shell */
+/* Shell / topbar */
 .shell{max-width:1100px;margin:0 auto;border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid var(--glass-border);box-shadow:0 30px 120px rgba(0,0,0,0.45)}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px;border-bottom:1px solid rgba(255,255,255,0.02);gap:10px}
 .brand{display:flex;align-items:center;gap:10px}
@@ -48,13 +47,13 @@ body.modal-open{ overflow:hidden; }
 /* Tabs */
 .tabs{display:flex;gap:8px;align-items:center}
 .tab{padding:7px 10px;border-radius:10px;font-weight:800;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-size:13px}
-.tab.active{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#06141e;transform:translateY(-3px);box-shadow:0 20px 60px rgba(255,170,40,0.10)}
+.tab.active{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#06141e; /* transform removed to avoid layout jumps */ box-shadow:0 20px 60px rgba(255,170,40,0.10)}
 
 /* Layout */
 .container{padding:10px}
 .grid{display:block}
 
-/* Panels (compact) */
+/* Panels */
 .panel{padding:var(--panel-pad);border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid var(--glass-border);margin-bottom:var(--gap-base);backdrop-filter: blur(6px)}
 .panel .heading {font-weight:900}
 .panel .note {color:var(--muted-weak);font-size:13px;margin-top:6px}
@@ -74,19 +73,44 @@ body.modal-open{ overflow:hidden; }
 .airline:hover{transform:translateY(-3px)}
 .airline.selected{outline:2px solid rgba(255,190,40,0.12);transform:translateY(-4px)}
 
-/* cards */
+/* Card grid base */
 .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
 .route-card, .fleet-card{padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:78px;gap:var(--card-gap)}
 
 /* time-item */
 .time-item{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(0,0,0,0.02));color:var(--text);font-weight:800;transition:all 180ms var(--ease-soft);position:relative;overflow:hidden;font-size:13px}
-.time-item.selected{ color:#06141e; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 20px 60px rgba(255,170,40,0.10);transform:translateY(-3px)}
+.time-item.selected{ color:#06141e; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 20px 60px rgba(255,170,40,0.10); transform:none; }
 
-/* buttons */
+/* ====== NOTE: global .btn and ripple implementation from old stylesheet
+   are commented out below to avoid conflicts with the new centralized UI theme.
+   If you rely on those exact rules, you can uncomment them. */
+
+/* COMMENTED: original global button rules (to prevent conflicts)
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:9px;border:1px solid transparent;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));color:var(--text);font-weight:800;cursor:pointer;font-size:14px;position:relative;overflow:hidden}
 .btn-primary{background: linear-gradient(180deg, var(--accent), var(--accent2));color:#06141e}
 .btn-secondary{background: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92));color: var(--text)}
 .btn-ghost{background: transparent;color: var(--text);border: 1px solid rgba(255,255,255,0.06)}
+*/
+
+/* COMMENTED: old ripple / interaction parents (we keep safe ripple handling externally) */
+/*
+.btn, .airline, .time-item, .route-card, .fleet-card {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.ripple {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0.28;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.06) 30%, transparent 60%);
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms;
+  will-change: transform, opacity, left, top;
+  mix-blend-mode: screen;
+}
+*/
 
 /* modals */
 .modal-backdrop{
@@ -111,7 +135,7 @@ body.modal-open{ overflow:hidden; }
   display:flex; gap:8px; justify-content:space-around; align-items:center;
 }
 .mobile-nav .nav-btn{ flex:1; padding:8px 6px; border-radius:10px; font-weight:800; font-size:13px; color:var(--text); background:transparent; border:1px solid rgba(255,255,255,0.04); }
-.mobile-nav .nav-btn.active{ background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06141e; box-shadow:0 14px 30px rgba(0,0,0,0.35); transform:translateY(-2px); }
+.mobile-nav .nav-btn.active{ background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06141e; box-shadow:0 14px 30px rgba(0,0,0,0.35); /* transform removed */ }
 
 /* Prevent overflow and ensure single column on small screens */
 @media(max-width:720px){
@@ -122,27 +146,7 @@ body.modal-open{ overflow:hidden; }
   .route-card, .fleet-card { padding:10px; }
 }
 
-/* ===== Ripple and interaction parents */
-.btn, .airline, .time-item, .route-card, .fleet-card {
-  position: relative;
-  overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-}
-.ripple {
-  position: absolute;
-  pointer-events: none;
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 0.28;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.06) 30%, transparent 60%);
-  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms;
-  will-change: transform, opacity, left, top;
-  mix-blend-mode: screen;
-}
-
-/* Mobile fit guarantee: ensure nothing overflows */
-html, body { overflow-x: hidden !important; max-width: 100%; }
-.shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
+/* Mobile safety: keep existing responsive adjustments that are not conflicting */
 @media (max-width: 768px) {
   .card-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
   .airline-grid { display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
@@ -163,178 +167,7 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 
 /* ===========================
    PATCH: stable card layout (title/meta clamp + button zone)
-   =========================== */
-
-/* Keep cards aligned and stable */
-.card-grid { align-items: start; grid-auto-rows: 1fr; }
-.card-grid > * { display: flex; flex-direction: column; }
-
-/* Title: single line, ellipsis */
-.route-card .title, .fleet-card .title {
-  font-weight: 800;
-  font-size: 14px;
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 1.15em;
-}
-
-/* Meta: up to 2 lines, clamp */
-.route-card .meta, .fleet-card .meta {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.18;
-  max-height: calc(1.18em * 2);
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  word-break: break-word;
-}
-
-/* Small note: clamp to 2 lines */
-.route-card .small-note, .fleet-card .small-note {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.15;
-  max-height: calc(1.15em * 2);
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-/* Button row stays visible and fixed at bottom of card */
-.route-card > div:last-child, .fleet-card > div:last-child {
-  margin-top: 6px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-}
-
-/* Slight adjustments for very narrow screens */
-@media (max-width:420px) {
-  .route-card, .fleet-card { min-height:86px; }
-  .route-card .title, .fleet-card .title { font-size:13px; white-space: nowrap; }
-  .route-card .meta, .fleet-card .meta { font-size:12px; -webkit-line-clamp: 2; }
-}
-
-/* ===========================
-   NEW: Side panel (interval/actions) + layout stability
-   =========================== */
-
-.side-panel {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:10px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
-  border-radius:10px;
-  border:1px solid var(--glass-border);
-  box-sizing:border-box;
-  width:100%;
-  max-width:300px;
-}
-
-.duration-list {
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.duration-item{
-  padding:6px 8px;
-  border-radius:8px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(0,0,0,0.02));
-  border:1px solid rgba(255,255,255,0.03);
-  color:var(--text);
-  font-weight:800;
-  cursor:pointer;
-  white-space:nowrap;
-  flex:0 0 auto;
-  font-size:13px;
-}
-.duration-item.selected{
-  background: linear-gradient(90deg,var(--accent),var(--accent2));
-  color:#06141e;
-  box-shadow:0 16px 40px rgba(255,170,40,0.10);
-}
-
-.side-actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  justify-content:flex-start;
-  flex-wrap:wrap;
-}
-.side-actions .btn{ min-width:110px; flex:1; }
-
-.layout-grid{
-  display:grid;
-  grid-template-columns: 1fr 300px;
-  gap:var(--gap-base);
-  align-items:start;
-}
-@media (max-width:920px){
-  .layout-grid{ grid-template-columns: 1fr; }
-  .side-panel{ order: -1; width:100%; max-width:100%; }
-}
-
-/* defensive */
-.panel, .side-panel, .card-grid, .route-card, .fleet-card { min-width:0; box-sizing:border-box; }
-
-/* accessibility helpers */
-.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
-
-/* reduce motion */
-@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
-
-/* ===== Ripple fix: ensure parents anchor and clip ripple ===== */
-.btn, .airline, .time-item, .route-card, .fleet-card {
-  position: relative;
-  overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* ripple element */
-.ripple {
-  position: absolute;
-  pointer-events: none;
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 0.28;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.06) 30%, transparent 60%);
-  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms;
-  will-change: transform, opacity, left, top;
-  mix-blend-mode: screen;
-}
-
-/* Mobile fit guarantee: ensure nothing overflows */
-html, body { overflow-x: hidden !important; max-width: 100%; }
-.shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
-@media (max-width: 768px) {
-  .card-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
-  .airline-grid { display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
-  .airline { min-width: 160px; flex:0 0 auto; }
-  .panel { padding: 12px; margin: 8px 0; max-height: calc(100vh - 160px); overflow: auto; -webkit-overflow-scrolling:touch; }
-  .modal-card { max-height: 88vh; overflow:auto; -webkit-overflow-scrolling:touch; }
-  .time-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
-  .route-card, .fleet-card { min-width: 0; width: 100%; }
-}
-@media (max-width: 420px) {
-  :root { font-size: 15px; }
-  .input-glass { padding: 10px 12px; font-size:15px; }
-  .btn { padding:10px; font-size:14px; }
-  .airline { min-width: 140px; }
-}
-
-/* protect against long words/tables */
-.panel * { min-width: 0 !important; word-break: break-word; -webkit-hyphens: auto; hyphens: auto; }
-
-/* ===========================
-   PATCH: stable card layout (title/meta clamp + button zone)
+   Kept minimal and non-duplicated
    =========================== */
 
 /* Keep cards aligned and stable */
@@ -410,15 +243,11 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
-/* FIX: только для Routes и Fleet — сделать контент в одну колонку на узких экранах */
-@media (max-width:920px) {
-  /* override inline grid-template-columns и гарантировать single-column для основного контента */
-  #page-routes, #page-fleet {
-    width:100% !important;
-    max-width:100% !important;
-  }
 
-  /* контейнер с двумя колонками внутри динамических секций — делаем один столбец */
+/* Mobile/column overrides kept (consolidated, non-duplicated) */
+@media (max-width:920px) {
+  #page-routes, #page-fleet { width:100% !important; max-width:100% !important; }
+
   #page-routes .panel > div,
   #page-fleet .panel > div,
   #page-routes .panel > div[style*="grid-template-columns"],
@@ -430,7 +259,6 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     width: 100% !important;
   }
 
-  /* куда рендерятся карточки — одна колонка, разумный gap и padding */
   #routesGrid.card-grid,
   #routesGrid,
   #page-routes .card-grid,
@@ -443,7 +271,6 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     gap: 10px !important;
   }
 
-  /* карточки: чуть уже padding, не вылезают за экран, содержимое адаптивно */
   #routesGrid .route-card,
   #fleetGroups .fleet-card,
   #fleetGroups .route-card,
@@ -459,11 +286,9 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     gap: 8px !important;
   }
 
-  /* заголовки и мета подстраиваются */
   #routesGrid .title, #fleetGroups .title { white-space: normal !important; overflow: hidden; text-overflow: ellipsis; font-size:15px !important; }
   #routesGrid .meta, #fleetGroups .meta { -webkit-line-clamp:2 !important; display:-webkit-box !important; -webkit-box-orient: vertical !important; font-size:13px !important; }
 
-  /* кнопочная строка — переносится и не выталкивает карточку по ширине */
   #routesGrid .route-card > div:last-child,
   #fleetGroups .fleet-card > div:last-child {
     justify-content: flex-start !important;
@@ -471,366 +296,18 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     flex-wrap: wrap !important;
   }
 
-  /* селекты/фильтры в шапке — чтобы не вылезали */
   #page-routes select#localCompanyFilter,
   #page-fleet select#localCompanyFilter {
     max-width: 100% !important;
     width: 100% !important;
   }
 
-  /* сохраняем горизонтальную прокрутку только для списков авиакомпаний (ничего не меняем) */
-  /* (не трогаем .airline-grid — специально) */
-
-  /* уменьшаем внешние отступы внутри страниц для экономии места */
   #page-routes .panel, #page-fleet .panel { padding-left:10px !important; padding-right:10px !important; }
 }
-  /* ---------- Layout helper and mobile safety ---------- */
-.two-col {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 12px;
-  align-items: start;
-  width: 100%;
-  box-sizing: border-box;
-}
-.two-col > * { box-sizing: border-box; }
 
-/* Колонки внутри (универсальные размеры) */
-.col-left { min-width: 0; }
-.col-right { min-width: 0; }
-
-/* Card lists: ensure they behave as single-column on small widths */
-.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; align-items: start; }
-
-/* Mobile overrides */
-@media (max-width: 920px) {
-  .two-col {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-  }
-
-  /* Форсировать колонки маршрутов/флота в single column */
-  #routesGrid.card-grid,
-  #routesGrid,
-  #fleetGroups,
-  #fleetGroups .fleet-list,
-  #page-routes .card-grid,
-  #page-fleet .card-grid {
-    grid-template-columns: 1fr !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    gap: 10px !important;
-  }
-
-  /* Убедиться, что карточки не вылазят за ширину и корректно переносят текст */
-  .route-card, .fleet-card {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    min-width: 0 !important;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-  }
-  .route-card .title, .fleet-card .title { white-space: normal !important; word-break:break-word; }
-  .route-card .meta, .fleet-card .meta { -webkit-line-clamp: 2 !important; display: -webkit-box !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
-
-  /* Кнопочная зона в карточке — переносим и даём больше места */
-  .route-card > div:last-child, .fleet-card > div:last-child {
-    justify-content: flex-start !important;
-    gap: 8px !important;
-    flex-wrap: wrap !important;
-  }
-
-  /* Расширяем селекты и фильтры на всю ширину */
-  #localCompanyFilter, #filterCompany { width: 100% !important; box-sizing: border-box; }
-
-  /* Padding / container adjustments to avoid clipping */
-  .container { padding-left: 10px !important; padding-right: 10px !important; }
-  .panel { padding-left: 10px !important; padding-right: 10px !important; }
-
-  /* Список авиакомпаний оставляем как было (без изменений) */
-  /* Примечание: .airline-grid не трогаем */
-}
-  /* Aircraft detail tweaks */
-#aircraftDetailModal .modal-card { max-width: 520px; padding:14px; }
-#aircraftDetailModal .body { font-size:14px; color:var(--text); }
-#aircraftDetailModal .body strong { color:var(--muted); font-weight:700; margin-right:6px; }
-  /* ====== FIX: убрать "прыжки" кнопок и стабилизировать компоновку карточек ====== */
-
-/* 1) Запретить transform, который меняет поток макета — используем box-shadow/outline для выделения */
-.tab.active,
-.time-item.selected,
-.duration-item.selected,
-.duration-item:active,
-.time-item:active {
-  transform: none !important;
-  /* оставляем визуальную подсветку через тень/фон, не смещая элемент */
-  box-shadow: 0 16px 48px rgba(255,170,40,0.10) !important;
-}
-
-/* 2) Стабильная зона для кнопок в карточках — обеспечим фиксированную минимальную ширину и постоянный flex */
-.route-card > div:last-child,
-.fleet-card > div:last-child {
-  display:flex !important;
-  gap:8px !important;
-  align-items:center !important;
-  justify-content:flex-end !important; /* по умолчанию правый край */
-  min-height:44px;                       /* фиксируем высоту зоны кнопок, чтобы не прыгала карточка */
-  box-sizing:border-box;
-}
-
-/* 3) Делаем кнопки одинаковыми по ширине и не даём им "расти" при выделении */
-.route-card .btn, .fleet-card .btn, .card-grid .btn {
-  min-width: 92px;      /* подбирай значение под твой дизайн */
-  padding:8px 10px;
-  flex: 0 0 auto;       /* не растут и не сжимаются по контейнеру */
-}
-
-/* 4) На мобильных: если кнопок несколько — перенести их в перенос (wrap) вместо сжатия */
-@media (max-width: 920px) {
-  .route-card > div:last-child,
-  .fleet-card > div:last-child {
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
-    gap:8px !important;
-  }
-  .route-card .btn, .fleet-card .btn { min-width: 44%; } /* две кнопки в ряд удобно на мобилке */
-}
-
-/* 5) Защита от изменения ширины при появлении box-shadow/outline (боксы не влияют на flow) */
-.tab, .time-item, .duration-item, .btn {
-  will-change: box-shadow, background-color;
-  /* убрать переходы ширины/translate, оставляем плавность цвета/тени */
-  transition: background-color 180ms ease, box-shadow 220ms ease, color 160ms ease;
-}
-
-/* 6) Если используется translateY на .selected в других местах — конкретно отменяем для карточек */
-.route-card .time-item.selected, .fleet-card .time-item.selected {
-  transform: none !important;
-}
-
-/* 7) Защититься от резких изменений inline-style (редкий случай) */
-[style*="transform: translateY"] { transform: none !important; }
-  /* 1. Зона действий в карточке: всегда фиксированное выравнивание */
-.route-card > div:last-child,
-.row .actions,
-.card-actions {
-  display:flex !important;
-  gap:8px !important;
-  align-items:center !important;
-  justify-content:flex-end !important; /* всегда справа */
-  min-height:44px;
-  box-sizing:border-box;
-}
-
-/* 2. Кнопки — одинаковые размеры, не влияют на поток при активном состоянии */
-.route-card .btn, .route-card .actions .btn {
-  min-width:92px;          /* подбери под дизайн */
-  padding:8px 10px;
-  flex:0 0 auto;
-  box-sizing:border-box;
-  transition: background-color .18s ease, box-shadow .22s ease, color .16s ease;
-}
-
-/* 3. Запретить transform, который сдвигает элемент в потоке */
-.route-card .btn:active,
-.route-card .btn.selected,
-.tab.active,
-.time-item.selected {
-  transform: none !important;
-  translate: none !important;
-  /* подсветка без смещения */
-  box-shadow: 0 10px 30px rgba(255,170,40,0.10);
-  outline: 2px solid rgba(255,170,40,0.06);
-}
-
-/* 4. Мобильный вариант — перенос вместо сжатия */
-@media (max-width:920px){
-  .route-card > div:last-child { justify-content:flex-start !important; flex-wrap:wrap; }
-  .route-card .btn { min-width:44%; }
-}
-  /* Мобильный фикс: запрещаем смещения и фиксируем блок кнопок */
-@media (max-width: 920px) {
-  /* Зона кнопок: гарантируем стабильный поток и перенос, но без сдвигов */
-  .route-card > div:last-child,
-  .fleet-card > div:last-child,
-  .card-actions {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    align-items: center !important;
-    justify-content: flex-start !important; /* всегда предсказуемо слева */
-    min-height: 48px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Кнопки не меняют ширину/transform при активном состоянии */
-  .route-card .btn,
-  .fleet-card .btn,
-  .card-actions .btn {
-    min-width: 44% !important;    /* две кнопки в ряд */
-    max-width: 100% !important;
-    padding: 8px 10px !important;
-    flex: 0 0 auto !important;
-    box-sizing: border-box !important;
-    transition: background-color .18s ease, box-shadow .22s ease !important;
-    transform: none !important;
-  }
-
-  /* Если где-то добавляют translate/transform — нейтрализуем */
-  .route-card .btn[style*="transform"],
-  .route-card .btn:hover[style*="transform"],
-  .route-card .btn:active[style*="transform"] {
-    transform: none !important;
-  }
-
-  /* Отключаем изменение justify-content у родителя при изменении классов */
-  .route-card, .fleet-card {
-    /* принудительно задаём поведение, чтобы JS не менял выравнивание */
-    --force-actions-justify: flex-start;
-  }
-}
-  /* --- Сильный мобильный фикс для кнопок в карточках --- */
-@media (max-width: 920px) {
-  /* стабильная зона действий — всегда слева/в строках, не меняется при клике */
-  .route-card > div:last-child,
-  .fleet-card > div:last-child,
-  .card-actions,
-  .row .actions {
-    display: flex !important;
-    gap: 8px !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
-    min-height: 48px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* кнопки фиксированного размера, не влияют на поток при активации */
-  .route-card .btn, .fleet-card .btn, .card-actions .btn {
-    min-width: 44% !important;
-    max-width: 100% !important;
-    padding: 8px 10px !important;
-    flex: 0 0 auto !important;
-    box-sizing: border-box !important;
-    transition: background-color .18s ease, box-shadow .22s ease !important;
-    transform: none !important;
-  }
-
-  /* отменяем любые inline/добавленные transform/translate */
-  .route-card .btn[style*="transform"],
-  .route-card .btn:active[style*="transform"],
-  .route-card .btn.selected[style*="transform"] {
-    transform: none !important;
-  }
-
-  /* при появлении класса selected/active — не менять размеры/паддинги */
-  .route-card .btn.selected, .route-card .btn.active {
-    padding: 8px 10px !important;
-    min-width: 44% !important;
-    box-shadow: 0 10px 30px rgba(255,170,40,0.10) !important;
-    outline: 2px solid rgba(255,170,40,0.06) !important;
-  }
-}
-  /* MOBILE LAYOUT: телефонный вид карточек (max-width 920px) */
-@media (max-width: 920px) {
-
-  /* Корневая карточка — колоночный, аккуратный блок */
-  .route-card, .fleet-card {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 10px;
-    min-height: 92px;
-    box-sizing: border-box;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-
-  /* Верхняя строка: title слева, meta справа (не ломает поток) */
-  .route-card .top, .fleet-card .top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  .route-card .title, .fleet-card .title {
-    font-weight: 800;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1 1 auto;
-  }
-
-  .route-card .meta, .fleet-card .meta {
-    font-size: 12px;
-    color: var(--muted);
-    flex: 0 0 auto;
-    margin-left: 8px;
-    white-space: nowrap;
-  }
-
-  /* Описание / длительность — компактно, максимум 3 строки */
-  .route-card .desc, .route-card .notes, .fleet-card .desc {
-    font-size: 12px;
-    color: var(--muted-weak);
-    line-height: 1.25;
-    max-height: 3.75em; /* примерно 3 строки */
-    overflow: hidden;
-  }
-
-  /* Зона действий: всегда внизу карточки, переносится аккуратно */
-  .route-card > .actions, .fleet-card > .actions,
-  .route-card > div:last-child, .fleet-card > div:last-child {
-    display: flex !important;
-    gap: 8px !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
-    min-height: 44px !important;
-    box-sizing: border-box !important;
-    margin-top: 6px;
-  }
-
-  /* Кнопки: две в ряд, одинаковый размер; не меняют поток при активации */
-  .route-card .btn, .fleet-card .btn, .select-route {
-    min-width: 44% !important;
-    max-width: 100% !important;
-    padding: 10px 12px !important;
-    flex: 0 0 auto !important;
-    box-sizing: border-box !important;
-    border-radius: 8px;
-    font-weight: 800;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transform: none !important;
-    transition: background-color .18s ease, box-shadow .22s ease !important;
-  }
-
-  /* Подсветка активной кнопки — визуально, но не через transform/padding */
-  .route-card .btn.selected, .route-card .btn.active {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
-    outline: 2px solid rgba(255,170,40,0.06) !important;
-  }
-
-  /* Нейтрализовать inline transform, если где-то добавляют */
-  .route-card .btn[style*="transform"], .route-card .btn[style*="translate"] {
-    transform: none !important;
-  }
-
-  /* Уменьшаем шрифты/отступы для очень узких экранов */
-  @media (max-width: 420px) {
-    .route-card, .fleet-card { min-height: 88px; padding: 10px; }
-    .route-card .title { font-size: 13px; }
-    .route-card .meta, .route-card .desc { font-size: 11px; }
-    .route-card .btn { padding: 8px 10px; min-width: 48% !important; }
-  }
-}
-
-
+/* Final safety: ensure no horizontal overflow */
+html, body { overflow-x: hidden !important; max-width: 100%; }
+.shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
 </style>
 </head>
 <body>
@@ -1857,6 +1334,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
