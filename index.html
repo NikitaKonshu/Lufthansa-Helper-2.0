@@ -610,6 +610,44 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 
 /* 7) Защититься от резких изменений inline-style (редкий случай) */
 [style*="transform: translateY"] { transform: none !important; }
+  /* 1. Зона действий в карточке: всегда фиксированное выравнивание */
+.route-card > div:last-child,
+.row .actions,
+.card-actions {
+  display:flex !important;
+  gap:8px !important;
+  align-items:center !important;
+  justify-content:flex-end !important; /* всегда справа */
+  min-height:44px;
+  box-sizing:border-box;
+}
+
+/* 2. Кнопки — одинаковые размеры, не влияют на поток при активном состоянии */
+.route-card .btn, .route-card .actions .btn {
+  min-width:92px;          /* подбери под дизайн */
+  padding:8px 10px;
+  flex:0 0 auto;
+  box-sizing:border-box;
+  transition: background-color .18s ease, box-shadow .22s ease, color .16s ease;
+}
+
+/* 3. Запретить transform, который сдвигает элемент в потоке */
+.route-card .btn:active,
+.route-card .btn.selected,
+.tab.active,
+.time-item.selected {
+  transform: none !important;
+  translate: none !important;
+  /* подсветка без смещения */
+  box-shadow: 0 10px 30px rgba(255,170,40,0.10);
+  outline: 2px solid rgba(255,170,40,0.06);
+}
+
+/* 4. Мобильный вариант — перенос вместо сжатия */
+@media (max-width:920px){
+  .route-card > div:last-child { justify-content:flex-start !important; flex-wrap:wrap; }
+  .route-card .btn { min-width:44%; }
+}
 </style>
 </head>
 <body>
@@ -1625,6 +1663,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
