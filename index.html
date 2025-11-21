@@ -731,6 +731,105 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     outline: 2px solid rgba(255,170,40,0.06) !important;
   }
 }
+  /* MOBILE LAYOUT: телефонный вид карточек (max-width 920px) */
+@media (max-width: 920px) {
+
+  /* Корневая карточка — колоночный, аккуратный блок */
+  .route-card, .fleet-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 10px;
+    min-height: 92px;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  /* Верхняя строка: title слева, meta справа (не ломает поток) */
+  .route-card .top, .fleet-card .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .route-card .title, .fleet-card .title {
+    font-weight: 800;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
+  }
+
+  .route-card .meta, .fleet-card .meta {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 0 0 auto;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+
+  /* Описание / длительность — компактно, максимум 3 строки */
+  .route-card .desc, .route-card .notes, .fleet-card .desc {
+    font-size: 12px;
+    color: var(--muted-weak);
+    line-height: 1.25;
+    max-height: 3.75em; /* примерно 3 строки */
+    overflow: hidden;
+  }
+
+  /* Зона действий: всегда внизу карточки, переносится аккуратно */
+  .route-card > .actions, .fleet-card > .actions,
+  .route-card > div:last-child, .fleet-card > div:last-child {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    min-height: 44px !important;
+    box-sizing: border-box !important;
+    margin-top: 6px;
+  }
+
+  /* Кнопки: две в ряд, одинаковый размер; не меняют поток при активации */
+  .route-card .btn, .fleet-card .btn, .select-route {
+    min-width: 44% !important;
+    max-width: 100% !important;
+    padding: 10px 12px !important;
+    flex: 0 0 auto !important;
+    box-sizing: border-box !important;
+    border-radius: 8px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: none !important;
+    transition: background-color .18s ease, box-shadow .22s ease !important;
+  }
+
+  /* Подсветка активной кнопки — визуально, но не через transform/padding */
+  .route-card .btn.selected, .route-card .btn.active {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+    outline: 2px solid rgba(255,170,40,0.06) !important;
+  }
+
+  /* Нейтрализовать inline transform, если где-то добавляют */
+  .route-card .btn[style*="transform"], .route-card .btn[style*="translate"] {
+    transform: none !important;
+  }
+
+  /* Уменьшаем шрифты/отступы для очень узких экранов */
+  @media (max-width: 420px) {
+    .route-card, .fleet-card { min-height: 88px; padding: 10px; }
+    .route-card .title { font-size: 13px; }
+    .route-card .meta, .route-card .desc { font-size: 11px; }
+    .route-card .btn { padding: 8px 10px; min-width: 48% !important; }
+  }
+}
+
 
 </style>
 </head>
@@ -1758,6 +1857,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
