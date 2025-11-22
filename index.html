@@ -308,6 +308,62 @@ body.modal-open{ overflow:hidden; }
 /* Final safety: ensure no horizontal overflow */
 html, body { overflow-x: hidden !important; max-width: 100%; }
 .shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
+/* ======= Button visual fix (paste at the end of existing <style>) ======= */
+
+/* Scoped fix inside .shell / global fallback */
+.shell .btn,
+.shell button.btn,
+.shell .btn-primary,
+.shell button.btn-primary {
+  background: linear-gradient(180deg, #f6d16a, #d9a017) !important;
+  color: #06141e !important;
+  box-shadow: 0 8px 28px rgba(165,102,10,0.16), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  min-width: 120px !important;
+  transition: transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s ease !important;
+}
+
+/* Hover / active states */
+.shell .btn:hover,
+.shell button.btn:hover,
+.shell .btn-primary:hover,
+.shell button.btn-primary:hover {
+  transform: translateY(-2px) !important;
+  filter: saturate(1.04) !important;
+  box-shadow: 0 14px 38px rgba(165,102,10,0.22) !important;
+}
+.shell .btn:active,
+.shell button.btn:active,
+.shell .btn-primary:active,
+.shell button.btn-primary:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.38) !important;
+}
+
+/* Secondary variant (keeps original darker style) */
+.shell .btn-secondary,
+.shell button.btn-secondary {
+  background: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92)) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,0.03) !important;
+  padding: 8px 12px !important;
+}
+
+/* Mobile: make two buttons per row and keep proportions */
+@media (max-width: 920px) {
+  .shell .btn, .shell button.btn, .shell .btn-primary {
+    min-width: 44% !important;
+    padding: 9px 10px !important;
+  }
+}
+
+/* Safety: ensure no commented/neutralizer rules hide the background inside .shell */
+.shell [style*="background: none"], .shell [style*="background:transparent"] {
+  background: initial !important;
+}
 </style>
 </head>
 <body>
@@ -1334,6 +1390,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
