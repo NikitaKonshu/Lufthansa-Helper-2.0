@@ -1,0 +1,91 @@
+/* app-ui.css
+   Безопасный, scoped стиль для .app-ui / .shell
+   Убирает эффекты нейтрализаторов и восстанавливает внешний вид кнопок */
+:root{
+  --bg-1:#031022; --bg-2:#063046;
+  --text:#eaf4ff; --muted:rgba(234,244,255,0.72);
+  --accent-1:#f6d16a; --accent-2:#d9a017;
+  --glass-border:rgba(255,255,255,0.06);
+  --card-radius:10px;
+  --ease:cubic-bezier(.16,.84,.35,1);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Scope everything under .app-ui to avoid global bleed */
+.app-ui, .shell { box-sizing:border-box; max-width:1100px; margin:0 auto; }
+
+/* Base layout + background (non-invasive) */
+.app-ui-body {
+  background: linear-gradient(160deg,var(--bg-1),var(--bg-2));
+  color:var(--text);
+  padding:14px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Panels */
+.app-ui .panel {
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  padding:10px;
+  margin-bottom:10px;
+}
+
+/* Restore primary/golden button visuals with moderate specificity */
+.app-ui .btn,
+.app-ui button.btn,
+.app-ui .btn-primary,
+.app-ui button.btn-primary {
+  background: linear-gradient(180deg, var(--accent-1), var(--accent-2)) !important;
+  color: #06141e !important;
+  box-shadow: 0 8px 28px rgba(165,102,10,0.16), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  min-width: 110px;
+  transition: transform .22s var(--ease), box-shadow .22s ease;
+}
+
+/* Hover/active */
+.app-ui .btn:hover, .app-ui .btn-primary:hover { transform: translateY(-2px) !important; }
+.app-ui .btn:active, .app-ui .btn-primary:active { transform: translateY(0) !important; box-shadow: 0 6px 12px rgba(0,0,0,0.38) !important; }
+
+/* Secondary button */
+.app-ui .btn-secondary, .app-ui button.btn-secondary {
+  background: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92)) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,0.03) !important;
+}
+
+/* Button area stability to prevent layout shift */
+.app-ui .actions { display:flex; gap:8px; align-items:center; justify-content:flex-end; min-height:44px; }
+
+/* Neutralizer safety rules
+   If other CSS tried to set background: none or transparent broadly, override it in .app-ui scope */
+.app-ui [style*="background: none"],
+.app-ui [style*="background:none"],
+.app-ui [style*="background:transparent"] {
+  background: initial !important;
+}
+
+/* Avoid selectors that remove backgrounds globally such as *[style*="transform"] hacks */
+.app-ui *[style*="transform"] { transform: none !important; }
+
+/* Ensure image/logo placeholders keep size to avoid shift */
+.app-ui .card-logo, .app-ui .logo { width:44px; height:44px; min-width:44px; min-height:44px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#052b36,#041721); color:var(--accent-1); font-weight:800; }
+
+/* Card grid */
+.app-ui .card-grid { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+
+/* Mobile tweaks */
+@media (max-width:920px){
+  .app-ui .btn, .app-ui .btn-primary { min-width:44% !important; padding:9px 10px !important; }
+  .app-ui .card-grid { grid-template-columns:1fr; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .app-ui * { transition: none !important; animation: none !important; }
+}
