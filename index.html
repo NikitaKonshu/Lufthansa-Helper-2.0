@@ -379,10 +379,9 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 <div id="splash" aria-hidden="false" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:16000;background:linear-gradient(180deg, rgba(0,6,18,0.96), rgba(2,14,30,0.99));">
   <div style="text-align:center;max-width:92%;padding:18px;">
     <h2 style="font-size:22px;color:var(--text);margin-bottom:8px">Welcome to Lufthansa Group</h2>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-      <button id="splashContinue" class="btn btn-primary" type="button">Продолжить</button>
-    </div>
-  </div>
+ <div class="welcome-screen app-ui">
+  <h1>Welcome to Lufthansa Group</h1>
+  <button class="btn btn-primary">Продолжить</button>
 </div>
 
 <div class="shell" role="application" aria-label="Flight Helper">
@@ -1402,6 +1401,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 <script src="/js/app-ui-fix.js" defer></script>
 </body>
 </html>
+
 
 
 
