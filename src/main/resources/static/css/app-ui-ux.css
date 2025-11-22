@@ -1,0 +1,83 @@
+/* app-ui-ux.css - scoped under .app-ui & .shell to avoid global bleed */
+:root{
+  --accent-1: #f6d16a;
+  --accent-2: #d9a017;
+  --btn-text-dark: #06141e;
+  --glass-border: rgba(255,255,255,0.06);
+  --ease-soft: cubic-bezier(.16,.84,.35,1);
+  --shadow-strong: 0 14px 38px rgba(165,102,10,0.18);
+}
+
+/* Ensure we target only app UI */
+.app-ui, .shell { --btn-min-w: 110px; }
+
+/* BUTTON RESET / CONSISTENT LOOK */
+.app-ui .btn, .app-ui button.btn,
+.shell .btn, .shell button.btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-weight: 800 !important;
+  min-width: var(--btn-min-w) !important;
+  cursor: pointer !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform .22s var(--ease-soft), box-shadow .22s ease, background .18s linear;
+  will-change: transform, box-shadow;
+  background-image: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+  color: var(--btn-text-dark);
+  box-shadow: 0 8px 28px rgba(165,102,10,0.12), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+/* Secondary variant */
+.app-ui .btn-secondary, .shell .btn-secondary {
+  background-image: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92));
+  color: #eaf4ff;
+  box-shadow: none;
+}
+
+/* Force white/disabled styles override (fixes places where buttons showed white) */
+.app-ui .btn[style], .app-ui .btn[style] * { background-image: unset !important; color: inherit !important; }
+
+/* Hover / active micro-interactions */
+.app-ui .btn:hover, .shell .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-strong); filter: saturate(1.04); }
+.app-ui .btn:active, .shell .btn:active { transform: translateY(0); box-shadow: 0 6px 12px rgba(0,0,0,0.38); }
+
+/* Focus (keyboard) */
+.app-ui .btn:focus { outline: 3px solid rgba(255,190,40,0.18); outline-offset: 3px; }
+
+/* Ripple element (if JS adds it) */
+.app-ui .ui-ripple { position:absolute; width:40px; height:40px; border-radius:50%; background: rgba(255,255,255,0.28); transform:scale(0); opacity:0; pointer-events:none; transition: transform .36s cubic-bezier(.2,.8,0,.9), opacity .36s ease; }
+
+/* MICRO-ANIMATIONS: subtle appear / status-change */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(6px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.app-ui .card, .app-ui .fleet-card, .app-ui .route-card {
+  transition: background .25s var(--ease-soft), transform .18s var(--ease-soft), box-shadow .18s var(--ease-soft);
+  animation: fadeUp .22s both;
+}
+
+/* Status badge pulse for state changes */
+@keyframes statusPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,215,74,0.0); }
+  70% { box-shadow: 0 0 0 10px rgba(255,215,74,0.06); }
+  100% { box-shadow: 0 0 0 0 rgba(255,215,74,0.0); }
+}
+.app-ui .status-updated {
+  animation: statusPulse .9s ease-out;
+}
+
+/* Smooth insertion/removal */
+.app-ui .list-enter { opacity: 0; transform: translateY(6px); }
+.app-ui .list-enter-active { opacity: 1; transform: translateY(0); transition: opacity .28s var(--ease-soft), transform .28s var(--ease-soft); }
+.app-ui .list-exit { opacity: 1; transform: translateY(0); }
+.app-ui .list-exit-active { opacity: 0; transform: translateY(6px); transition: opacity .28s var(--ease-soft), transform .28s var(--ease-soft); }
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce){
+  .app-ui .card, .app-ui .btn { transition: none !important; animation: none !important; }
+}
