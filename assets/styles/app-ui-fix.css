@@ -55,3 +55,65 @@ button:focus { outline: 3px solid rgba(255,190,40,0.18) !important; outline-offs
 @media (prefers-reduced-motion: reduce) {
   button, .btn { transition: none !important; }
 }
+/* Emergency layout safety for .welcome-screen.app-ui */
+.welcome-screen.app-ui {
+  box-sizing: border-box;
+  display: block !important;
+  position: static !important;
+  width: auto !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 24px !important;
+}
+
+/* Ensure children keep natural flow (no forced flex/grid unless intended) */
+.welcome-screen.app-ui > * {
+  position: static !important;
+  display: block !important;
+  width: auto !important;
+  transform: none !important;
+}
+
+/* Safe card/grid defaults for inside .app-ui (non-invasive) */
+.welcome-screen.app-ui .card-grid,
+.welcome-screen.app-ui .list,
+.welcome-screen.app-ui .main {
+  display: block !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Target only visual properties for buttons — do NOT change layout of parent containers */
+.welcome-screen.app-ui button.btn,
+.welcome-screen.app-ui button.btn-primary,
+.welcome-screen.app-ui .btn.btn-primary {
+  appearance: none !important;
+  background-image: linear-gradient(180deg,#f6d16a,#d9a017) !important;
+  color: #06141e !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  box-shadow: 0 8px 28px rgba(165,102,10,0.12) !important;
+  min-width: 110px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Prevent any previously applied absolute/transform rules from breaking layout */
+.welcome-screen.app-ui [style*="position: absolute"],
+.welcome-screen.app-ui [style*="position:absolute"],
+.welcome-screen.app-ui [style*="transform:"] {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen.app-ui * { transition: none !important; animation: none !important; }
+}
