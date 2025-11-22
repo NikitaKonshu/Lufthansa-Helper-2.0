@@ -371,6 +371,11 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 .shell [style*="background: none"], .shell [style*="background:transparent"] {
   background: initial !important;
 }
+  /* быстрый inline-fix для splash */
+  #splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:16000;background:linear-gradient(180deg, rgba(0,6,18,0.96), rgba(2,14,30,0.99));}
+  #splash .splash-inner{max-width:92%;padding:18px;text-align:center;color:#fff;}
+  #splash button{background:linear-gradient(180deg,#f6d16a,#d9a017);color:#06141e;border-radius:10px;padding:10px 16px;border:none;min-width:140px;}
+  html.splash-lock, body.splash-lock{overflow:hidden;height:100%;}
 </style>
 </head>
 <body>
@@ -1403,6 +1408,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 <script src="/js/app-ui-fix.js" defer></script>
 </body>
 </html>
+
 
 
 
