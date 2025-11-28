@@ -1,17 +1,10 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <!-- другие стили -->
-  <link rel="stylesheet" href="/css/vendor.css">
-  <link rel="stylesheet" href="/css/main.css">
-
-  <!-- наш файл должен идти последним, чтобы переопределять предыдущие правила -->
-  <link rel="stylesheet" href="/css/app-ui-fix.css">
-</head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
 <title>Flight Helper — Lufthansa Group</title>
-<link rel="icon" href='data:image/svg+xml;utf8,<svgxmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><circle cx="8"cy="8" r="8" fill="%23f6d16a"/></svg>'>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-1:#031022; --bg-2:#063046;
@@ -23,9 +16,6 @@
   --ease-soft:cubic-bezier(.16,.84,.35,1);
   font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   font-size:16px;
-  --gap-base:8px;
-  --panel-pad:10px;
-  --card-gap:8px;
 }
 
 /* Reset + base */
@@ -42,37 +32,37 @@ body{
 }
 body.modal-open{ overflow:hidden; }
 
-/* Shell / topbar */
-.shell{max-width:1100px;margin:0 auto;border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid var(--glass-border);box-shadow:0 30px 120px rgba(0,0,0,0.45)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px;border-bottom:1px solid rgba(255,255,255,0.02);gap:10px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent);background:linear-gradient(180deg,#052b36,#041721)}
-.title{font-weight:900;font-size:16px}
+/* Shell */
+.shell{max-width:1100px;margin:0 auto;border-radius:14px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid var(--glass-border);box-shadow:0 30px 120px rgba(0,0,0,0.5)}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid rgba(255,255,255,0.02);gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent);background:linear-gradient(180deg,#052b36,#041721)}
+.title{font-weight:900;font-size:17px}
 .subtitle{font-size:13px;color:var(--muted-weak)}
 .session{display:flex;gap:8px;align-items:center}
 
 /* Tabs */
 .tabs{display:flex;gap:8px;align-items:center}
-.tab{padding:7px 10px;border-radius:10px;font-weight:800;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-size:13px}
-.tab.active{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#06141e; /* transform removed to avoid layout jumps */ box-shadow:0 20px 60px rgba(255,170,40,0.10)}
+.tab{padding:8px 10px;border-radius:10px;font-weight:800;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-size:14px}
+.tab.active{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#06141e;transform:translateY(-3px);box-shadow:0 24px 80px rgba(255,170,40,0.12)}
 
 /* Layout */
-.container{padding:10px}
+.container{padding:14px}
 .grid{display:block}
 
 /* Panels */
-.panel{padding:var(--panel-pad);border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid var(--glass-border);margin-bottom:var(--gap-base);backdrop-filter: blur(6px)}
+.panel{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border:1px solid var(--glass-border);margin-bottom:12px;backdrop-filter: blur(6px)}
 .panel .heading {font-weight:900}
 .panel .note {color:var(--muted-weak);font-size:13px;margin-top:6px}
 
 /* Inputs */
-.input-glass{width:100%;padding:9px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));color:var(--text);outline:none;font-size:14px}
+.input-glass{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));color:var(--text);outline:none;font-size:15px}
 .input-glass::placeholder{color:rgba(234,244,255,0.42)}
-.input-glass:focus{box-shadow:0 12px 40px rgba(0,0,0,0.32), 0 0 16px rgba(255,200,50,0.03)}
+.input-glass:focus{box-shadow:0 18px 56px rgba(0,0,0,0.42), 0 0 20px rgba(255,200,50,0.03)}
 
 /* Lists & cards */
-.airline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:10px}
-.airline{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .12s;overflow:hidden;position:relative}
+.airline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px}
+.airline{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .12s;overflow:hidden;position:relative}
 .brand-dot{width:12px;height:12px;border-radius:3px;flex:0 0 12px}
 .airline .name{font-weight:800;color:var(--text);font-size:14px}
 .airline .meta{font-size:12px;color:var(--muted)}
@@ -80,55 +70,30 @@ body.modal-open{ overflow:hidden; }
 .airline:hover{transform:translateY(-3px)}
 .airline.selected{outline:2px solid rgba(255,190,40,0.12);transform:translateY(-4px)}
 
-/* Card grid base */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
-.route-card, .fleet-card{padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:78px;gap:var(--card-gap)}
+/* cards */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:12px}
+.route-card, .fleet-card{padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.03);position:relative;overflow:hidden}
 
 /* time-item */
-.time-item{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(0,0,0,0.02));color:var(--text);font-weight:800;transition:all 180ms var(--ease-soft);position:relative;overflow:hidden;font-size:13px}
-.time-item.selected{ color:#06141e; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 20px 60px rgba(255,170,40,0.10); transform:none; }
+.time-item{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(0,0,0,0.02));color:var(--text);font-weight:800;transition:all 220ms var(--ease-soft);position:relative;overflow:hidden;font-size:14px}
+.time-item.selected{ color:#06141e; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 26px 90px rgba(255,170,40,0.12);transform:translateY(-4px)}
 
-/* ====== NOTE: global .btn and ripple implementation from old stylesheet
-   are commented out below to avoid conflicts with the new centralized UI theme.
-   If you rely on those exact rules, you can uncomment them. */
-
-/* COMMENTED: original global button rules (to prevent conflicts)
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:9px;border:1px solid transparent;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));color:var(--text);font-weight:800;cursor:pointer;font-size:14px;position:relative;overflow:hidden}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:10px;border:1px solid transparent;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));color:var(--text);font-weight:800;cursor:pointer;font-size:14px;position:relative;overflow:hidden}
 .btn-primary{background: linear-gradient(180deg, var(--accent), var(--accent2));color:#06141e}
 .btn-secondary{background: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92));color: var(--text)}
 .btn-ghost{background: transparent;color: var(--text);border: 1px solid rgba(255,255,255,0.06)}
-*/
-
-/* COMMENTED: old ripple / interaction parents (we keep safe ripple handling externally) */
-/*
-.btn, .airline, .time-item, .route-card, .fleet-card {
-  position: relative;
-  overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-}
-.ripple {
-  position: absolute;
-  pointer-events: none;
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 0.28;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.06) 30%, transparent 60%);
-  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms;
-  will-change: transform, opacity, left, top;
-  mix-blend-mode: screen;
-}
-*/
 
 /* modals */
 .modal-backdrop{
   display:none;
   position:fixed;inset:0;z-index:17000;
   background:rgba(0,0,0,0.56);
-  align-items:center;justify-content:center;padding:14px;
+  align-items:center;justify-content:center;padding:18px;
   pointer-events:none;
   transition:opacity .18s ease;
 }
-.modal-card{width:min(820px,96%);max-height:86vh;overflow:auto;border-radius:12px;padding:14px;background:linear-gradient(180deg, rgba(20,28,38,0.98), rgba(10,14,20,0.98));border:1px solid var(--glass-border);box-shadow:0 40px 120px rgba(0,0,0,0.6);color:var(--text);transform:translateY(6px);opacity:0;transition:transform 220ms var(--ease-soft),opacity 200ms var(--ease-soft)}
+.modal-card{width:min(820px,96%);max-height:86vh;overflow:auto;border-radius:12px;padding:16px;background:linear-gradient(180deg, rgba(20,28,38,0.98), rgba(10,14,20,0.98));border:1px solid var(--glass-border);box-shadow:0 40px 140px rgba(0,0,0,0.6);color:var(--text);transform:translateY(6px);opacity:0;transition:transform 260ms var(--ease-soft),opacity 220ms var(--ease-soft)}
 .modal-backdrop.showing{ pointer-events:auto; }
 .modal-backdrop.showing .modal-card{ transform:none; opacity:1; }
 
@@ -141,255 +106,78 @@ body.modal-open{ overflow:hidden; }
   padding:6px 8px;
   display:flex; gap:8px; justify-content:space-around; align-items:center;
 }
-.mobile-nav .nav-btn{ flex:1; padding:8px 6px; border-radius:10px; font-weight:800; font-size:13px; color:var(--text); background:transparent; border:1px solid rgba(255,255,255,0.04); }
-.mobile-nav .nav-btn.active{ background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06141e; box-shadow:0 14px 30px rgba(0,0,0,0.35); /* transform removed */ }
+.mobile-nav .nav-btn{ flex:1; padding:10px 6px; border-radius:10px; font-weight:800; font-size:13px; color:var(--text); background:transparent; border:1px solid rgba(255,255,255,0.04); }
+.mobile-nav .nav-btn.active{ background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06141e; box-shadow:0 14px 40px rgba(0,0,0,0.45); transform:translateY(-2px); }
 
 /* Prevent overflow and ensure single column on small screens */
 @media(max-width:720px){
   .mobile-nav{ display:flex; }
-  .container{ padding-bottom:72px; }
+  .container{ padding-bottom:80px; }
   .tabs{ display:none; }
   .card-grid{ grid-template-columns: 1fr !important; }
   .route-card, .fleet-card { padding:10px; }
 }
 
-/* Mobile safety: keep existing responsive adjustments that are not conflicting */
+/* ===== Ripple fix: ensure parents anchor and clip ripple ===== */
+.btn, .airline, .time-item, .route-card, .fleet-card {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ripple element */
+.ripple {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0.28;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.45), rgba(255,255,255,0.06) 30%, transparent 60%);
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 360ms;
+  will-change: transform, opacity, left, top;
+  mix-blend-mode: screen;
+}
+
+/* Mobile fit guarantee: ensure nothing overflows */
+html, body { overflow-x: hidden !important; max-width: 100%; }
+.shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
 @media (max-width: 768px) {
   .card-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
-  .airline-grid { display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
-  .airline { min-width: 150px; flex:0 0 auto; }
-  .panel { padding: var(--panel-pad); margin: 8px 0; max-height: calc(100vh - 140px); overflow: auto; -webkit-overflow-scrolling:touch; }
+  .airline-grid { display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
+  .airline { min-width: 160px; flex:0 0 auto; }
+  .panel { padding: 12px; margin: 8px 0; max-height: calc(100vh - 160px); overflow: auto; -webkit-overflow-scrolling:touch; }
   .modal-card { max-height: 88vh; overflow:auto; -webkit-overflow-scrolling:touch; }
+  .time-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
   .route-card, .fleet-card { min-width: 0; width: 100%; }
 }
 @media (max-width: 420px) {
-  :root { font-size:15px; }
-  .input-glass { padding:9px 10px; font-size:14px; }
-  .btn { padding:7px 9px; font-size:13px; }
-  .airline { min-width:140px; padding:8px; }
+  :root { font-size: 15px; }
+  .input-glass { padding: 10px 12px; font-size:15px; }
+  .btn { padding:10px; font-size:14px; }
+  .airline { min-width: 140px; }
 }
 
 /* protect against long words/tables */
 .panel * { min-width: 0 !important; word-break: break-word; -webkit-hyphens: auto; hyphens: auto; }
-
-/* ===========================
-   PATCH: stable card layout (title/meta clamp + button zone)
-   Kept minimal and non-duplicated
-   =========================== */
-
-/* Keep cards aligned and stable */
-.card-grid { align-items: start; grid-auto-rows: 1fr; }
-.card-grid > * { display: flex; flex-direction: column; }
-
-/* Card internals: fixed-ish height, vertical layout */
-.route-card, .fleet-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 84px;
-  padding: 10px;
-  gap: 8px;
-  box-sizing: border-box;
-}
-
-/* Title: single line, ellipsis */
-.route-card .title, .fleet-card .title {
-  font-weight: 800;
-  font-size: 15px;
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 1.15em;
-}
-
-/* Meta: up to 2 lines, clamp */
-.route-card .meta, .fleet-card .meta {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.2;
-  max-height: calc(1.2em * 2);
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  word-break: break-word;
-}
-
-/* Small note: clamp to 2 lines */
-.route-card .small-note, .fleet-card .small-note {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.15;
-  max-height: calc(1.15em * 2);
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-/* Button row stays visible and fixed at bottom of card */
-.route-card > div:last-child, .fleet-card > div:last-child {
-  margin-top: 6px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-}
-
-/* Slight adjustments for very narrow screens */
-@media (max-width:420px) {
-  .route-card, .fleet-card { min-height: 92px; }
-  .route-card .title, .fleet-card .title { font-size: 14px; white-space: nowrap; }
-  .route-card .meta, .fleet-card .meta { font-size: 12px; -webkit-line-clamp: 2; }
-}
 
 /* accessibility helpers */
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
-
-/* Mobile/column overrides kept (consolidated, non-duplicated) */
-@media (max-width:920px) {
-  #page-routes, #page-fleet { width:100% !important; max-width:100% !important; }
-
-  #page-routes .panel > div,
-  #page-fleet .panel > div,
-  #page-routes .panel > div[style*="grid-template-columns"],
-  #page-fleet .panel > div[style*="grid-template-columns"] {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-    align-items: start !important;
-    width: 100% !important;
-  }
-
-  #routesGrid.card-grid,
-  #routesGrid,
-  #page-routes .card-grid,
-  #fleetGroups,
-  #fleetGroups .fleet-list,
-  #page-fleet .card-grid {
-    grid-template-columns: 1fr !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    gap: 10px !important;
-  }
-
-  #routesGrid .route-card,
-  #fleetGroups .fleet-card,
-  #fleetGroups .route-card,
-  #page-fleet .fleet-card,
-  #page-routes .route-card {
-    min-width: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    gap: 8px !important;
-  }
-
-  #routesGrid .title, #fleetGroups .title { white-space: normal !important; overflow: hidden; text-overflow: ellipsis; font-size:15px !important; }
-  #routesGrid .meta, #fleetGroups .meta { -webkit-line-clamp:2 !important; display:-webkit-box !important; -webkit-box-orient: vertical !important; font-size:13px !important; }
-
-  #routesGrid .route-card > div:last-child,
-  #fleetGroups .fleet-card > div:last-child {
-    justify-content: flex-start !important;
-    gap: 8px !important;
-    flex-wrap: wrap !important;
-  }
-
-  #page-routes select#localCompanyFilter,
-  #page-fleet select#localCompanyFilter {
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  #page-routes .panel, #page-fleet .panel { padding-left:10px !important; padding-right:10px !important; }
-}
-
-/* Final safety: ensure no horizontal overflow */
-html, body { overflow-x: hidden !important; max-width: 100%; }
-.shell, .container, .panel, .card-grid, #dynamicPages, .modal-card { box-sizing: border-box; max-width: 100%; width: 100%; }
-/* ======= Button visual fix (paste at the end of existing <style>) ======= */
-
-/* Scoped fix inside .shell / global fallback */
-.shell .btn,
-.shell button.btn,
-.shell .btn-primary,
-.shell button.btn-primary {
-  background: linear-gradient(180deg, #f6d16a, #d9a017) !important;
-  color: #06141e !important;
-  box-shadow: 0 8px 28px rgba(165,102,10,0.16), inset 0 1px 0 rgba(255,255,255,0.28) !important;
-  border: 1px solid rgba(255,255,255,0.06) !important;
-  padding: 10px 14px !important;
-  border-radius: 10px !important;
-  font-weight: 800 !important;
-  min-width: 120px !important;
-  transition: transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s ease !important;
-}
-
-/* Hover / active states */
-.shell .btn:hover,
-.shell button.btn:hover,
-.shell .btn-primary:hover,
-.shell button.btn-primary:hover {
-  transform: translateY(-2px) !important;
-  filter: saturate(1.04) !important;
-  box-shadow: 0 14px 38px rgba(165,102,10,0.22) !important;
-}
-.shell .btn:active,
-.shell button.btn:active,
-.shell .btn-primary:active,
-.shell button.btn-primary:active {
-  transform: translateY(0) !important;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.38) !important;
-}
-
-/* Secondary variant (keeps original darker style) */
-.shell .btn-secondary,
-.shell button.btn-secondary {
-  background: linear-gradient(180deg, rgba(6,24,44,0.88), rgba(4,18,34,0.92)) !important;
-  color: var(--text) !important;
-  border: 1px solid rgba(255,255,255,0.03) !important;
-  padding: 8px 12px !important;
-}
-
-/* Mobile: make two buttons per row and keep proportions */
-@media (max-width: 920px) {
-  .shell .btn, .shell button.btn, .shell .btn-primary {
-    min-width: 44% !important;
-    padding: 9px 10px !important;
-  }
-}
-
-/* Safety: ensure no commented/neutralizer rules hide the background inside .shell */
-.shell [style*="background: none"], .shell [style*="background:transparent"] {
-  background: initial !important;
-}
-  /* быстрый inline-fix для splash */
-  #splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:16000;background:linear-gradient(180deg, rgba(0,6,18,0.96), rgba(2,14,30,0.99));}
-  #splash .splash-inner{max-width:92%;padding:18px;text-align:center;color:#fff;}
-  #splash button{background:linear-gradient(180deg,#f6d16a,#d9a017);color:#06141e;border-radius:10px;padding:10px 16px;border:none;min-width:140px;}
-  html.splash-lock, body.splash-lock{overflow:hidden;height:100%;}
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
-<!-- minimal splash -->
-<div id="splash" aria-hidden="false">
-  <div class="splash-inner">
-    <h2>Welcome to Lufthansa Group</h2>
-    <p class="splash-sub">Добро пожаловать</p>
-    <button id="splash-continue" class="splash-btn">Продолжить</button>
+<div id="splash" aria-hidden="false" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:16000;background:linear-gradient(180deg, rgba(0,6,18,0.96), rgba(2,14,30,0.99));">
+  <div style="text-align:center;max-width:92%;padding:18px;">
+    <h2 style="font-size:22px;color:var(--text);margin-bottom:8px">Welcome to Lufthansa Group</h2>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+      <button id="splashContinue" class="btn btn-primary" type="button">Продолжить</button>
+    </div>
   </div>
 </div>
-
 
 <div class="shell" role="application" aria-label="Flight Helper">
   <div class="topbar">
@@ -499,6 +287,7 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     </div>
   </div>
 </div>
+
 <!-- FLIGHT DETAIL modal -->
 <div id="flightDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
   <div class="modal-card" role="document" aria-label="Детали рейса">
@@ -568,20 +357,7 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
     </div>
   </div>
 </div>
-<!-- AIRCRAFT DETAIL modal -->
-<div id="aircraftDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
-  <div class="modal-card" role="document" aria-label="Детали самолёта">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div class="title" id="airDetailTitle">Самолёт</div>
-      <div class="subtitle" id="airDetailStatus"></div>
-    </div>
-    <div class="body" id="airDetailBody" style="margin-top:10px"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-      <button id="closeAircraftDetail" class="btn btn-secondary" type="button">Закрыть</button>
-    </div>
-  </div>
-</div>
-  
+
 <script>
 /* ============================
    ДАННЫЕ (как прежде)
@@ -656,9 +432,8 @@ let ROUTES = []; (function(){
 let FLEET = []; (function(){ const types=["A320","A321","B737","A220","A330","B787","A350"]; AIRLINES.forEach((a,ai)=>{ for(let i=1;i<=2;i++){ FLEET.push({ id:`${a.code}-AC${String(i).padStart(2,'0')}`, airline:a.name, type:types[(ai+i)%types.length], locationICAO:i===1?"EDDF":"EGLL", status:"idle", fuelMinutes:420 + i*60, turnaround:20 + i*5, reserveMargin:30 }); } }); })();
 
 let PILOTS = [
-  { id: "pilot_nikita",  name: "Nikita Konshu",      callSign: "IPET",    verified: true,  password: "ivanpass" },
-  { id: "pilot_loui",  name: "Loui Desulier",    callSign: "FRENCH",  verified: true,  password: "louiSecret" },
-  { id: "pilot_artem", name: "Artem Solovyev",   callSign: "SU001",   verified: true,  password: "artemSecret" }
+  {id:"pilot_ivan",name:"Ivan Petrov",callSign:"IPET",verified:true,password:"ivanpass"},
+  {id:"pilot_loui",name:"Loui Desulier",callSign:"FRENCH",verified:true,password:"louiSecret"}
 ];
 
 let SESSION = { pilotId:null };
@@ -917,34 +692,24 @@ function representativeDurationForAircraft(ac){
 function renderRoutesPage(){
   const container = document.createElement('section'); container.className='panel'; container.id='page-routes';
   container.innerHTML = `
-   <section id="page-routes" class="panel">
-  <div class="two-col">
-    <aside class="col-left">
-      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
-      <div id="routesAirList" style="min-height:60px"></div>
-
-      <div style="font-weight:900;margin-top:14px;margin-bottom:8px">Фильтры времени</div>
-      <div id="routesDurList" class="small-note"></div>
-    </aside>
-
-    <main class="col-right">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <div style="min-width:0">
-          <div style="font-weight:900">Направления</div>
-          <div style="color:var(--muted);margin-top:6px">Карточки маршрутов. Фильтр по авиакомпаниям и времени</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <select id="localCompanyFilter" class="input-glass" style="min-width:200px"><option value="">Все авиакомпании</option></select>
-          <button id="closeRoutesBtn" class="btn btn-ghost">Закрыть</button>
-        </div>
+    <div style="display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:start">
+      <div>
+        <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
+        <div id="routesAirList" style="min-height:60px"></div>
+        <div style="font-weight:900;margin-top:14px;margin-bottom:8px">Фильтры времени</div>
+        <div id="routesDurList" class="small-note"></div>
       </div>
-
-      <div style="margin-top:12px">
-        <div id="routesGrid" class="card-grid"></div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <div style="min-width:0"><div style="font-weight:900">Направления</div><div style="color:var(--muted);margin-top:6px">Карточки маршрутов. Фильтр по авиакомпаниям и времени</div></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="localCompanyFilter" class="input-glass" style="min-width:200px"><option value="">Все авиакомпании</option></select>
+            <button id="closeRoutesBtn" class="btn btn-ghost">Закрыть</button>
+          </div>
+        </div>
+        <div style="margin-top:12px" id="routesGrid" class="card-grid"></div>
       </div>
-    </main>
-  </div>
-</section>
+    </div>
   `;
   dynamicPages.appendChild(container);
 
@@ -960,6 +725,7 @@ function renderRoutesPage(){
   container.querySelector('#closeRoutesBtn').addEventListener('click', ()=> activatePage('home'));
 
   renderRoutesGrid();
+  // clamp layout after render
   if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
 
@@ -979,9 +745,9 @@ function renderRoutesGrid(){
   list.forEach(r=>{
     const durH = Math.round(r.durationMinutes/60);
     const node = document.createElement('div'); node.className='route-card';
-    node.innerHTML = `<div><div class="title">${r.fromICAO} → ${r.toICAO} · ${r.airlineCode}</div>
+    node.innerHTML = `<div class="title">${r.fromICAO} → ${r.toICAO} · ${r.airlineCode}</div>
       <div class="meta">${r.fromCity} → ${r.toCity} · ${durH} ч · ${r.airline}</div>
-      <div class="small-note">Длительность: примерно ${durH} ч ${r.durationMinutes%60} мин</div></div>
+      <div class="small-note">Длительность: примерно ${durH} ч ${r.durationMinutes%60} мин</div>
       <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-primary select-route" data-id="${r.id}">Выбрать</button></div>`;
     grid.appendChild(node);
   });
@@ -1000,28 +766,16 @@ function renderRoutesGrid(){
 function renderFleetPage(){
   const container = document.createElement('section'); container.className='panel'; container.id='page-fleet';
   container.innerHTML = `
- <section id="page-fleet" class="panel">
-  <div class="two-col">
-    <aside class="col-left">
-      <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
-      <div id="fleetAirList" style="min-height:60px"></div>
-    </aside>
-
-    <main class="col-right">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="min-width:0">
-          <div style="font-weight:900">Флот</div>
-          <div style="color:var(--muted);margin-top:6px">Показывается по авиакомпаниям. В карточке указан ориентировочное время полёта</div>
-        </div>
-        <div>
-          <button id="closeFleetBtn" class="btn btn-ghost">Закрыть</button>
-        </div>
+    <div style="display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:start">
+      <div>
+        <div style="font-weight:900;margin-bottom:8px">Авиакомпании</div>
+        <div id="fleetAirList" style="min-height:60px"></div>
       </div>
-
-      <div id="fleetGroups" style="margin-top:12px"></div>
-    </main>
-  </div>
-</section>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div style="min-width:0"><div style="font-weight:900">Флот</div><div style="color:var(--muted);margin-top:6px">Показывается по авиакомпаниям. В карточке указан ориентировочное время полёта</div></div><div><button id="closeFleetBtn" class="btn btn-ghost">Закрыть</button></div></div>
+        <div id="fleetGroups" style="margin-top:12px"></div>
+      </div>
+    </div>
   `;
   dynamicPages.appendChild(container);
   const fleetAir = container.querySelector('#fleetAirList');
@@ -1046,59 +800,16 @@ function renderFleetGroups(filterBy){
       const rep = representativeDurationForAircraft(f);
       const approx = rep ? `~${rep} ч` : '—';
       const card = document.createElement('div'); card.className='fleet-card'; card.style.marginBottom='8px';
-      card.innerHTML = `<div><div class="title">${f.id} · ${f.type}</div>
+      card.innerHTML = `<div class="title">${f.id} · ${f.type}</div>
         <div class="meta">${f.locationICAO} · Топливо: ${f.fuelMinutes} мин · Статус: ${f.status}</div>
-        <div class="small-note">Ориентировочное время полёта для этого самолёта: ${approx}</div></div>
-        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-primary">Узнать больше</button></div>`;
+        <div class="small-note">Ориентировочное время полёта для этого самолёта: ${approx}</div>`;
       list.appendChild(card);
     });
   });
   attachRipple(groups);
   if(window.clampLayoutForMobile) window.clampLayoutForMobile();
 }
-// Открыть модалку с деталями самолёта
-function openAircraftDetail(aircraftId){
-  const ac = FLEET.find(x => x.id === aircraftId);
-  if(!ac){
-    alert('Самолёт не найден');
-    return;
-  }
 
-  // Заголовок и статус
-  document.getElementById('airDetailTitle').textContent = `${ac.id} · ${ac.type}`;
-  document.getElementById('airDetailStatus').textContent = ac.status ? ac.status : '';
-
-  // Основное содержимое — настраивай, что нужно показывать
-  document.getElementById('airDetailBody').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div><strong>Авиакомпания:</strong> ${ac.airline}</div>
-      <div><strong>Тип:</strong> ${ac.type}</div>
-      <div><strong>Позиция:</strong> ${ac.locationICAO}</div>
-      <div><strong>Топливо:</strong> ${ac.fuelMinutes} мин</div>
-      <div><strong>Turnaround:</strong> ${ac.turnaround || '—'} мин</div>
-      <div><strong>Запас (reserve margin):</strong> ${ac.reserveMargin || '—'} мин</div>
-      <div><strong>Статус подробный:</strong> ${ac.statusDetail || '—'}</div>
-      <div style="margin-top:6px;color:var(--muted)"><small>ID записи: ${ac.id}</small></div>
-    </div>`;
-
-  // показываем модалку
-  modalShow(document.getElementById('aircraftDetailModal'));
-}
-
-// Закрытие
-document.getElementById('closeAircraftDetail')?.addEventListener('click', ()=>{
-  modalHide(document.getElementById('aircraftDetailModal'));
-});
-
-// Делегирование кликов по кнопкам "Узнать больше" (работает при динамическом рендере)
-document.addEventListener('click', function(e){
-  const btn = e.target.closest && e.target.closest('.more-info');
-  if(!btn) return;
-  const id = btn.dataset.id;
-  if(!id) return;
-  openAircraftDetail(id);
-});
-  
 /* FLIGHTS */
 function renderFlightsPage(){
   const container = document.createElement('section'); container.className='panel'; container.id='page-flights';
@@ -1389,45 +1100,6 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
   });
   moClamp.observe(document.body, {childList:true, subtree:true});
 })();
-  if(window.innerWidth <= 920){
-  document.addEventListener('click', function mobileSelectGuard(e){
-    const b = e.target.closest && e.target.closest('.route-card .btn, .route-card .select-route');
-    if(!b) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    b.classList.toggle('selected');
-    // не вызывать ререндер — это только для диагностики; убери позже
-    setTimeout(()=>{ b.classList.toggle('selected'); }, 1200);
-  }, true);
-}
 </script>
-  <!-- основной бандл -->
-<script src="/js/main.bundle.js" defer></script>
-
-<!-- наш фикс / нормалайзер — подключаем после -->
-<script src="/js/app-ui-fix.js" defer></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
