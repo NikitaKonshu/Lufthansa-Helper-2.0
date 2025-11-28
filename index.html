@@ -165,6 +165,71 @@ html, body { overflow-x: hidden !important; max-width: 100%; }
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+  /* --- Mobile responsive base --- */
+:root { --gap: 12px; --panel-pad: 14px; --text: #eaf4ff; --muted: rgba(255,255,255,0.75); }
+
+html,body { height:100%; margin:0; padding:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+body { background:#001018; color:var(--text); -webkit-text-size-adjust:100%; }
+
+/* Container safety */
+.app-ui, .welcome-screen, #main-content, .panel {
+  box-sizing: border-box;
+  width:100% !important;
+  max-width:100% !important;
+  padding-left: var(--gap) !important;
+  padding-right: var(--gap) !important;
+}
+
+/* Grid -> single column on small screens */
+.card-grid, .fleet-list, .routes-list, .panel .grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: var(--gap) !important;
+}
+
+/* Table wrapper for horizontal scroll */
+.table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+table.responsive { width:100%; border-collapse:collapse; min-width: 600px; }
+
+/* Make table cells wrap and be readable */
+table.responsive td, table.responsive th {
+  white-space: normal !important;
+  word-break: break-word !important;
+  padding: 8px 10px;
+  vertical-align: top;
+}
+
+/* Buttons adapt */
+button, .btn, .splash-btn {
+  min-width: 0 !important;
+  width: auto !important;
+  padding: 8px 12px !important;
+  font-size: 15px !important;
+  box-sizing: border-box;
+}
+
+/* Prevent absolute positioning inside panels from breaking layout */
+.panel *[style*="position: absolute"], .app-ui *[style*="position:absolute"] {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+/* Small screen tweaks */
+@media (max-width: 520px) {
+  .splash-inner h1 { font-size: 20px !important; }
+  .splash-inner p { font-size: 14px !important; }
+  .nav { gap:8px; font-size:14px; flex-wrap:wrap; }
+  .panel { padding: 12px !important; border-radius:10px; }
+  .fleet-item, .route-item { padding:10px 6px !important; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
 </style>
 </head>
 <body>
@@ -1103,3 +1168,4 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
