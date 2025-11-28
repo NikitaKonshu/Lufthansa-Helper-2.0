@@ -1239,8 +1239,34 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
   });
   moClamp.observe(document.body, {childList:true, subtree:true});
 })();
+  <script>
+(function(){
+  function normalize(){
+    document.querySelectorAll('[style]').forEach(el=>{
+      var s = el.getAttribute('style') || '';
+      if(/position\s*:\s*absolute|left\s*:|top\s*:|transform\s*:/.test(s)){
+        el.style.position = '';
+        el.style.left = '';
+        el.style.top = '';
+        el.style.transform = '';
+      }
+    });
+    document.querySelectorAll('table.responsive').forEach(t=>{
+      if(!t.parentElement.classList.contains('table-wrap')){
+        var wrap = document.createElement('div');
+        wrap.className = 'table-wrap';
+        t.parentNode.insertBefore(wrap, t);
+        wrap.appendChild(t);
+      }
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', normalize);
+  else normalize();
+  try { new MutationObserver(normalize).observe(document.body, { childList:true, subtree:true }); } catch(e){}
+})();
 </script>
 </body>
 </html>
+
 
 
