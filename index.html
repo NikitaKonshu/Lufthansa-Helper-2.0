@@ -304,6 +304,79 @@ table.responsive { width:100%; min-width:600px; border-collapse:collapse; }
   .route-line { font-size:14px; }
   .select-btn { padding:7px 10px; font-size:14px; }
 }
+  /* Layout: two columns -> single column on small screens */
+.columns {
+  display: grid;
+  grid-template-columns: 320px 1fr; /* левый столбец фиксирован, правый растёт */
+  gap: 16px;
+  align-items: start;
+}
+
+/* На узких экранах — одна колонка (правый блок уходит вниз) */
+@media (max-width: 720px) {
+  .columns {
+    grid-template-columns: 1fr;
+    padding: 0 12px;
+  }
+}
+
+/* Левый столбец: список авиакомпаний — скролл внутри */
+.airlines {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Правый столбец: направления — адаптивные карточки */
+.destinations {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Защитные правила: отменяем опасные inline layout‑правила */
+.columns *[style*="position: absolute"],
+.columns *[style*="position:absolute"],
+.columns *[style*="transform:"] {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+/* Кнопки и карточки — адаптивные */
+.destination-card {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:12px;
+  border-radius:10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  word-break: break-word;
+}
+
+.select-btn {
+  align-self:flex-start;
+  padding:8px 12px;
+  border-radius:8px;
+  background: linear-gradient(180deg,#f6d16a,#d9a017);
+  color:#06141e;
+  border:none;
+  cursor:pointer;
+}
+
+/* Мелкие экраны */
+@media (max-width:420px){
+  .columns { gap:10px; }
+  .airlines { padding:8px; max-height: calc(100vh - 100px); }
+  .destination-card { padding:10px; }
+  .select-btn { padding:7px 10px; font-size:14px; }
+}
+
 </style>
 </head>
 <body>
@@ -1217,6 +1290,7 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
 
 
