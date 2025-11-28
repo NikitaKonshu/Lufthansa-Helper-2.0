@@ -230,6 +230,80 @@ button, .btn, .splash-btn {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+/* layout safety */
+.app-shell, .app-ui, #main-content { box-sizing: border-box; width:100%; max-width:100%; }
+
+/* двухколоночная сетка, которая автоматически сворачивается на мобильных */
+.columns {
+  display: grid;
+  grid-template-columns: 320px 1fr; /* левый столбец фиксированно узкий, правый растёт */
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .columns { grid-template-columns: 1fr; padding: 0 12px; }
+}
+
+/* левый список авиакомпаний — скролл внутри, не ломает страницу */
+.airlines {
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  padding: 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* карточки направлений — адаптивная сетка внутри правого столбца */
+.destinations {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 980px) {
+  .destinations { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+
+/* карточка направления — не использовать абсолютные размеры */
+.destination-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+  word-break: break-word;
+}
+
+/* строка заголовка маршрута — перенос и иконки */
+.route-line {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  font-weight:600;
+}
+
+/* метки и кнопки */
+.airline-badge { background: #ffd54a; color:#06141e; padding:4px 8px; border-radius:8px; font-weight:700; }
+.select-btn { align-self:flex-start; padding:8px 12px; border-radius:8px; background:linear-gradient(180deg,#f6d16a,#d9a017); color:#06141e; border:none; cursor:pointer; }
+
+/* таблицы и списки — обёртка с горизонтальным скроллом */
+.table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+table.responsive { width:100%; min-width:600px; border-collapse:collapse; }
+
+/* защитные правила против inline absolute */
+*[style*="position: absolute"], *[style*="left:"] { position: static !important; left:auto !important; top:auto !important; transform:none !important; }
+
+/* мелкие экраны — уменьшение отступов и шрифтов */
+@media (max-width: 420px) {
+  .columns { gap:10px; }
+  .airlines { padding:8px; max-height: calc(100vh - 120px); }
+  .destination-card { padding:10px; }
+  .route-line { font-size:14px; }
+  .select-btn { padding:7px 10px; font-size:14px; }
+}
 </style>
 </head>
 <body>
@@ -1168,4 +1242,5 @@ window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX
 </script>
 </body>
 </html>
+
 
