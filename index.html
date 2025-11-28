@@ -1214,59 +1214,10 @@ function attachGlobalHandlers(){
 /* prevent accidental horizontal overflow */
 window.addEventListener('resize', ()=>{ document.documentElement.style.overflowX = 'hidden'; document.body.style.overflowX = 'hidden'; });
 
-/* ============================
-   JS patch: clamp layout for mobile dynamic content
-   ============================ */
-(function(){
-  function clampWidths(root){
-    (root || document).querySelectorAll('.card-grid, .panel, .airline, .route-card, .fleet-card, #dynamicPages').forEach(el=>{
-      if(!(el instanceof HTMLElement)) return;
-      el.style.maxWidth = '100%';
-      el.style.boxSizing = 'border-box';
-      el.style.minWidth = '0';
-    });
-  }
-  window.clampLayoutForMobile = clampWidths;
-  window.addEventListener('load', ()=> {
-    clampWidths(document);
-    const visiblePanel = document.querySelector('#dynamicPages .panel, .panel[style*="display:block"]');
-    if(visiblePanel && window.innerWidth <= 768) visiblePanel.scrollIntoView({behavior:'smooth', block:'start'});
-  });
-  const moClamp = new MutationObserver((mutations)=>{
-    let saw = false;
-    mutations.forEach(m=>{ if(m.addedNodes && m.addedNodes.length) saw = true; });
-    if(saw) clampWidths(document);
-  });
-  moClamp.observe(document.body, {childList:true, subtree:true});
-})();
-  <script>
-(function(){
-  function normalize(){
-    document.querySelectorAll('[style]').forEach(el=>{
-      var s = el.getAttribute('style') || '';
-      if(/position\s*:\s*absolute|left\s*:|top\s*:|transform\s*:/.test(s)){
-        el.style.position = '';
-        el.style.left = '';
-        el.style.top = '';
-        el.style.transform = '';
-      }
-    });
-    document.querySelectorAll('table.responsive').forEach(t=>{
-      if(!t.parentElement.classList.contains('table-wrap')){
-        var wrap = document.createElement('div');
-        wrap.className = 'table-wrap';
-        t.parentNode.insertBefore(wrap, t);
-        wrap.appendChild(t);
-      }
-    });
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', normalize);
-  else normalize();
-  try { new MutationObserver(normalize).observe(document.body, { childList:true, subtree:true }); } catch(e){}
-})();
 </script>
 </body>
 </html>
+
 
 
 
