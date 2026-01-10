@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v149</title>
+    <title>LOT Premium v150</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -15,20 +15,19 @@
         :root {
             --lot-blue-dark: #0b1a38;
             --lot-blue-light: #1e3a8a;
-            --accent-gold: #c5a47e; /* More premium muted gold */
+            --accent-gold: #c5a47e; 
             --accent-gold-glow: rgba(197, 164, 126, 0.4);
             
             --bg-deep: #050b14;
             
             /* Premium Glass */
             --glass-panel: rgba(20, 25, 40, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --glass-blur: blur(40px);
             
             --text-main: #ffffff;
             --text-sec: #94a3b8;
             
-            --radius-xl: 32px;
             --radius-lg: 24px;
             --radius-md: 16px;
             
@@ -36,7 +35,7 @@
             --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* === GLOBAL RESET & ANIMATED BG === */
+        /* === GLOBAL RESET === */
         html, body {
             width: 100%; height: 100%;
             overflow-x: hidden; position: relative;
@@ -47,64 +46,73 @@
         body {
             font-family: 'Inter', sans-serif; 
             background: radial-gradient(circle at 50% 0%, #172a52 0%, #050b14 80%);
-            background-size: 100% 150%;
+            background-attachment: fixed; /* Fix bg on scroll */
             color: var(--text-main);
             padding-top: 0; padding-bottom: 140px; 
-            animation: ambientMove 20s infinite alternate ease-in-out;
-        }
-        
-        @keyframes ambientMove {
-            0% { background-position: 50% 0%; }
-            100% { background-position: 50% 20%; }
         }
 
         .hidden { display: none !important; }
 
         /* === TYPOGRAPHY === */
-        h1, h2, h3 { letter-spacing: -0.03em; margin: 0; }
+        h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* === HEADER (Floating Glass) === */
+        /* === LOADER (FIXED CENTER) === */
+        #flight-loader {
+            position: fixed; inset: 0; 
+            background: rgba(5, 11, 20, 0.95); backdrop-filter: blur(20px);
+            z-index: 9999; /* Highest Z-Index */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #flight-loader.active { opacity: 1; pointer-events: all; }
+        
+        .loader-spinner { 
+            width: 60px; height: 60px; 
+            border: 3px solid rgba(255,255,255,0.1); 
+            border-top: 3px solid var(--accent-gold); 
+            border-radius: 50%; 
+            animation: spin 1s cubic-bezier(0.5,0,0.5,1) infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* === HEADER === */
         header { 
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
             width: 92%; max-width: 600px; height: 60px; 
-            background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(20px); 
+            background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(20px); 
             border: 1px solid var(--glass-border); border-radius: 30px;
             z-index: 2000; display: flex; justify-content: center; align-items: center; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: all 0.3s var(--ease-out);
         }
-        .brand { 
-            font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; 
-            color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
+        .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
         .header-spacer { height: 110px; width: 100%; }
 
-        /* === CARDS (Premium Glass) === */
+        /* === CARDS === */
         .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
         
-        .anim-item, .ticket, .crew-card, .news-item {
-            background: var(--glass-panel); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border); box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+        .anim-item, .ticket {
+            background: var(--glass-panel); backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border); box-shadow: 0 15px 40px rgba(0,0,0,0.25); 
             border-radius: var(--radius-lg); position: relative; margin-bottom: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
         .anim-item { padding: 24px; }
-        .anim-item:active { transform: scale(0.98); }
+        .anim-item:active { transform: scale(0.99); }
 
-        /* === TICKET STYLING === */
+        /* === TICKET === */
         .ticket { padding: 0 !important; display: flex; overflow: hidden; cursor: pointer; }
         .ticket-l { flex: 1; padding: 22px; position: relative; }
         .ticket-r { width: 80px; background: linear-gradient(180deg, var(--accent-gold) 0%, #8f7250 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #000; }
         
-        .al-tag { font-size: 0.75rem; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px; margin-bottom: 10px; }
-        .route-path { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; }
-        .ap { font-size: 1.8rem; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 4px; }
-        .icon-plane { font-size: 1.2rem; background: -webkit-linear-gradient(#fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .al-tag { font-size: 0.7rem; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+        .route-path { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .ap { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
+        .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
+        .icon-plane { font-size: 1.2rem; color: #fff; opacity: 0.5; }
 
-        /* === BUTTONS (Glowing) === */
-        button { font-family: 'Inter', sans-serif; border: none; cursor: pointer; position: relative; overflow: hidden; }
+        /* === BUTTONS === */
+        button { font-family: 'Inter', sans-serif; border: none; cursor: pointer; }
         
         .btn-primary {
             width: 100%; padding: 18px;
@@ -114,34 +122,78 @@
             box-shadow: 0 10px 25px var(--accent-gold-glow);
             transition: transform 0.2s;
         }
-        .btn-primary:active { transform: scale(0.97); box-shadow: 0 5px 15px var(--accent-gold-glow); }
+        .btn-primary:active { transform: scale(0.97); }
+        
+        .btn-filter {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            color: #fff; padding: 8px 16px; border-radius: 20px;
+            font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px;
+        }
 
-        /* === NAVIGATION DOCK === */
+        /* === NAV DOCK === */
         .nav-dock { 
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
             width: 92%; max-width: 450px; height: var(--nav-h); 
-            background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-radius: 35px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(30px);
+            border-radius: 35px; border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
             z-index: 1900; display: flex; justify-content: space-evenly; align-items: center; 
         }
-        .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.4s var(--ease-out); }
-        .nav-btn i { font-style: normal; font-size: 1.6rem; margin-bottom: 6px; display: block; filter: grayscale(1); transition: 0.4s; }
+        .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+        .nav-btn i { font-style: normal; font-size: 1.6rem; margin-bottom: 6px; display: block; filter: grayscale(1); transition: 0.3s; }
         .nav-btn span { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px; opacity: 0.7; }
         .nav-btn.active { color: #fff; } 
-        .nav-btn.active i { transform: translateY(-6px); filter: grayscale(0) drop-shadow(0 0 8px rgba(255,255,255,0.6)); }
+        .nav-btn.active i { transform: translateY(-5px); filter: grayscale(0) drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
 
-        /* === TABS ANIMATION === */
-        .tab-view { display: none; opacity: 0; transform: translateY(30px) scale(0.98); transition: none; }
-        .tab-view.active { 
-            display: block; 
-            animation: tabEntrance 0.6s var(--ease-out) forwards; 
+        /* === TABS === */
+        .tab-view { display: none; opacity: 0; transform: translateY(20px); transition: none; }
+        .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
+        @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
+
+        /* === MODALS (FIXED) === */
+        .modal-overlay { 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
+            z-index: 5000; align-items: flex-end; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-        @keyframes tabEntrance {
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        .modal-overlay.visible { opacity: 1; }
+        
+        .modal-body { 
+            width: 100%; max-width: 600px; 
+            background: #111620; /* Solid dark color for readability */
+            border-radius: 36px 36px 0 0; padding: 40px 30px; 
+            max-height: 85vh; overflow-y: auto; 
+            border-top: 1px solid rgba(255,255,255,0.15); 
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.7); 
+            transform: translateY(100%); transition: transform 0.4s var(--ease-out);
+            color: #fff; /* Ensure text is white */
+        }
+        .modal-overlay.visible .modal-body { transform: translateY(0); }
+
+        /* === MODAL TYPOGRAPHY & CHIPS === */
+        .modal-body h3, .modal-body h2 { font-family: 'Inter', sans-serif; margin-bottom: 20px; font-weight: 700; }
+        
+        /* Fixed Chips (Filters) */
+        .chip { 
+            padding: 12px 20px; 
+            background: rgba(255,255,255,0.08); /* Dark background */
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 12px; 
+            color: #ddd; /* Light text */
+            margin: 5px; 
+            display: inline-block; 
+            font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: 0.2s; 
+        }
+        .chip.active { 
+            background: var(--accent-gold); 
+            color: #000; /* Dark text on gold */
+            border-color: var(--accent-gold); 
+            font-weight: 800;
         }
 
-        /* === INPUTS (Glass) === */
+        /* Login Input */
         .ios-input { 
             width: 100%; padding: 18px; 
             background: rgba(255,255,255,0.05); 
@@ -150,73 +202,38 @@
             font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; 
             transition: 0.3s; 
         }
-        .ios-input::placeholder { color: rgba(255,255,255,0.3); }
-        .ios-input:focus { background: rgba(255,255,255,0.1); border-color: var(--accent-gold); box-shadow: 0 0 20px var(--accent-gold-glow); outline: none; }
+        .ios-input:focus { border-color: var(--accent-gold); outline: none; background: rgba(255,255,255,0.1); }
 
-        /* === MODALS (Sheet Logic) === */
-        .modal-overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); 
-            z-index: 5000; align-items: flex-end; justify-content: center;
-            opacity: 0; transition: opacity 0.4s ease;
-        }
-        .modal-overlay.visible { opacity: 1; }
-        
-        .modal-body { 
-            width: 100%; max-width: 600px; background: #111620; 
-            border-radius: 36px 36px 0 0; padding: 40px 30px; 
-            max-height: 85vh; overflow-y: auto; 
-            border-top: 1px solid rgba(255,255,255,0.15); 
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.6); 
-            transform: translateY(100%); transition: transform 0.5s var(--ease-out);
-        }
-        .modal-overlay.visible .modal-body { transform: translateY(0); }
+        /* OFP Grid - Spacing Fix */
+        .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; margin-top: 20px; }
+        .ofp-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
+        .ofp-val { font-size: 1.2rem; color: var(--accent-gold); font-weight: 700; font-family: 'JetBrains Mono'; }
 
-        /* Login Specific */
-        #login-modal .modal-body {
-            background: transparent; border: none; box-shadow: none;
-            height: 100%; align-items: center; justify-content: center; display: flex; flex-direction: column;
-        }
-        .login-logo { font-size: 4rem; margin-bottom: 20px; background: linear-gradient(135deg, #fff 0%, #999 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* === MAP & OFP === */
-        #map-wrap { height: 450px; border-radius: 24px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: inset 0 0 40px rgba(0,0,0,0.5); }
-        .leaflet-container { font-family: 'Inter'; background: #0e0e0e; }
-        
-        /* Dark Map Popup */
-        .leaflet-popup-content-wrapper { background: #1a202c; color: #fff; border-radius: 12px; border: 1px solid #333; }
+        /* Map */
+        #map-wrap { height: 450px; border-radius: 24px; overflow: hidden; border: 1px solid var(--glass-border); position: relative; }
+        .leaflet-popup-content-wrapper { background: #1a202c; color: #fff; border: 1px solid #444; }
         .leaflet-popup-tip { background: #1a202c; }
-        .map-popup-header b { color: var(--accent-gold); }
-        .map-flight-item { border-bottom: 1px solid #333; }
-        .map-flight-dest { color: #fff; font-weight: 700; }
-        
-        .efb-body { background: #080808; border-top: 2px solid var(--accent-gold); }
-        .ofp-header { border-bottom: 1px dashed #333; background: #111; }
-        .ofp-status { background: var(--accent-gold); color: #000; box-shadow: 0 0 15px var(--accent-gold-glow); }
-        .ofp-val { color: var(--accent-gold); text-shadow: 0 0 10px rgba(197, 164, 126, 0.3); }
 
-        /* === INTRO === */
+        /* Intro */
         #intro { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .intro-line { width: 0; height: 2px; background: var(--accent-gold); animation: expandLine 1s ease forwards 0.5s; margin: 20px 0; }
-        @keyframes expandLine { to { width: 100px; } }
 
         /* Utils */
-        .btn-float { position: fixed; bottom: 130px; right: 25px; width: 64px; height: 64px; border-radius: 50%; background: var(--accent-gold); color: #000; box-shadow: 0 10px 30px rgba(197, 164, 126, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 1800; border: 2px solid #fff; }
-        .chip { padding: 10px 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: #aaa; margin: 4px; display: inline-block; transition: 0.3s; }
-        .chip.active { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold-glow); }
+        .btn-float { position: fixed; bottom: 130px; right: 25px; width: 64px; height: 64px; border-radius: 50%; background: var(--accent-gold); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 1800; border: 2px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
 <div id="intro">
-    <div style="font-size:2.5rem; font-weight:200; letter-spacing:4px; color:#fff; animation:fadeIn 1s forwards;">LOT POLISH</div>
-    <div class="intro-line"></div>
+    <div style="font-size:2.5rem; font-weight:300; letter-spacing:4px; color:#fff; animation:fadeIn 1s forwards;">LOT POLISH</div>
+    <div style="width:60px; height:2px; background:var(--accent-gold); margin:20px 0; opacity:0; animation:fadeIn 1s forwards 0.5s;"></div>
     <div style="font-size:0.9rem; font-weight:700; color:#666; letter-spacing:2px; animation:fadeIn 1s forwards 0.8s; opacity:0;">FLIGHT OPERATIONS</div>
     <style>@keyframes fadeIn{to{opacity:1}}</style>
 </div>
 
 <div id="flight-loader">
-    <div class="loader-spinner" style="width:60px; height:60px; border:3px solid rgba(255,255,255,0.05); border-top:3px solid var(--accent-gold); border-radius:50%; animation:spin 1s cubic-bezier(0.5,0,0.5,1) infinite;"></div>
-    <div style="color:var(--accent-gold); font-family:'JetBrains Mono'; margin-top:25px; font-size:0.8rem; letter-spacing:2px;" id="loader-msg">SYSTEM BOOT...</div>
+    <div class="loader-spinner"></div>
+    <div style="color:var(--accent-gold); font-family:'JetBrains Mono'; margin-top:25px; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;" id="loader-msg">Connecting...</div>
 </div>
 
 <header>
@@ -232,10 +249,10 @@
 </div>
 
 <div id="login-modal" class="modal-overlay">
-    <div class="modal-body">
-        <div style="font-size:3rem; margin-bottom:10px;">✈</div>
-        <h2 style="font-size:2rem; font-weight:200; color:#fff; margin-bottom:5px;">Welcome Back</h2>
-        <p style="color:#666; margin-bottom:40px; font-size:0.9rem; letter-spacing:1px;">IDENTIFY YOURSELF, CAPTAIN</p>
+    <div class="modal-body" style="background:transparent; border:none; box-shadow:none; height:100%; align-items:center; justify-content:center; display:flex; flex-direction:column;">
+        <div style="font-size:3.5rem; margin-bottom:10px;">✈</div>
+        <h2 style="font-size:2rem; font-weight:300; color:#fff; margin-bottom:5px;">Welcome</h2>
+        <p style="color:#666; margin-bottom:40px; font-size:0.9rem; letter-spacing:1px; text-transform:uppercase;">Sign in to operations</p>
         
         <input type="text" id="travel-id" class="ios-input" placeholder="PILOT ID (e.g. LOT001)">
         <input type="password" id="travel-pass" class="ios-input" placeholder="ACCESS CODE">
@@ -252,9 +269,9 @@
         <div id="pilot-profile-card"></div>
         
         <div class="anim-item">
-            <h3 style="margin-bottom:10px; font-weight:300; font-size:1.6rem; color:#fff;">Daily Roster</h3>
-            <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:25px; font-family:'JetBrains Mono';">UTC /// 08:00 ZULU</p>
-            <div id="daily-content" style="font-size:1.8rem; font-weight:800; margin-bottom:25px; background:linear-gradient(90deg, #fff, #999); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Loading...</div>
+            <h3 style="font-size:1.5rem; color:#fff; font-weight:300;">Daily Roster</h3>
+            <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:25px; font-family:'JetBrains Mono'; margin-top:5px;">UTC /// 08:00 ZULU</p>
+            <div id="daily-content" style="font-size:1.8rem; font-weight:800; margin-bottom:25px; color:#fff;">Loading...</div>
             <button class="btn-primary" onclick="app.prep(app.dailyIdx)">INITIATE BRIEFING</button>
         </div>
 
@@ -276,8 +293,8 @@
     <div id="view-routes" class="tab-view">
         <div class="header-spacer"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <div class="title" style="font-weight:200; font-size:2rem;">Departures</div>
-            <button class="btn-filter" style="color:#fff;" onclick="app.openFilter('routes')">FILTER</button>
+            <div style="font-weight:200; font-size:2rem;">Departures</div>
+            <button class="btn-filter" onclick="app.openFilter('routes')">FILTER</button>
         </div>
         <div id="routes-list"></div>
         <button class="btn-float" onclick="app.openGenerator()">🎲</button>
@@ -286,18 +303,18 @@
     <div id="view-fleet" class="tab-view">
         <div class="header-spacer"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <div class="title" style="font-weight:200; font-size:2rem;">Hangar</div>
-            <button class="btn-filter" style="color:#fff;" onclick="app.openFilter('fleet')">FILTER</button>
+            <div style="font-weight:200; font-size:2rem;">Hangar</div>
+            <button class="btn-filter" onclick="app.openFilter('fleet')">FILTER</button>
         </div>
         <div id="fleet-list"></div>
     </div>
 
     <div id="view-map" class="tab-view">
         <div class="header-spacer"></div>
-        <div style="margin-bottom:20px;"><div class="title" style="font-weight:200; font-size:2rem;">Network</div></div>
+        <div style="margin-bottom:20px;"><div style="font-weight:200; font-size:2rem;">Network</div></div>
         <div class="anim-item" style="padding:0; overflow:hidden; border:none;">
             <div id="map-wrap">
-                <button class="btn-filter" style="position:absolute; top:20px; right:20px; z-index:1000; color:#000; background:rgba(255,255,255,0.9);" onclick="app.openFilter('map')">LAYERS</button>
+                <button class="btn-filter" style="position:absolute; top:20px; right:20px; z-index:1000; background:rgba(0,0,0,0.8);" onclick="app.openFilter('map')">LAYERS</button>
                 <div id="map-c" style="width:100%; height:100%;"></div>
             </div>
         </div>
@@ -305,10 +322,10 @@
 
     <div id="view-crew" class="tab-view">
         <div class="header-spacer"></div>
-        <div style="margin-bottom:20px;"><div class="title" style="font-weight:200; font-size:2rem;">Ops Center</div></div>
-        <div class="segment-control">
-            <button id="seg-roster" class="seg-btn active" onclick="app.crewTab('roster')">ROSTER</button>
-            <button id="seg-news" class="seg-btn" onclick="app.crewTab('news')">NOTAMS</button>
+        <div style="margin-bottom:20px;"><div style="font-weight:200; font-size:2rem;">Ops Center</div></div>
+        <div style="display:flex; gap:10px; margin-bottom:25px;">
+            <button id="seg-roster" class="btn-filter active" style="flex:1; justify-content:center;" onclick="app.crewTab('roster')">ROSTER</button>
+            <button id="seg-news" class="btn-filter" style="flex:1; justify-content:center;" onclick="app.crewTab('news')">NOTAMS</button>
         </div>
         <div id="crew-roster-view"></div>
         <div id="crew-news-view" class="hidden"></div>
@@ -318,10 +335,10 @@
 
 <div id="gen-modal" class="modal-overlay">
     <div class="modal-body">
-        <h3 style="margin-bottom:20px; color:#fff; font-weight:300;">Generate Flight</h3>
+        <h3 style="color:#fff;">Flight Generator</h3>
         <div style="margin-bottom:30px;">
-            <label style="color:#666; font-size:0.8rem; display:block; margin-bottom:10px;">DURATION</label>
-            <div style="display:flex; flex-wrap:wrap; gap:5px;">
+            <label style="color:#666; font-size:0.8rem; display:block; margin-bottom:15px; font-weight:700;">DURATION</label>
+            <div style="display:flex; flex-wrap:wrap;">
                 <div class="chip active" onclick="app.setGen('time', 'ALL', this)">ANY</div>
                 <div class="chip" onclick="app.setGen('time', 'SHORT', this)">SHORT</div>
                 <div class="chip" onclick="app.setGen('time', 'MEDIUM', this)">MEDIUM</div>
@@ -335,7 +352,7 @@
 
 <div id="filter-modal" class="modal-overlay">
     <div class="modal-body">
-        <h3 style="margin-bottom:20px; color:#fff; font-weight:300;">Filter Data</h3>
+        <h3 style="color:#fff;">Filter Data</h3>
         <div id="filter-container" style="display:flex; flex-wrap:wrap;"></div>
         <button class="btn-primary" style="margin-top:20px; background:transparent; border:1px solid #333; color:#fff; box-shadow:none;" onclick="app.closeM()">CLOSE</button>
     </div>
@@ -350,40 +367,37 @@
 
 <div id="news-read-modal" class="modal-overlay">
     <div class="modal-body">
-        <span id="nr-tag" style="color:var(--accent-gold); font-weight:700; font-size:0.8rem; letter-spacing:1px;"></span>
-        <h2 id="nr-title" style="margin:15px 0; color:#fff; font-weight:300; font-size:1.8rem;"></h2>
-        <p id="nr-body" style="color:#999; line-height:1.6;"></p>
+        <span id="nr-tag" style="color:var(--accent-gold); font-weight:700; font-size:0.8rem; letter-spacing:1px; border:1px solid var(--accent-gold); padding:2px 8px; border-radius:4px;"></span>
+        <h2 id="nr-title" style="margin:20px 0; color:#fff; font-weight:300; font-size:1.8rem; line-height:1.3;"></h2>
+        <p id="nr-body" style="color:#ccc; line-height:1.7; font-size:1.05rem;"></p>
         <button class="btn-primary" style="margin-top:30px; background:transparent; border:1px solid #333; color:#fff; box-shadow:none;" onclick="app.closeM()">CLOSE</button>
     </div>
 </div>
 
 <div id="efb-modal" class="modal-overlay">
-    <div class="modal-body efb-body">
-        <div class="ofp-header">
-            <span class="mono" style="color:#666;">LOT // OFP RELEASE</span>
-            <span class="ofp-status">CLEARED</span>
+    <div class="modal-body efb-body" style="background:#080808; padding:0; overflow:hidden;">
+        <div style="background:#151515; padding:20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333;">
+            <span class="mono" style="color:#888; font-weight:700;">LOT // OFP RELEASE</span>
+            <span style="background:var(--accent-gold); color:#000; padding:4px 10px; border-radius:4px; font-weight:800; font-size:0.8rem;">CLEARED</span>
         </div>
-        <div class="ofp-content">
+        <div style="padding:30px;">
             <div class="ofp-grid">
                 <div class="ofp-box"><span class="ofp-lbl">CALLSIGN</span><span class="ofp-val" id="br-cs"></span></div>
                 <div class="ofp-box"><span class="ofp-lbl">AIRCRAFT</span><span class="ofp-val" id="br-ac"></span></div>
-                <div class="ofp-box"><span class="ofp-lbl">DEP</span><span class="ofp-val" id="br-dep"></span></div>
-                <div class="ofp-box"><span class="ofp-lbl">ARR</span><span class="ofp-val" id="br-arr"></span></div>
+                <div class="ofp-box"><span class="ofp-lbl">ORIGIN</span><span class="ofp-val" id="br-dep"></span></div>
+                <div class="ofp-box"><span class="ofp-lbl">DESTINATION</span><span class="ofp-val" id="br-arr"></span></div>
                 <div class="ofp-box"><span class="ofp-lbl">BLOCK FUEL</span><span class="ofp-val" id="br-fuel"></span></div>
-                <div class="ofp-box"><span class="ofp-lbl">EET</span><span class="ofp-val" id="br-time"></span></div>
+                <div class="ofp-box"><span class="ofp-lbl">EST TIME</span><span class="ofp-val" id="br-time"></span></div>
                 <div class="ofp-box"><span class="ofp-lbl">PAX</span><span class="ofp-val" id="br-pax"></span></div>
-                <div class="ofp-box"><span class="ofp-lbl">STAND</span><span class="ofp-val" id="br-gate"></span></div>
+                <div class="ofp-box"><span class="ofp-lbl">GATE</span><span class="ofp-val" id="br-gate"></span></div>
             </div>
-            <div class="ofp-actions">
-                <button class="btn-primary" style="background:#fff; color:#000;" onclick="app.accept()">ACCEPT & SIGN</button>
-                <button class="btn-primary" style="background:transparent; color:#666; border:1px solid #333; margin-top:10px; box-shadow:none;" onclick="app.closeM()">REJECT</button>
-            </div>
+            <button class="btn-primary" style="background:#fff; color:#000;" onclick="app.accept()">ACCEPT & SIGN</button>
+            <button class="btn-primary" style="background:transparent; color:#666; border:1px solid #333; margin-top:10px; box-shadow:none;" onclick="app.closeM()">REJECT</button>
         </div>
     </div>
 </div>
 
 <script>
-    /* === LOGIC RESTORED + PREMIUM MOTION === */
     const DB = {
         PILOTS: [
             { id: "LOT001", pwd: "1234", name: "Capt. Mueller", rank: "Captain", base: "EDDF", callsign: "GHOST", platform: "Discord" },
@@ -427,10 +441,9 @@
         stats: { h: 0, l: 0 },
 
         init: function() {
-            // Trigger login Modal Animation
             setTimeout(() => { document.getElementById('login-modal').classList.add('visible'); document.getElementById('login-modal').style.display='flex'; }, 100);
 
-            const s = JSON.parse(localStorage.getItem('lot_stats_v149'));
+            const s = JSON.parse(localStorage.getItem('lot_stats_v150'));
             if(s) this.stats = s;
             const f = JSON.parse(localStorage.getItem('lot_flight'));
             if(f) { this.active = f; this.timer(); }
@@ -486,7 +499,7 @@
             const l = document.getElementById('routes-list'); l.innerHTML = '';
             DB.ROUTES.forEach((r, i) => {
                 if(this.filters.al !== 'ALL' && r.al !== this.filters.al) return;
-                l.innerHTML += `<div class="ticket anim-item" onclick="app.prep(${i}, event)"><div class="ticket-l"><div class="al-tag">${r.al}</div><div class="route-path"><div><div class="ap">${r.d}</div><div class="ap-lbl">DEP</div></div><div class="icon-plane">✈</div><div style="text-align:right;"><div class="ap">${r.a}</div><div class="ap-lbl">ARR</div></div></div><div style="font-size:0.8rem; color:var(--text-sec);">${r.ac}</div></div><div class="ticket-r"><div style="font-family:'JetBrains Mono'; font-weight:700; font-size:0.9rem;">${r.t}h</div></div></div>`;
+                l.innerHTML += `<div class="ticket anim-item" onclick="app.prep(${i})"><div class="ticket-l"><div class="al-tag">${r.al}</div><div class="route-path"><div><div class="ap">${r.d}</div><div class="ap-lbl">DEP</div></div><div class="icon-plane">✈</div><div style="text-align:right;"><div class="ap">${r.a}</div><div class="ap-lbl">ARR</div></div></div><div style="font-size:0.8rem; color:var(--text-sec);">${r.ac}</div></div><div class="ticket-r"><div style="font-family:'JetBrains Mono'; font-weight:700; font-size:0.9rem;">${r.t}h</div></div></div>`;
             });
         },
         renderF: function(f='ALL') {
@@ -502,8 +515,8 @@
             document.getElementById('crew-news-view').innerHTML = DB.NEWS.map((n,i)=>`<div class="anim-item" onclick="app.readNews(${i})"><div><span style="font-size:0.7rem; font-weight:800; color:var(--accent-gold); border:1px solid var(--accent-gold); padding:2px 6px; border-radius:4px;">${n.tag}</span><h4 style="margin:10px 0; color:#fff;">${n.t}</h4><p style="font-size:0.9rem; color:#666;">${n.d}</p></div></div>`).join('');
         },
         crewTab: function(t) {
-            document.getElementById('seg-roster').classList.toggle('active', t==='roster');
-            document.getElementById('seg-news').classList.toggle('active', t==='news');
+            document.getElementById('seg-roster').classList.toggle('active', t==='roster'); document.getElementById('seg-roster').style.background = t==='roster' ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)'; document.getElementById('seg-roster').style.color = t==='roster' ? '#000' : '#fff';
+            document.getElementById('seg-news').classList.toggle('active', t==='news'); document.getElementById('seg-news').style.background = t==='news' ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)'; document.getElementById('seg-news').style.color = t==='news' ? '#000' : '#fff';
             document.getElementById('crew-roster-view').classList.toggle('hidden', t!=='roster');
             document.getElementById('crew-news-view').classList.toggle('hidden', t!=='news');
         },
@@ -517,13 +530,18 @@
         },
         dailyUI: function() { const r = DB.ROUTES[this.dailyIdx]; document.getElementById('daily-content').innerText = `${r.d} ➝ ${r.a} (${r.ac})`; },
         
-        prep: function(i, event) {
+        prep: function(i) {
             if(this.active) { alert("Flight in progress"); return; }
-            if(event && event.currentTarget) event.currentTarget.classList.add('ticket-tearing'); 
+            const loader = document.getElementById('flight-loader');
+            const txt = document.getElementById('loader-msg');
+            
+            loader.classList.add('active');
+            txt.innerText = "CONNECTING TO DISPATCH...";
+            
             setTimeout(() => {
-                document.getElementById('flight-loader').classList.add('active');
+                txt.innerText = "CALCULATING FUEL...";
                 setTimeout(() => {
-                    document.getElementById('flight-loader').classList.remove('active');
+                    loader.classList.remove('active');
                     const r = DB.ROUTES[i];
                     this.temp = { ...r, n: 'LO'+Math.floor(Math.random()*900+100), gate: DB.GATES[Math.floor(Math.random()*DB.GATES.length)] };
                     document.getElementById('br-cs').innerText = this.temp.n; document.getElementById('br-ac').innerText = r.ac;
@@ -531,9 +549,8 @@
                     document.getElementById('br-fuel').innerText = r.fuel; document.getElementById('br-time').innerText = r.t + ' H';
                     document.getElementById('br-pax').innerText = Math.floor(Math.random()*100+50); document.getElementById('br-gate').innerText = this.temp.gate;
                     this.openM('efb-modal');
-                    if(event && event.currentTarget) event.currentTarget.classList.remove('ticket-tearing');
-                }, 2000);
-            }, event ? 1000 : 100);
+                }, 1500);
+            }, 800);
         },
         accept: function() {
             this.active = { ...this.temp, start: Date.now(), dur: this.temp.t * 3600 * 1000 };
@@ -556,7 +573,7 @@
                 }
             }, 1000);
         },
-        finish: function() { clearInterval(this.tmr); alert("Flight Complete."); this.stats.h += this.active.t; this.stats.l += 1; localStorage.setItem('lot_stats_v149', JSON.stringify(this.stats)); this.active = null; localStorage.removeItem('lot_flight'); document.getElementById('flight-card').classList.add('hidden'); this.profile(); },
+        finish: function() { clearInterval(this.tmr); alert("Flight Complete."); this.stats.h += this.active.t; this.stats.l += 1; localStorage.setItem('lot_stats_v150', JSON.stringify(this.stats)); this.active = null; localStorage.removeItem('lot_flight'); document.getElementById('flight-card').classList.add('hidden'); this.profile(); },
         cancel: function() { if(confirm("Cancel?")) { clearInterval(this.tmr); this.active = null; localStorage.removeItem('lot_flight'); document.getElementById('flight-card').classList.add('hidden'); } },
         
         openFilter: function(type) {
@@ -567,7 +584,7 @@
         },
         applyFilter: function(t, v) { this.closeM(); if(t === 'routes') { this.filters.al = v; this.renderR(); } if(t === 'fleet') { this.renderF(v); } if(t === 'map') { this.filters.al = v; this.drawLines(v); } },
         
-        openGenerator: function() { const c = document.getElementById('gen-al'); const als = ['ALL', ...new Set(DB.ROUTES.map(r => r.al))]; c.innerHTML = als.map(x => `<div class="chip" onclick="app.setGen('al', '${x}', this)">${x}</div>`).join(''); this.openM('gen-modal'); },
+        openGenerator: function() { const c = document.getElementById('gen-al'); const als = ['ALL', ...new Set(DB.ROUTES.map(r => r.al))]; /*c.innerHTML = als.map(x => `<div class="chip" onclick="app.setGen('al', '${x}', this)">${x}</div>`).join('');*/ this.openM('gen-modal'); },
         setGen: function(cat, val, btn) { this.gen[cat] = val; btn.parentNode.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); btn.classList.add('active'); },
         generateSmart: function() {
             let matches = DB.ROUTES.filter(r => { if(this.gen.al !== 'ALL' && r.al !== this.gen.al) return false; if(this.gen.time === 'SHORT' && r.t > 3) return false; if(this.gen.time === 'MEDIUM' && (r.t < 3 || r.t > 8)) return false; if(this.gen.time === 'LONG' && r.t < 8) return false; return true; });
@@ -608,7 +625,7 @@
         },
         closeM: function() { 
             document.querySelectorAll('.modal-overlay.visible').forEach(m => {
-                m.classList.remove('visible'); setTimeout(() => { m.style.display = 'none'; }, 400); 
+                m.classList.remove('visible'); setTimeout(() => { m.style.display = 'none'; }, 300); 
             }); 
         }
     };
