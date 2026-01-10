@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EFN Portal v146</title>
+    <title>LOT Portal v147</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     
@@ -11,10 +11,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <style>
-        /* === THEME VARIABLES (LIGHT ONLY) === */
+        /* === THEME VARIABLES (LOT BLUE & LIGHT) === */
         :root {
-            --lh-blue: #05164d; 
-            --lh-gold: #ffb81c;
+            --lh-blue: #05164d; /* Dark Blue similar to LOT branding */
+            --lh-gold: #ffb81c; /* Accent color */
             
             --bg-body: #f0f2f5; 
             --glass-bg: rgba(255, 255, 255, 0.95);
@@ -46,8 +46,8 @@
         }
         .hidden { display: none !important; }
 
-        /* === BUTTONS === */
-        button { font-family: 'Inter', sans-serif; border: none; cursor: pointer; }
+        /* === BUTTONS & ANIMATIONS === */
+        button { font-family: 'Inter', sans-serif; border: none; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
         .btn-primary {
             width: 100%; padding: 18px;
@@ -55,9 +55,8 @@
             color: #000; font-weight: 800; font-size: 1.05rem;
             border-radius: var(--radius-btn);
             box-shadow: 0 4px 15px rgba(255, 184, 28, 0.25);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:active { transform: scale(0.96); }
         
         .btn-map-action {
             padding: 6px 12px;
@@ -65,6 +64,7 @@
             font-weight: 700; font-size: 0.75rem;
             white-space: nowrap;
         }
+        .btn-map-action:active { transform: scale(0.95); }
 
         .btn-filter {
             background: var(--glass-bg); 
@@ -75,7 +75,6 @@
             font-weight: 700; font-size: 0.85rem;
             display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
         }
         .btn-filter:active { transform: scale(0.95); }
 
@@ -84,7 +83,6 @@
             border-radius: 50%; background: var(--lh-blue); color: #fff; 
             box-shadow: 0 15px 40px rgba(5, 22, 77, 0.4); 
             display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 1800; 
-            transition: transform 0.2s;
         }
         .btn-float:active { transform: scale(0.9); }
 
@@ -181,7 +179,7 @@
         .modal-overlay { 
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); 
             z-index: 5000; align-items: flex-end; justify-content: center;
-            opacity: 0; /* Init opacity for fade */
+            opacity: 0; 
         }
         .modal-overlay.open { 
             display: flex; 
@@ -194,8 +192,8 @@
             max-height: 85vh; overflow-y: auto; 
             border-top: 1px solid var(--glass-border); 
             box-shadow: 0 -10px 40px rgba(0,0,0,0.2); 
-            transform: translateY(100%); /* Start hidden */
-            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; /* Smooth iOS slide */
+            transform: translateY(100%); 
+            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -249,8 +247,8 @@
 <div id="intro">
     <div class="intro-glow"></div>
     <div class="intro-container">
-        <div class="intro-text-main">EUROPEAN FLIGHT</div>
-        <div class="intro-text-sub">NETWORK SYSTEM</div>
+        <div class="intro-text-main">LOT POLISH</div>
+        <div class="intro-text-sub">AIRLINES SYSTEM</div>
     </div>
 </div>
 
@@ -260,7 +258,7 @@
 </div>
 
 <header>
-    <div class="brand">European Flight Network</div>
+    <div class="brand">LOT Polish Airlines</div>
 </header>
 
 <div class="nav-dock hidden" id="nav">
@@ -405,7 +403,7 @@
 <div id="efb-modal" class="modal-overlay">
     <div class="modal-body efb-body">
         <div class="ofp-header">
-            <span class="ofp-title">EFN // FLIGHT RELEASE</span>
+            <span class="ofp-title">LOT // FLIGHT RELEASE</span>
             <span class="ofp-status">READY</span>
         </div>
         <div class="ofp-content">
@@ -430,13 +428,11 @@
 <script>
     const DB = {
         PILOTS: [
-            // UPDATED TO LOT IDs
             { id: "LOT001", pwd: "1234", name: "Capt. Mueller", rank: "Captain", base: "EDDF", callsign: "GHOST", platform: "Discord" },
             { id: "LOT002", pwd: "1234", name: "F.O. Weber", rank: "First Officer", base: "EDDM", callsign: "SPEEDBIRD", platform: "Telegram" },
             { id: "LOT003", pwd: "1234", name: "S.O. Schmidt", rank: "Second Officer", base: "LSZH", callsign: "ALPINE", platform: "VK" }
         ],
         ROUTES: [
-            // UPDATED LUFTHANSA TO LOT
             { al: "LOT", code: "LO", d: "EDDF", a: "EGLL", t: 1.5, ac: "A320neo", fuel: "5.8t" },
             { al: "Swiss", code: "LX", d: "LSZH", a: "KJFK", t: 8.8, ac: "A330-300", fuel: "105.0t" },
             { al: "Austrian", code: "OS", d: "LOWW", a: "VTBS", t: 10.0, ac: "B777-200", fuel: "130.0t" },
@@ -452,7 +448,6 @@
             { al: "TAP", code: "TP", d: "LPPT", a: "SBGL", t: 10.0, ac: "A330neo", fuel: "95.0t" }
         ],
         FLEET: [
-            // UPDATED LUFTHANSA TO LOT
             { t: "Airbus A320neo", op: "LOT", r: "6,300km", spd: "M0.82", mtow: "79t" },
             { t: "Boeing 747-8", op: "LOT", r: "14,800km", spd: "M0.86", mtow: "447t" },
             { t: "Airbus A330-300", op: "Swiss", r: "11,750km", spd: "M0.86", mtow: "242t" },
@@ -474,9 +469,10 @@
         stats: { h: 0, l: 0 },
 
         init: function() {
-            const s = JSON.parse(localStorage.getItem('efn_stats_v146'));
+            // Updated LocalStorage Key for new version
+            const s = JSON.parse(localStorage.getItem('lot_stats_v147'));
             if(s) this.stats = s;
-            const f = JSON.parse(localStorage.getItem('efn_flight'));
+            const f = JSON.parse(localStorage.getItem('lot_flight'));
             if(f) { this.active = f; this.timer(); }
 
             const today = new Date().toDateString();
@@ -692,7 +688,8 @@
                 setTimeout(() => {
                     loader.classList.remove('active');
                     const r = DB.ROUTES[i];
-                    this.temp = { ...r, n: 'EFN'+Math.floor(Math.random()*900+100), gate: DB.GATES[Math.floor(Math.random()*DB.GATES.length)] };
+                    // UPDATED FLIGHT NUMBER GEN TO 'LO'
+                    this.temp = { ...r, n: 'LO'+Math.floor(Math.random()*900+100), gate: DB.GATES[Math.floor(Math.random()*DB.GATES.length)] };
                     document.getElementById('br-cs').innerText = this.temp.n; document.getElementById('br-ac').innerText = r.ac;
                     document.getElementById('br-dep').innerText = r.d; document.getElementById('br-arr').innerText = r.a;
                     document.getElementById('br-fuel').innerText = r.fuel; document.getElementById('br-time').innerText = r.t + ' H';
@@ -705,7 +702,7 @@
         
         accept: function() {
             this.active = { ...this.temp, start: Date.now(), dur: this.temp.t * 3600 * 1000 };
-            localStorage.setItem('efn_flight', JSON.stringify(this.active));
+            localStorage.setItem('lot_flight', JSON.stringify(this.active));
             this.closeM(); this.timer(); this.nav('dash');
         },
         timer: function() {
@@ -728,12 +725,12 @@
         finish: function() {
             clearInterval(this.tmr); alert("Flight Complete.");
             this.stats.h += this.active.t; this.stats.l += 1;
-            localStorage.setItem('efn_stats_v146', JSON.stringify(this.stats));
-            this.active = null; localStorage.removeItem('efn_flight');
+            localStorage.setItem('lot_stats_v147', JSON.stringify(this.stats));
+            this.active = null; localStorage.removeItem('lot_flight');
             document.getElementById('flight-card').classList.add('hidden');
             this.profile();
         },
-        cancel: function() { if(confirm("Cancel?")) { clearInterval(this.tmr); this.active = null; localStorage.removeItem('efn_flight'); document.getElementById('flight-card').classList.add('hidden'); } },
+        cancel: function() { if(confirm("Cancel?")) { clearInterval(this.tmr); this.active = null; localStorage.removeItem('lot_flight'); document.getElementById('flight-card').classList.add('hidden'); } },
         
         openFilter: function(type) {
             const c = document.getElementById('filter-container');
