@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v172 Secure Report</title>
+    <title>LOT Premium v173 Manual</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -14,7 +14,6 @@
         /* === CONFIG === */
         :root {
             --accent-gold: #c5a47e; 
-            --accent-gold-dark: #8f7250;
             --bg-deep: #050b14;
             --glass-panel: rgba(20, 25, 40, 0.85);
             --glass-border: rgba(255, 255, 255, 0.12);
@@ -53,22 +52,14 @@
         header { 
             width: 100%; height: 60px; 
             background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 24px; 
+            border: 1px solid var(--glass-border); border-radius: 24px; 
             display: flex; justify-content: center; align-items: center; 
             cursor: pointer; position: relative; z-index: 20; 
             transition: all 0.3s var(--ease-out);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        
-        header.open {
-            border-bottom-left-radius: 0; 
-            border-bottom-right-radius: 0;
-            border-bottom-color: transparent; 
-            background: #131722;
-        }
-
-        .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; transition: 0.3s; }
+        header.open { border-radius: 24px 24px 0 0; background: #131722; border-bottom-color: transparent; }
+        .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
         header.open .brand { color: var(--accent-gold); }
         
         #about-panel {
@@ -76,37 +67,20 @@
             border: 1px solid var(--glass-border); border-top: none;
             border-radius: 0 0 24px 24px;
             max-height: 0; opacity: 0; overflow: hidden;
-            transition: all 0.4s var(--ease-out);
-            position: relative; z-index: 10; 
+            transition: all 0.4s var(--ease-out); position: relative; z-index: 10; 
             box-sizing: border-box;
         }
-        #about-panel.open { 
-            max-height: 350px; opacity: 1; 
-            padding: 30px 25px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-        }
-
+        #about-panel.open { max-height: 350px; opacity: 1; padding: 30px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .header-spacer { height: 110px; width: 100%; }
 
         /* === UI ELEMENTS === */
         .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
-        
-        .anim-item, .ticket { 
-            background: var(--glass-panel); backdrop-filter: blur(30px); 
-            border: 1px solid var(--glass-border); 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25); 
-            border-radius: var(--radius-lg); 
-            position: relative; margin-bottom: 20px; transition: transform 0.2s; 
-        }
+        .anim-item, .ticket { background: var(--glass-panel); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); box-shadow: 0 15px 40px rgba(0,0,0,0.25); border-radius: var(--radius-lg); position: relative; margin-bottom: 20px; transition: transform 0.2s; }
         .anim-item { padding: 24px; }
         .anim-item:active { transform: scale(0.99); }
 
         /* === LOADER === */
-        #flight-loader {
-            position: fixed; inset: 0; background: rgba(5, 11, 20, 0.95); backdrop-filter: blur(20px);
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
+        #flight-loader { position: fixed; inset: 0; background: rgba(5, 11, 20, 0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         #flight-loader.active { opacity: 1; pointer-events: all; }
         .loader-spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-gold); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -120,127 +94,64 @@
         .ap { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
         .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
 
-        /* === CHIPS & FILTERS === */
+        /* === CHIPS === */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .chip {
-            padding: 8px 16px; background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 14px;
-            color: #ddd; font-weight: 600; font-size: 0.8rem;
-            cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px);
-        }
-        .chip:active { transform: scale(0.95); }
+        .chip { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #ddd; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px); }
         .chip.selected { background: var(--accent-gold); color: #000; font-weight: 800; border-color: var(--accent-gold); }
-        @keyframes softPop { 
-            0% { opacity: 0; transform: translateY(15px); } 
-            60% { transform: translateY(-3px); } 
-            100% { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes softPop { 0% { opacity: 0; transform: translateY(15px); } 60% { transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        /* === NAV DOCK === */
-        .nav-dock { 
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            width: 90%; max-width: 500px; height: var(--nav-h); 
-            background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); 
-            border-radius: 35px; border: 1px solid var(--glass-border); 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
-            z-index: 2000; display: flex; justify-content: space-evenly; align-items: center; 
-        }
+        /* === NAV === */
+        .nav-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; height: var(--nav-h); background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); border-radius: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: space-evenly; align-items: center; }
         .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; width: 50px; }
         .nav-btn.active { color: #fff; } 
         .nav-btn.active i { transform: translateY(-5px); filter: grayscale(0) drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
         .nav-btn i { font-style: normal; font-size: 1.4rem; margin-bottom: 6px; display: block; filter: grayscale(1); transition: 0.3s; }
         .nav-lbl { font-size: 0.6rem; font-weight: 700; opacity: 0; transform: translateY(5px); transition: 0.3s; }
         .nav-btn.active .nav-lbl { opacity: 1; transform: translateY(0); }
-
-        /* === TABS === */
         .tab-view { display: none; opacity: 0; transform: translateY(20px); transition: none; }
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
         /* === MODALS === */
-        .modal-overlay { 
-            display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.95); z-index: 5000; 
-            align-items: center; justify-content: center; flex-direction: column;
-        }
-        .modal-sheet {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000;
-            display: none; align-items: flex-end; justify-content: center;
-        }
-        .sheet-body { 
-            width: 100%; max-width: 600px; background: #111620; 
-            border-radius: 36px 36px 0 0; padding: 40px 30px; 
-            max-height: 90vh; overflow-y: auto; 
-            border-top: 1px solid rgba(255,255,255,0.15); 
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.7); 
-            animation: slideUp 0.4s var(--ease-out); color: #fff;
-        }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
+        .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
+        .sheet-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); animation: slideUp 0.4s var(--ease-out); color: #fff; }
         .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; }
         .btn-primary:active { transform: scale(0.96); }
-        .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; }
+        .btn-sec { background: rgba(255,255,255,0.1); color: #fff; border:1px solid rgba(255,255,255,0.2); }
+        .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; box-sizing: border-box; }
         
-        /* === REPORT CARD STYLES === */
-        .report-paper {
-            background: radial-gradient(circle at 100% 0%, #222 0%, #111 100%);
-            border: 2px solid var(--accent-gold);
-            border-radius: 20px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 20px;
+        /* === REPORT WATERMARK === */
+        .report-paper { position: relative; background: #1a1a1a; padding: 25px; border-radius: 20px; border: 1px solid #333; overflow: hidden; margin-bottom: 20px; }
+        .watermark-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 4rem; font-weight: 900; color: var(--accent-gold);
+            opacity: 0.3; /* 30% Visibility */
+            border: 8px solid var(--accent-gold); padding: 10px 40px;
+            pointer-events: none; white-space: nowrap; z-index: 0;
+            text-transform: uppercase;
         }
-        /* Security Pattern */
-        .report-paper::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: repeating-linear-gradient(45deg, rgba(197, 164, 126, 0.03) 0px, rgba(197, 164, 126, 0.03) 1px, transparent 1px, transparent 10px);
-            pointer-events: none;
-        }
-        .stamp {
-            position: absolute; top: 20px; right: 20px;
-            border: 3px solid rgba(34, 197, 94, 0.5); color: rgba(34, 197, 94, 0.8);
-            font-weight: 900; font-size: 1rem; padding: 5px 10px;
-            border-radius: 8px; transform: rotate(-15deg);
-            text-transform: uppercase; letter-spacing: 2px;
-            mix-blend-mode: screen;
-        }
-        .rpt-row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .rpt-row { position: relative; z-index: 1; display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .rpt-lbl { color: #888; font-size: 0.8rem; font-family: 'JetBrains Mono'; }
-        .rpt-val { color: #fff; font-weight: 600; font-size: 0.9rem; font-family: 'JetBrains Mono'; text-align: right; }
-        .rpt-hash { 
-            font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--accent-gold); 
-            text-align: center; margin-top: 20px; padding: 10px; 
-            border: 1px dashed rgba(197, 164, 126, 0.3); border-radius: 8px; 
-            word-break: break-all; 
-        }
+        .rpt-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono'; }
+        .rpt-hash { position:relative; z-index:1; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #666; text-align: center; margin-top: 20px; word-break: break-all; }
 
-        /* === OFP GRID === */
+        /* === GRID === */
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .ofp-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
         .ofp-val { font-size: 1.1rem; color: var(--accent-gold); font-weight: 700; font-family: 'JetBrains Mono'; }
 
-        /* === SPECIFIC CARDS === */
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
         
         /* News */
-        .news-card { 
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 20px; cursor: pointer; transition: background 0.2s;
-        }
-        .news-card:active { background: rgba(255,255,255,0.05); }
-        .news-icon { 
-            width: 40px; height: 40px; border-radius: 12px; 
-            background: rgba(255,255,255,0.05); 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 1.2rem; margin-right: 15px; color: #fff;
-        }
+        .news-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; cursor: pointer; transition: background 0.2s; }
+        .news-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px; color: #fff; }
         .news-time { font-size: 0.7rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 4px; display: block; }
-        .news-arrow { color: #555; font-size: 1.2rem; margin-left: 10px; }
-        
         .map-expand-btn { position: absolute; bottom: 15px; right: 15px; z-index: 1000; background: #000; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid #333; cursor: pointer; }
     </style>
 </head>
@@ -254,14 +165,8 @@
         <div style="text-align:center;">
             <h2 style="color:#fff; margin:0; font-size:1.4rem;">LOT Polish Airlines</h2>
             <div style="color:var(--accent-gold); font-weight:700; font-size:0.9rem; margin-bottom:20px; letter-spacing:1px;">Virtual Group 2026</div>
-            
-            <p style="color:#888; font-size:0.85rem; line-height:1.6; margin-bottom:25px;">
-                Welcome to the premium virtual aviation experience. Simulating modern flight operations with precision and style.
-            </p>
-            
-            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; font-size:0.8rem; color:#555;">
-                made by <span style="color:#fff; font-weight:600;">Nikita Konshu</span>
-            </div>
+            <p style="color:#888; font-size:0.85rem; line-height:1.6; margin-bottom:25px;">Welcome to the premium virtual aviation experience. Simulating modern flight operations with precision and style.</p>
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; font-size:0.8rem; color:#555;">made by <span style="color:#fff; font-weight:600;">Nikita Konshu</span></div>
         </div>
     </div>
 </div>
@@ -297,17 +202,22 @@
             <div id="daily-content" style="font-size:1.8rem; font-weight:800; margin-bottom:25px; color:#fff;">Loading...</div>
             <button class="btn-primary" onclick="app.prep(app.dailyIdx)">INITIATE BRIEFING</button>
         </div>
+        
         <div id="flight-card" class="anim-item hidden" style="border: 1px solid var(--accent-gold);">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <span style="font-weight:900; color:var(--accent-gold); font-size:0.8rem; letter-spacing:1px;">ACTIVE FLIGHT</span>
+                <span style="font-weight:900; color:var(--accent-gold); font-size:0.8rem; letter-spacing:1px;">FLIGHT IN PROGRESS</span>
                 <span id="af-timer" class="mono" style="font-size:0.9rem; color:#fff;">00:00:00</span>
             </div>
             <h2 id="af-route" style="font-size:2.5rem; font-weight:200; margin-bottom:5px;">DEP - ARR</h2>
             <p id="af-ac" style="color:var(--text-sec); font-family:'JetBrains Mono'; font-size:0.8rem; margin-bottom:25px;">Aircraft</p>
-            <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+            <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; margin-bottom:30px;">
                 <div id="af-bar" style="height:100%; width:0%; background:var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); transition: width 1s linear;"></div>
             </div>
-            <button class="btn-primary" style="background:transparent; border:1px solid rgba(255,255,255,0.2); margin-top:30px; color:#fff; box-shadow:none;" onclick="app.cancel()">ABORT FLIGHT</button>
+            
+            <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px;">
+                <button class="btn-primary btn-sec" onclick="app.cancel()">CANCEL</button>
+                <button class="btn-primary" onclick="app.requestLanding()">LAND & REPORT</button>
+            </div>
         </div>
     </div>
 
@@ -369,37 +279,51 @@
     </div>
 </div>
 
+<div id="landing-modal" class="modal-sheet">
+    <div class="sheet-body">
+        <h2 style="margin-top:0;">Arrival Confirmation</h2>
+        <p style="color:#888; margin-bottom:20px;">Please enter your touchdown performance data.</p>
+        <input type="number" id="landing-rate" class="ios-input" placeholder="LANDING RATE (e.g. -145)">
+        <button class="btn-primary" onclick="app.finishFlight()">SUBMIT REPORT</button>
+    </div>
+</div>
+
 <div id="report-modal" class="modal-sheet">
     <div class="sheet-body" style="padding:0; background:#000;">
         <div style="padding:40px 30px;">
             <div style="text-align:center; margin-bottom:20px;">
-                <div style="font-size:3rem;">✈</div>
                 <h2 style="color:#fff; font-weight:300;">Flight Report</h2>
-                <p style="color:#666; font-size:0.9rem;">Official Digital Record</p>
+                <p style="color:#666; font-size:0.9rem;">Official Record</p>
             </div>
             
             <div class="report-paper">
-                <div class="stamp">VERIFIED</div>
+                <div class="watermark-overlay">VERIFIED</div>
+                
                 <div class="rpt-row">
-                    <span class="rpt-lbl">PILOT</span>
+                    <span class="rpt-lbl">PILOT IN COMMAND</span>
                     <span class="rpt-val" id="rpt-pilot"></span>
                 </div>
                 <div class="rpt-row">
-                    <span class="rpt-lbl">ROUTE</span>
+                    <span class="rpt-lbl">FLIGHT</span>
                     <span class="rpt-val" id="rpt-route"></span>
                 </div>
-                <div class="rpt-row">
+                 <div class="rpt-row">
                     <span class="rpt-lbl">AIRCRAFT</span>
                     <span class="rpt-val" id="rpt-ac"></span>
                 </div>
                 <div class="rpt-row">
-                    <span class="rpt-lbl">LANDING RATE</span>
-                    <span class="rpt-val" id="rpt-rate" style="color:var(--accent-gold);"></span>
+                    <span class="rpt-lbl">BLOCK OFF (DEP)</span>
+                    <span class="rpt-val" id="rpt-off"></span>
                 </div>
-                <div class="rpt-row" style="border:none;">
-                    <span class="rpt-lbl">ARRIVAL TIME</span>
-                    <span class="rpt-val" id="rpt-time"></span>
+                <div class="rpt-row">
+                    <span class="rpt-lbl">BLOCK ON (ARR)</span>
+                    <span class="rpt-val" id="rpt-on"></span>
                 </div>
+                <div class="rpt-row" style="border:none; margin-top:15px;">
+                    <span class="rpt-lbl">TOUCHDOWN RATE</span>
+                    <span class="rpt-val" id="rpt-rate" style="color:var(--accent-gold); font-size:1.2rem;"></span>
+                </div>
+                
                 <div class="rpt-hash" id="rpt-hash"></div>
             </div>
             
@@ -499,7 +423,7 @@
                 this.dailyUI();
                 
                 try {
-                    const saved = JSON.parse(localStorage.getItem('lot_flight_v154'));
+                    const saved = JSON.parse(localStorage.getItem('lot_flight_v173'));
                     if(saved) { this.active = saved; this.timer(); }
                 } catch(e) {}
                 
@@ -554,12 +478,10 @@
             const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
             this.renderChips(ops, 'routes-filter-c', 'routes');
         },
-        
         renderFleetFilters: function() {
             const ops = ['ALL', ...new Set(DB.FLEET.map(f=>f.op))];
             this.renderChips(ops, 'hangar-filter-c', 'fleet');
         },
-        
         renderMapFilters: function() {
              const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
              this.renderChips(ops, 'map-filter-c', 'map');
@@ -602,7 +524,6 @@
                 let tStr = n.date + "m ago";
                 if(n.date > 60) tStr = Math.floor(n.date/60) + "h ago";
                 if(n.date > 1400) tStr = "Yesterday";
-                
                 return `
                 <div class="anim-item news-card" onclick="app.openNews(${n.id})">
                     <div style="display:flex; align-items:center;">
@@ -664,8 +585,15 @@
 
         accept: function() {
             this.closeM();
-            this.active = { ...this.temp, start: Date.now(), dur: 20000 }; 
-            try { localStorage.setItem('lot_flight_v154', JSON.stringify(this.active)); } catch(e){}
+            // Start flight: Save start time
+            this.active = { 
+                ...this.temp, 
+                startTs: Date.now(),
+                // Display time for Block Off
+                blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
+                dur: 20000 // Only used for progress bar visual
+            }; 
+            try { localStorage.setItem('lot_flight_v173', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -676,44 +604,56 @@
             document.getElementById('af-ac').innerText = this.active.ac;
             
             this.tmr = setInterval(() => {
-                const el = Date.now() - this.active.start;
+                const el = Date.now() - this.active.startTs;
+                // Just visual progress, flight doesn't end automatically
                 const pct = Math.min(el/this.active.dur, 1);
                 document.getElementById('af-bar').style.width = (pct*100)+'%';
                 
-                if(pct >= 1) {
-                    clearInterval(this.tmr);
-                    app.finishFlight(); // CALL REPORT
-                } else {
-                    const rem = Math.ceil((this.active.dur - el)/1000);
-                    document.getElementById('af-timer').innerText = rem + "s LEFT";
-                }
-            }, 100);
+                const secs = Math.floor(el/1000);
+                const m = Math.floor(secs/60);
+                const s = secs % 60;
+                document.getElementById('af-timer').innerText = `${m}:${s<10?'0'+s:s} ELAPSED`;
+            }, 1000);
         },
 
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v154'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v173'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         
+        requestLanding: function() {
+             document.getElementById('landing-modal').style.display = 'flex';
+        },
+        
         finishFlight: function() {
-            // Generate Data
-            const landingRate = "-" + Math.floor(Math.random() * (350 - 100) + 100) + " fpm";
-            const time = new Date().toISOString().split('T')[1].substring(0,5) + " Z";
-            const hash = "HASH: " + Math.random().toString(36).substring(2, 10).toUpperCase() + "-" + Date.now().toString().substring(8);
+            const input = document.getElementById('landing-rate').value;
+            if(!input) { alert("Please enter landing rate"); return; }
             
+            const landingRate = input + " fpm";
+            const blockOn = new Date().toISOString().split('T')[1].substring(0,5) + " Z";
+            // Simple Hash
+            const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString().substring(9);
+            
+            clearInterval(this.tmr);
+            
+            // Fill Report
             document.getElementById('rpt-pilot').innerText = this.user.name;
             document.getElementById('rpt-route').innerText = this.active.d + " ➝ " + this.active.a;
             document.getElementById('rpt-ac').innerText = this.active.ac;
+            document.getElementById('rpt-off').innerText = this.active.blockOff;
+            document.getElementById('rpt-on').innerText = blockOn;
             document.getElementById('rpt-rate').innerText = landingRate;
-            document.getElementById('rpt-time').innerText = time;
             document.getElementById('rpt-hash').innerText = hash;
             
+            // Clear Data
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v154'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v173'); } catch(e){}
+            document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             
+            // Show Report
             document.getElementById('report-modal').style.display = 'flex';
         },
         
@@ -749,12 +689,10 @@
         },
         
         filterMap: function(type, el) {
-            // UI Toggle
             if(el) {
                 document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected'));
                 el.classList.add('selected');
             }
-            // Logic
             if(this.map) {
                 this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); 
                 this.drawMapLines(this.map, type);
