@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v177</title>
+    <title>LOT Premium v178 Leaderboard</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -14,6 +14,8 @@
         /* === CONFIG === */
         :root {
             --accent-gold: #c5a47e; 
+            --accent-silver: #a0a0a0;
+            --accent-bronze: #cd7f32;
             --bg-deep: #050b14;
             --glass-panel: rgba(20, 25, 40, 0.9);
             --glass-border: rgba(255, 255, 255, 0.12);
@@ -79,6 +81,70 @@
         .anim-item { padding: 24px; }
         .anim-item:active { transform: scale(0.99); }
 
+        /* === LEADERBOARD STYLES (NEW) === */
+        .podium-wrap {
+            display: flex; justify-content: center; align-items: flex-end;
+            gap: 10px; height: 180px; margin-bottom: 30px; padding-top: 20px;
+        }
+        .pod-col {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            width: 30%; position: relative;
+        }
+        .pod-avatar {
+            width: 50px; height: 50px; border-radius: 50%; 
+            background: #333; border: 2px solid #555;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: #fff; margin-bottom: -10px; z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .pod-block {
+            width: 100%; border-radius: 12px 12px 0 0;
+            background: rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; align-items: center; padding-top: 15px;
+            border: 1px solid rgba(255,255,255,0.1); border-bottom: none;
+        }
+        .pod-rank { font-size: 1.5rem; font-weight: 900; opacity: 0.3; margin-bottom: 5px; }
+        .pod-pts { font-family: 'JetBrains Mono'; font-size: 0.7rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .pod-name { font-size: 0.7rem; color: #aaa; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; }
+
+        /* 1st Place Specifics */
+        .place-1 .pod-avatar { 
+            width: 70px; height: 70px; border-color: var(--accent-gold); 
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%); color: #000;
+            box-shadow: 0 0 20px rgba(197, 164, 126, 0.4);
+        }
+        .place-1 .pod-block { 
+            height: 110px; background: linear-gradient(to top, rgba(197, 164, 126, 0.2), rgba(197, 164, 126, 0)); 
+            border-color: var(--accent-gold); 
+        }
+        .place-1 .crown { 
+            position: absolute; top: -28px; font-size: 1.8rem; 
+            filter: drop-shadow(0 0 10px gold); animation: float 2s infinite ease-in-out;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* 2nd Place */
+        .place-2 .pod-avatar { border-color: var(--accent-silver); }
+        .place-2 .pod-block { height: 80px; border-color: var(--accent-silver); }
+        
+        /* 3rd Place */
+        .place-3 .pod-avatar { border-color: var(--accent-bronze); }
+        .place-3 .pod-block { height: 60px; border-color: var(--accent-bronze); }
+
+        /* Rank List */
+        .rank-list-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 15px; margin-bottom: 8px;
+            background: rgba(255,255,255,0.03); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .r-left { display: flex; align-items: center; gap: 12px; }
+        .r-idx { font-family: 'JetBrains Mono'; color: #666; font-size: 0.8rem; width: 20px; }
+        .r-name { font-weight: 600; font-size: 0.9rem; }
+        .r-pts { font-family: 'JetBrains Mono'; color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
+
+
         /* === LOADER === */
         #flight-loader { position: fixed; inset: 0; background: rgba(5, 11, 20, 0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         #flight-loader.active { opacity: 1; pointer-events: all; }
@@ -94,7 +160,7 @@
         .ap { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
         .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
 
-        /* === CHIPS & NAV === */
+        /* === NAV === */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #ddd; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px); }
         .chip.selected { background: var(--accent-gold); color: #000; font-weight: 800; border-color: var(--accent-gold); }
@@ -111,14 +177,13 @@
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
-        /* === MODALS === */
+        /* === MODALS & BUTTONS === */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
         .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
         .sheet-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); animation: slideUp 0.4s var(--ease-out); color: #fff; }
         .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* === BUTTONS & INPUTS === */
         .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
         .btn-primary:active { transform: scale(0.96); }
         .btn-sec { background: rgba(255,255,255,0.1); color: #fff; border:1px solid rgba(255,255,255,0.2); }
@@ -127,57 +192,30 @@
         @keyframes goldPulse { 0% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(197, 164, 126, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0); } }
         .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; box-sizing: border-box; }
         
-        /* === HIGH SECURITY REPORT === */
         .report-paper { 
-            position: relative; 
-            background: #111;
-            /* High Contrast Guilloche Pattern */
-            background-image: 
-                repeating-radial-gradient( circle at 0 0, transparent 0, #111 20px ),
-                repeating-linear-gradient( 45deg, rgba(197, 164, 126, 0.15) 0px, rgba(197, 164, 126, 0.15) 1px, transparent 1px, transparent 4px ),
-                repeating-linear-gradient( -45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 4px );
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 2px solid var(--accent-gold);
-            margin-bottom: 20px; 
-            overflow: hidden;
+            position: relative; background: #111;
+            background-image: repeating-radial-gradient( circle at 0 0, transparent 0, #111 20px ), repeating-linear-gradient( 45deg, rgba(197, 164, 126, 0.15) 0px, rgba(197, 164, 126, 0.15) 1px, transparent 1px, transparent 4px );
+            padding: 25px; border-radius: 16px; border: 2px solid var(--accent-gold); margin-bottom: 20px; overflow: hidden;
         }
-
-        /* Scan lines overlay */
         .report-paper::before {
             content: ""; position: absolute; inset: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none; z-index: 2;
+            background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 2;
         }
-
         .hologram-text {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
             font-size: 3.5rem; font-weight: 900; 
-            /* Gradient Text (Gold/Silver/White) */
             background: linear-gradient(135deg, #8f7250 0%, #fff 40%, #c5a47e 60%, #8f7250 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0.6; z-index: 1;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0.6; z-index: 1;
             border: 6px double rgba(197, 164, 126, 0.4); padding: 5px 30px;
             text-transform: uppercase; letter-spacing: 4px;
         }
-
         .rpt-row { position: relative; z-index: 3; display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 6px; }
         .rpt-lbl { color: #aaa; font-size: 0.75rem; font-family: 'JetBrains Mono'; letter-spacing: 1px; }
         .rpt-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono'; text-shadow: 0 1px 2px #000; }
-        
-        .microtext {
-            position: absolute; bottom: 3px; left: 0; width: 100%;
-            font-size: 0.4rem; color: rgba(197, 164, 126, 0.5); text-align: center;
-            font-family: 'JetBrains Mono'; letter-spacing: 1px; white-space: nowrap;
-            z-index: 3;
-            content: "OFFICIAL RECORD // LOT VIRTUAL GROUP // DO NOT ALTER // SECURE HASH";
-        }
-        
+        .microtext { position: absolute; bottom: 3px; left: 0; width: 100%; font-size: 0.4rem; color: rgba(197, 164, 126, 0.5); text-align: center; font-family: 'JetBrains Mono'; letter-spacing: 1px; white-space: nowrap; z-index: 3; content: "OFFICIAL RECORD // LOT VIRTUAL GROUP // DO NOT ALTER // SECURE HASH"; }
         .rpt-hash { position:relative; z-index:3; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--accent-gold); text-align: center; margin-top: 15px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); }
 
-        /* === GRID & CARDS === */
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .ofp-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
@@ -232,6 +270,20 @@
 
     <div id="view-dash" class="tab-view active">
         <div class="header-spacer"></div>
+        
+        <div class="anim-item" style="border:1px solid var(--accent-gold); padding-bottom:10px;">
+            <div style="text-align:center; margin-bottom:15px;">
+                <div style="font-size:0.7rem; color:var(--accent-gold); letter-spacing:2px; font-weight:800;">TOP PILOTS</div>
+                <h2 style="margin:5px 0 0 0; color:#fff;">Leaderboard</h2>
+            </div>
+            
+            <div class="podium-wrap" id="podium-c">
+                </div>
+            
+            <div id="rank-list-c">
+                </div>
+        </div>
+
         <div class="anim-item" id="profile-card"></div>
         <div class="anim-item">
             <h3 style="font-size:1.5rem; color:#fff; font-weight:300;">Daily Roster</h3>
@@ -250,7 +302,6 @@
             <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; margin-bottom:30px;">
                 <div id="af-bar" style="height:100%; width:0%; background:var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); transition: width 1s linear;"></div>
             </div>
-            
             <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px;">
                 <button class="btn-primary btn-sec" onclick="app.cancel()">CANCEL</button>
                 <button id="btn-land" class="btn-primary btn-disabled" onclick="app.requestLanding()">WAITING...</button>
@@ -335,32 +386,12 @@
             
             <div class="report-paper">
                 <div class="hologram-text">VERIFIED</div>
-                
-                <div class="rpt-row">
-                    <span class="rpt-lbl">PILOT</span>
-                    <span class="rpt-val" id="rpt-pilot"></span>
-                </div>
-                <div class="rpt-row">
-                    <span class="rpt-lbl">ROUTE</span>
-                    <span class="rpt-val" id="rpt-route"></span>
-                </div>
-                 <div class="rpt-row">
-                    <span class="rpt-lbl">AIRCRAFT</span>
-                    <span class="rpt-val" id="rpt-ac"></span>
-                </div>
-                <div class="rpt-row">
-                    <span class="rpt-lbl">BLOCK OFF</span>
-                    <span class="rpt-val" id="rpt-off"></span>
-                </div>
-                <div class="rpt-row">
-                    <span class="rpt-lbl">BLOCK ON</span>
-                    <span class="rpt-val" id="rpt-on"></span>
-                </div>
-                <div class="rpt-row" style="border:none; margin-top:15px;">
-                    <span class="rpt-lbl">LANDING RATE</span>
-                    <span class="rpt-val" id="rpt-rate" style="color:var(--accent-gold); font-size:1.2rem;"></span>
-                </div>
-                
+                <div class="rpt-row"><span class="rpt-lbl">PILOT</span><span class="rpt-val" id="rpt-pilot"></span></div>
+                <div class="rpt-row"><span class="rpt-lbl">ROUTE</span><span class="rpt-val" id="rpt-route"></span></div>
+                <div class="rpt-row"><span class="rpt-lbl">AIRCRAFT</span><span class="rpt-val" id="rpt-ac"></span></div>
+                <div class="rpt-row"><span class="rpt-lbl">BLOCK OFF</span><span class="rpt-val" id="rpt-off"></span></div>
+                <div class="rpt-row"><span class="rpt-lbl">BLOCK ON</span><span class="rpt-val" id="rpt-on"></span></div>
+                <div class="rpt-row" style="border:none; margin-top:15px;"><span class="rpt-lbl">LANDING RATE</span><span class="rpt-val" id="rpt-rate" style="color:var(--accent-gold); font-size:1.2rem;"></span></div>
                 <div class="rpt-hash" id="rpt-hash"></div>
                 <div class="microtext">OFFICIAL RECORD // LOT VIRTUAL GROUP // DO NOT ALTER // SECURE HASH // 2026 // OFFICIAL RECORD // LOT VIRTUAL GROUP</div>
             </div>
@@ -402,6 +433,14 @@
         PILOTS: [
             { id: "LOT001", pwd: "1234", name: "Capt. Mueller", rank: "Captain", base: "EDDF" },
             { id: "LOT002", pwd: "1234", name: "F.O. Weber", rank: "First Officer", base: "EDDM" }
+        ],
+        // === RANKING DATA (EDIT THIS MANUALLY) ===
+        RANKING: [
+            { name: "Capt. Mueller", pts: 2540 },
+            { name: "F.O. Weber", pts: 1950 },
+            { name: "Capt. Smith", pts: 1800 },
+            { name: "F.O. Kowalski", pts: 1200 },
+            { name: "Cadet Jones", pts: 850 }
         ],
         ROUTES: [
             { al: "LOT", d: "EPWA", a: "KJFK", t: 9.0, ac: "B787-9", fuel: "75t" },
@@ -450,6 +489,9 @@
                 document.getElementById('nav').classList.remove('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 this.nav('dash');
+                
+                // RENDER LOGIC
+                this.renderLeaderboard();
                 this.renderProfile();
                 this.renderRouteFilters();
                 this.renderRoutes('ALL');
@@ -459,8 +501,9 @@
                 this.renderMapFilters();
                 this.renderCrew();
                 this.dailyUI();
+                
                 try {
-                    const saved = JSON.parse(localStorage.getItem('lot_flight_v176'));
+                    const saved = JSON.parse(localStorage.getItem('lot_flight_v177'));
                     if(saved) { this.active = saved; this.timer(); }
                 } catch(e) {}
             } else {
@@ -468,6 +511,78 @@
             }
         },
         
+        renderLeaderboard: function() {
+            // Sort pilots by points DESC
+            const sorted = [...DB.RANKING].sort((a, b) => b.pts - a.pts);
+            
+            // Get Top 3
+            const p1 = sorted[0];
+            const p2 = sorted[1];
+            const p3 = sorted[2];
+            
+            // Render Podium
+            const podContainer = document.getElementById('podium-c');
+            let podHTML = '';
+            
+            // 2nd Place (Left)
+            if(p2) {
+                podHTML += `
+                <div class="pod-col place-2">
+                    <div class="pod-avatar">${p2.name[0]}</div>
+                    <div class="pod-block">
+                        <div class="pod-rank">2</div>
+                        <div class="pod-name">${p2.name}</div>
+                        <div class="pod-pts">${p2.pts}</div>
+                    </div>
+                </div>`;
+            }
+            
+            // 1st Place (Center)
+            if(p1) {
+                podHTML += `
+                <div class="pod-col place-1">
+                    <div class="crown">👑</div>
+                    <div class="pod-avatar">${p1.name[0]}</div>
+                    <div class="pod-block">
+                        <div class="pod-rank">1</div>
+                        <div class="pod-name">${p1.name}</div>
+                        <div class="pod-pts">${p1.pts}</div>
+                    </div>
+                </div>`;
+            }
+            
+            // 3rd Place (Right)
+            if(p3) {
+                 podHTML += `
+                <div class="pod-col place-3">
+                    <div class="pod-avatar">${p3.name[0]}</div>
+                    <div class="pod-block">
+                        <div class="pod-rank">3</div>
+                        <div class="pod-name">${p3.name}</div>
+                        <div class="pod-pts">${p3.pts}</div>
+                    </div>
+                </div>`;
+            }
+            podContainer.innerHTML = podHTML;
+            
+            // Render List (4th onwards)
+            const listContainer = document.getElementById('rank-list-c');
+            let listHTML = '';
+            
+            for(let i=3; i < sorted.length; i++) {
+                const p = sorted[i];
+                listHTML += `
+                <div class="rank-list-item">
+                    <div class="r-left">
+                        <span class="r-idx">${i+1}</span>
+                        <span class="r-name">${p.name}</span>
+                    </div>
+                    <span class="r-pts">${p.pts}</span>
+                </div>`;
+            }
+            listContainer.innerHTML = listHTML;
+        },
+
         toggleAbout: function() {
             document.getElementById('main-header').classList.toggle('open');
             document.getElementById('about-panel').classList.toggle('open');
@@ -614,7 +729,7 @@
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v176', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v177', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -650,7 +765,7 @@
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v176'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v177'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         requestLanding: function() {
@@ -676,11 +791,11 @@
             document.getElementById('rpt-hash').innerText = hash;
             
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v176'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v177'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             
-            // RESET BUTTONS for new report (Use Class Manipulation now)
+            // RESET BUTTONS for new report
             document.getElementById('btn-upload').classList.remove('hidden');
             document.getElementById('btn-archive').classList.add('hidden');
             
