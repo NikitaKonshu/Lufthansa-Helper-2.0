@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v169 Repair</title>
+    <title>LOT Premium v170</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -43,25 +43,25 @@
         .hidden { display: none !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* === MONOLITH HEADER (FIXED) === */
+        /* === HEADER (PERFECT ALIGN) === */
         #header-wrapper {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 600px; z-index: 3000;
+            width: 92%; max-width: 450px; /* Fixed max-width for alignment */
+            z-index: 3000;
             display: flex; flex-direction: column;
-            /* No alignment set here to allow children to fill width */
         }
         
         header { 
             width: 100%; height: 60px; 
             background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
-            border: 1px solid var(--glass-border); border-radius: 30px;
+            border: 1px solid var(--glass-border); 
+            border-radius: 24px; /* Matches Panel Radius */
             display: flex; justify-content: center; align-items: center; 
             cursor: pointer; position: relative; z-index: 20; 
             transition: all 0.3s var(--ease-out);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         
-        /* When open: square off bottom corners */
         header.open {
             border-bottom-left-radius: 0; 
             border-bottom-right-radius: 0;
@@ -72,19 +72,19 @@
         .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; transition: 0.3s; }
         header.open .brand { color: var(--accent-gold); }
         
-        /* The Panel */
         #about-panel {
-            width: 100%; background: #131722; /* Matches open header exactly */
+            width: 100%; /* Matches header exactly */
+            background: #131722;
             border: 1px solid var(--glass-border); border-top: none;
-            border-radius: 0 0 30px 30px;
+            border-radius: 0 0 24px 24px;
             max-height: 0; opacity: 0; overflow: hidden;
-            padding: 0 25px; transition: all 0.4s var(--ease-out);
+            transition: all 0.4s var(--ease-out);
             position: relative; z-index: 10; 
-            margin-top: -1px; /* Seamless join */
+            box-sizing: border-box;
         }
         #about-panel.open { 
             max-height: 300px; opacity: 1; 
-            padding: 20px 25px 25px 25px; 
+            padding: 20px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
         }
 
@@ -194,16 +194,20 @@
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
         
+        /* News Upgrade */
         .news-card { 
-            border-left: 3px solid var(--accent-gold); padding-left: 20px; cursor: pointer;
-            transition: background 0.2s;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px; cursor: pointer; transition: background 0.2s;
         }
         .news-card:active { background: rgba(255,255,255,0.05); }
-        .news-tag { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; background: #333; margin-bottom: 10px; }
-        .news-tag.urgent { background: rgba(239, 68, 68, 0.2); color: #ef4444; animation: pulse-red 2s infinite; }
-        .news-tag.info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-        
-        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        .news-icon { 
+            width: 40px; height: 40px; border-radius: 12px; 
+            background: rgba(255,255,255,0.05); 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem; margin-right: 15px; color: #fff;
+        }
+        .news-time { font-size: 0.7rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 4px; display: block; }
+        .news-arrow { color: #555; font-size: 1.2rem; margin-left: 10px; }
         
         .map-expand-btn { position: absolute; bottom: 15px; right: 15px; z-index: 1000; background: #000; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid #333; cursor: pointer; }
     </style>
@@ -216,7 +220,7 @@
     </header>
     <div id="about-panel">
         <h3 style="color:#fff; font-size:1.5rem; margin-bottom:5px;">System Status</h3>
-        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v169.0 Grand Repair</p>
+        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v170.0 Perfect Align</p>
         <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333;">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">
                 <span style="color:#888; font-size:0.8rem;">SERVER</span>
@@ -341,11 +345,11 @@
     <div class="sheet-body" style="padding:0;">
         <div style="height:200px; background:var(--accent-gold); position:relative;">
             <button onclick="document.getElementById('news-modal').style.display='none'" style="position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.5); border:none; color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer;">✕</button>
+            <div id="nm-icon" style="position:absolute; bottom:-30px; left:30px; width:60px; height:60px; background:#333; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:2rem; border:4px solid #111;">📣</div>
         </div>
-        <div style="padding:30px;">
-            <span id="nm-tag" style="background:#333; padding:4px 8px; border-radius:4px; font-size:0.7rem;">TAG</span>
-            <h2 id="nm-title" style="margin-top:10px;">Title</h2>
-            <p id="nm-date" style="color:#666; font-size:0.8rem; margin-bottom:20px;">Date</p>
+        <div style="padding:40px 30px 30px 30px;">
+            <h2 id="nm-title" style="margin-top:10px; line-height:1.2;">Title</h2>
+            <p id="nm-date" style="color:#666; font-size:0.8rem; margin-bottom:20px; margin-top:5px;">Date</p>
             <p id="nm-desc" style="color:#ccc; line-height:1.6;">Content</p>
         </div>
     </div>
@@ -386,9 +390,9 @@
             { t: "Embraer 195", op: "Air Dolomiti", r: "4,200km", spd: "M0.78" }
         ],
         NEWS: [
-            { id:1, tag:"URGENT", type:"urgent", t: "De-icing Procedures", d: "Heavy snowfall expected in Munich (EDDM). All crews must account for +30m de-icing delays.", date: "2m ago" },
-            { id:2, tag:"FLEET", type:"info", t: "New A320neo Arrival", d: "We have received a new A320neo (Reg: SP-LMA) ready for regional operations starting tomorrow.", date: "1h ago" },
-            { id:3, tag:"ROUTE", type:"info", t: "Dubai Service", d: "Daily flights to DXB starting next month. Bid for roster now open.", date: "Yesterday" }
+            { id:1, icon:"❄", t: "De-icing Alert: Munich", d: "Heavy snowfall expected in Munich (EDDM). All crews must account for +30m de-icing delays.", date: 2 },
+            { id:2, icon:"✈", t: "New A320neo Delivery", d: "We have received a new A320neo (Reg: SP-LMA) ready for regional operations starting tomorrow.", date: 60 },
+            { id:3, icon:"⚡", t: "Dubai Service Launch", d: "Daily flights to DXB starting next month. Bid for roster now open.", date: 1440 }
         ],
         COORDS: {
              "EPWA":[52.16,20.96], "KJFK":[40.64,-73.77], "EDDF":[50.03,8.56], "EGLL":[51.47,-0.45], 
@@ -442,7 +446,6 @@
         },
 
         nav: function(id) {
-            // FIX: INSTANT SWITCHING, NO TIMERS
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             const btns = document.querySelectorAll('.nav-btn');
             if(id=='dash') btns[0].classList.add('active');
@@ -452,17 +455,15 @@
             if(id=='map') btns[4].classList.add('active');
             if(id=='crew') btns[5].classList.add('active');
 
-            // Force hide all views immediately
             document.querySelectorAll('.tab-view').forEach(t => {
                 t.classList.remove('active');
                 t.style.display = 'none';
             });
             
-            // Show target
             const target = document.getElementById('view-'+id);
             if(target) {
                 target.style.display = 'block';
-                setTimeout(() => target.classList.add('active'), 20); // Small fade in
+                setTimeout(() => target.classList.add('active'), 20);
             }
             
             if(id === 'map') this.initMap();
@@ -523,23 +524,33 @@
         
         renderNews: function() {
             const c = document.getElementById('news-list');
-            c.innerHTML = DB.NEWS.map(n => `
+            c.innerHTML = DB.NEWS.map(n => {
+                let tStr = n.date + "m ago";
+                if(n.date > 60) tStr = Math.floor(n.date/60) + "h ago";
+                if(n.date > 1400) tStr = "Yesterday";
+                
+                return `
                 <div class="anim-item news-card" onclick="app.openNews(${n.id})">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                        <span class="news-tag ${n.type}">${n.tag}</span>
-                        <span style="font-size:0.7rem; color:#666;">${n.date}</span>
+                    <div style="display:flex; align-items:center;">
+                        <div class="news-icon">${n.icon}</div>
+                        <div>
+                            <span class="news-time">${tStr}</span>
+                            <h3 style="margin:0; font-size:1.1rem; line-height:1.2;">${n.t}</h3>
+                        </div>
                     </div>
-                    <h3 style="margin:5px 0 5px 0; font-size:1.1rem;">${n.t}</h3>
+                    <div class="news-arrow">›</div>
                 </div>
-            `).join('');
+            `}).join('');
         },
 
         openNews: function(id) {
             const n = DB.NEWS.find(x => x.id === id);
             if(n) {
-                document.getElementById('nm-tag').innerText = n.tag;
+                let tStr = n.date + "m ago";
+                if(n.date > 60) tStr = Math.floor(n.date/60) + "h ago";
+                document.getElementById('nm-icon').innerText = n.icon;
                 document.getElementById('nm-title').innerText = n.t;
-                document.getElementById('nm-date').innerText = n.date;
+                document.getElementById('nm-date').innerText = tStr;
                 document.getElementById('nm-desc').innerText = n.d;
                 document.getElementById('news-modal').style.display = 'flex';
             }
