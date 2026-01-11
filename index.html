@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v160 Ultimate</title>
+    <title>LOT Premium v161 Fixed</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -16,10 +16,9 @@
             --accent-gold: #c5a47e; 
             --accent-gold-dark: #8f7250;
             --accent-gold-glow: rgba(197, 164, 126, 0.4);
-            --vip-gold: #ffd700;
             --bg-deep: #050b14;
             --glass-panel: rgba(20, 25, 40, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
             --text-main: #ffffff;
             --text-sec: #94a3b8;
             --radius-lg: 24px;
@@ -146,11 +145,14 @@
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
-        /* === MODALS === */
+        /* === MODALS (FIXED LOGIN) === */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.visible { opacity: 1; }
         .modal-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); transform: translateY(100%); transition: transform 0.4s var(--ease-out); color: #fff; }
         .modal-overlay.visible .modal-body { transform: translateY(0); }
+
+        /* Specific Login Modal Fix to ensure visibility */
+        #login-modal { display: flex !important; opacity: 1 !important; background: rgba(0,0,0,0.95) !important; z-index: 9999 !important; }
 
         /* === OFP GRID === */
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
@@ -180,7 +182,7 @@
         }
         @keyframes softPop { 0% { opacity: 0; transform: translateY(15px); } 60% { transform: translateY(-2px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; }
+        .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; }
         .btn-float { position: fixed; bottom: 130px; right: 25px; width: 64px; height: 64px; border-radius: 50%; background: var(--accent-gold); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 1800; border: 2px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
@@ -192,7 +194,7 @@
     </header>
     <div id="about-panel">
         <h3 style="color:#fff; font-size:1.5rem; margin-bottom:5px;">System Info</h3>
-        <p style="color:#888; margin-bottom:20px; font-size:0.9rem;">EFN/LOT Portal v160.0 (Grand Master)</p>
+        <p style="color:#888; margin-bottom:20px; font-size:0.9rem;">EFN/LOT Portal v161.0 (Fixed)</p>
         <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333;">
             <div style="display:flex; justify-content:space-between;">
                 <span style="color:#888; font-size:0.8rem;">SERVER</span>
@@ -315,12 +317,14 @@
 
 </div>
 
-<div id="login-modal" class="modal-overlay" style="display:flex;">
+<div id="login-modal" class="modal-overlay">
     <div class="modal-body" style="background:transparent; border:none; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
         <h1 style="color:#fff; font-size:3rem; margin-bottom:10px;">✈</h1>
+        <h2 style="font-size:2rem; font-weight:300; color:#fff; margin-bottom:5px;">Welcome</h2>
         <input type="text" id="travel-id" class="ios-input" placeholder="ID (LOT001)" style="text-transform:uppercase;">
         <input type="password" id="travel-pass" class="ios-input" placeholder="PASSWORD">
         <button class="btn-primary" onclick="app.login()" style="margin-top:20px;">ENTER SYSTEM</button>
+        <p id="login-err" style="color:#ef4444; margin-top:20px; font-weight:700; font-size:0.8rem;"></p>
     </div>
 </div>
 
@@ -398,14 +402,24 @@ const DB = {
 const app = {
     user: null, active: null, temp: null, customCS: null, ofpMap: null, liveMap: null, map: null, dailyIdx: 0,
     filters: { al: 'ALL' },
+    stats: { h: 0, l: 0 },
 
     init: function() {
+        // Safe check for localStorage
+        try {
+            const s = JSON.parse(localStorage.getItem('lot_stats_v160'));
+            if(s) this.stats = s;
+            const f = JSON.parse(localStorage.getItem('lot_flight'));
+            if(f) { this.active = f; this.timer(); }
+        } catch(e) { console.log("Storage disallowed"); }
+
         const today = new Date().toDateString();
         let hash = 0;
         for(let i=0; i<today.length; i++) hash = today.charCodeAt(i) + ((hash << 5) - hash);
         this.dailyIdx = Math.abs(hash) % DB.ROUTES.length;
-        
-        // Restore session logic could go here
+
+        // Force Login Visible
+        document.getElementById('login-modal').classList.add('visible');
     },
 
     login: function() {
@@ -414,22 +428,31 @@ const app = {
         const usr = DB.PILOTS.find(x => x.id === u && x.pwd === p);
         if(usr) {
             this.user = usr;
-            document.getElementById('login-modal').classList.remove('visible');
-            setTimeout(()=> document.getElementById('login-modal').style.display='none', 300);
-            document.getElementById('nav').classList.remove('hidden');
-            document.getElementById('app').classList.remove('hidden');
             
-            if(usr.vip) document.getElementById('nav-btn-vip').classList.remove('hidden');
+            // Hide Login
+            const login = document.getElementById('login-modal');
+            login.classList.remove('visible');
+            login.style.opacity = '0';
+            setTimeout(() => {
+                login.style.display = 'none';
+                document.getElementById('nav').classList.remove('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                
+                if(usr.vip) document.getElementById('nav-btn-vip').classList.remove('hidden');
+                
+                this.nav('dash');
+                this.profile();
+                this.dailyUI();
+                this.renderRoutes();
+                this.renderVipRoutes();
+                this.initFleetSelector();
+                this.renderF('ALL');
+                this.renderCrew();
+            }, 500);
             
-            this.nav('dash');
-            this.profile();
-            this.dailyUI();
-            this.renderRoutes();
-            this.renderVipRoutes();
-            this.initFleetSelector();
-            this.renderF('ALL');
-            this.renderCrew();
-        } else alert("INVALID");
+        } else {
+            document.getElementById('login-err').innerText = "INVALID CREDENTIALS";
+        }
     },
 
     toggleAbout: function() {
@@ -441,8 +464,12 @@ const app = {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         if(id === 'vip') document.getElementById('nav-btn-vip').classList.add('active');
         else {
-             // Find button with correct icon logic or just iterate children
-             // Simplified active state for demo
+             // Basic active toggle logic
+             if(id=='dash') document.querySelector('.nav-btn:nth-child(1)').classList.add('active');
+             if(id=='routes') document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
+             if(id=='fleet') document.querySelector('.nav-btn:nth-child(3)').classList.add('active');
+             if(id=='map') document.querySelector('.nav-btn:nth-child(4)').classList.add('active');
+             if(id=='crew') document.querySelector('.nav-btn:nth-child(5)').classList.add('active');
         }
         
         ['dash','routes','fleet','map','vip','crew'].forEach(v => {
@@ -569,6 +596,7 @@ const app = {
     accept: function() {
         this.closeM();
         this.active = { ...this.temp, start: Date.now(), dur: 20000 }; 
+        try { localStorage.setItem('lot_flight', JSON.stringify(this.active)); } catch(e){}
         this.nav('dash');
         document.getElementById('flight-card').classList.remove('hidden');
         document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`;
@@ -590,7 +618,7 @@ const app = {
                 document.querySelector('.plane-marker').style.transform = `rotate(${angle}deg)`;
             }
 
-            if(pct >= 1) { clearInterval(this.tmr); alert("Arrived"); this.active = null; document.getElementById('flight-card').classList.add('hidden'); }
+            if(pct >= 1) { clearInterval(this.tmr); alert("Arrived"); this.active = null; document.getElementById('flight-card').classList.add('hidden'); try{localStorage.removeItem('lot_flight');}catch(e){} }
             else {
                 const rem = this.active.dur - (Date.now() - this.active.start);
                 const s = Math.ceil(rem/1000);
@@ -635,7 +663,7 @@ const app = {
     openFilter: function(t) {
         const c = document.getElementById('filter-container');
         const data = t === 'routes' ? ['ALL', ...new Set(DB.ROUTES.map(r => r.al))] : [];
-        c.innerHTML = data.map(x => `<div class="chip" onclick="app.applyFilter('${t}', '${x}')">${x}</div>`).join('');
+        c.innerHTML = data.map(x => `<div class="hangar-chip" onclick="app.applyFilter('${t}', '${x}')">${x}</div>`).join('');
         this.openM('filter-modal');
     },
     applyFilter: function(t, v) { 
@@ -644,7 +672,7 @@ const app = {
     },
     generateSmart: function() { this.closeM(); this.prep(Math.floor(Math.random()*DB.ROUTES.length), 'std'); },
 
-    cancel: function() { clearInterval(this.tmr); this.active = null; document.getElementById('flight-card').classList.add('hidden'); },
+    cancel: function() { clearInterval(this.tmr); this.active = null; document.getElementById('flight-card').classList.add('hidden'); try{localStorage.removeItem('lot_flight');}catch(e){} },
     openM: function(id) { document.getElementById(id).style.display='flex'; setTimeout(()=>document.getElementById(id).classList.add('visible'), 10); },
     closeM: function() { document.querySelectorAll('.modal-overlay').forEach(x=> { x.classList.remove('visible'); setTimeout(()=>x.style.display='none', 300); }); }
 };
