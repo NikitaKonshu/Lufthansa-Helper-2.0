@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v170</title>
+    <title>LOT Premium v171</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -43,11 +43,10 @@
         .hidden { display: none !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* === HEADER (PERFECT ALIGN) === */
+        /* === HEADER === */
         #header-wrapper {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 450px; /* Fixed max-width for alignment */
-            z-index: 3000;
+            width: 92%; max-width: 450px; z-index: 3000;
             display: flex; flex-direction: column;
         }
         
@@ -55,7 +54,7 @@
             width: 100%; height: 60px; 
             background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
             border: 1px solid var(--glass-border); 
-            border-radius: 24px; /* Matches Panel Radius */
+            border-radius: 24px; 
             display: flex; justify-content: center; align-items: center; 
             cursor: pointer; position: relative; z-index: 20; 
             transition: all 0.3s var(--ease-out);
@@ -73,8 +72,7 @@
         header.open .brand { color: var(--accent-gold); }
         
         #about-panel {
-            width: 100%; /* Matches header exactly */
-            background: #131722;
+            width: 100%; background: #131722;
             border: 1px solid var(--glass-border); border-top: none;
             border-radius: 0 0 24px 24px;
             max-height: 0; opacity: 0; overflow: hidden;
@@ -83,8 +81,8 @@
             box-sizing: border-box;
         }
         #about-panel.open { 
-            max-height: 300px; opacity: 1; 
-            padding: 20px; 
+            max-height: 350px; opacity: 1; 
+            padding: 30px 25px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
         }
 
@@ -125,9 +123,9 @@
         /* === CHIPS & FILTERS === */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip {
-            padding: 8px 16px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
-            color: #ccc; font-weight: 600; font-size: 0.8rem;
+            padding: 8px 16px; background: rgba(255,255,255,0.1); /* Brighter bg for visibility */
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 14px;
+            color: #ddd; font-weight: 600; font-size: 0.8rem;
             cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px);
         }
         .chip:active { transform: scale(0.95); }
@@ -194,7 +192,7 @@
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
         
-        /* News Upgrade */
+        /* News */
         .news-card { 
             display: flex; align-items: center; justify-content: space-between;
             padding: 20px; cursor: pointer; transition: background 0.2s;
@@ -219,16 +217,16 @@
         <div class="brand">LOT Polish Airlines ▾</div>
     </header>
     <div id="about-panel">
-        <h3 style="color:#fff; font-size:1.5rem; margin-bottom:5px;">System Status</h3>
-        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v170.0 Perfect Align</p>
-        <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333;">
-            <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">
-                <span style="color:#888; font-size:0.8rem;">SERVER</span>
-                <span style="color:#22c55e; font-size:0.8rem;">ONLINE</span>
-            </div>
-             <div style="display:flex; justify-content:space-between;">
-                <span style="color:#888; font-size:0.8rem;">ACARS</span>
-                <span style="color:#fff; font-size:0.8rem;">CONNECTED</span>
+        <div style="text-align:center;">
+            <h2 style="color:#fff; margin:0; font-size:1.4rem;">LOT Polish Airlines</h2>
+            <div style="color:var(--accent-gold); font-weight:700; font-size:0.9rem; margin-bottom:20px; letter-spacing:1px;">Virtual Group 2026</div>
+            
+            <p style="color:#888; font-size:0.85rem; line-height:1.6; margin-bottom:25px;">
+                Welcome to the premium virtual aviation experience. Simulating modern flight operations with precision and style.
+            </p>
+            
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; font-size:0.8rem; color:#555;">
+                made by <span style="color:#fff; font-weight:600;">Nikita Konshu</span>
             </div>
         </div>
     </div>
@@ -302,11 +300,7 @@
     <div id="view-map" class="tab-view">
         <div class="header-spacer"></div>
         <h2 style="font-weight:200; font-size:2rem; margin-bottom:20px;">Network</h2>
-        <div class="filter-container" id="map-filter-c">
-            <div class="chip selected" onclick="app.filterMap('ALL', this)">ALL</div>
-            <div class="chip" onclick="app.filterMap('LOT', this)">LOT</div>
-            <div class="chip" onclick="app.filterMap('STAR', this)">STAR ALLIANCE</div>
-        </div>
+        <div class="filter-container" id="map-filter-c"></div>
         <div class="anim-item" style="padding:0; overflow:hidden;">
             <div id="map-wrap">
                 <button class="map-expand-btn" onclick="app.expandMap()">⤢ EXPAND</button>
@@ -427,6 +421,7 @@
                 this.renderFleetFilters();
                 this.renderFleet('ALL');
                 this.renderNews();
+                this.renderMapFilters(); // NEW
                 this.renderCrew();
                 this.dailyUI();
                 
@@ -491,6 +486,11 @@
             const ops = ['ALL', ...new Set(DB.FLEET.map(f=>f.op))];
             this.renderChips(ops, 'hangar-filter-c', 'fleet');
         },
+        
+        renderMapFilters: function() {
+             const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
+             this.renderChips(ops, 'map-filter-c', 'map');
+        },
 
         renderChips: function(arr, containerId, type) {
             const c = document.getElementById(containerId);
@@ -504,6 +504,7 @@
             el.classList.add('selected');
             if(type === 'routes') this.renderRoutes(val);
             if(type === 'fleet') this.renderFleet(val);
+            if(type === 'map') this.filterMap(val);
         },
 
         renderRoutes: function(filter) {
@@ -653,9 +654,7 @@
              document.getElementById('full-map-modal').style.display = 'none';
         },
         
-        filterMap: function(type, el) {
-            document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
+        filterMap: function(type) {
             if(this.map) {
                 this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); 
                 this.drawMapLines(this.map, type);
@@ -663,7 +662,7 @@
         },
         
         drawMapLines: function(m, type) {
-            const data = type === 'ALL' ? DB.ROUTES : (type === 'LOT' ? DB.ROUTES.filter(r=>r.al==='LOT') : DB.ROUTES.filter(r=>r.al!=='LOT'));
+            const data = type === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === type);
             data.forEach(r => {
                 const c1 = DB.COORDS[r.d]; const c2 = DB.COORDS[r.a];
                 if(c1 && c2) {
