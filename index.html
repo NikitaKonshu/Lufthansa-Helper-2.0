@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v168 Full</title>
+    <title>LOT Premium v169 Repair</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -43,12 +43,12 @@
         .hidden { display: none !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* === SEAMLESS HEADER FIX === */
+        /* === MONOLITH HEADER (FIXED) === */
         #header-wrapper {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 600px; z-index: 3000;
+            width: 92%; max-width: 600px; z-index: 3000;
             display: flex; flex-direction: column;
-            align-items: center;
+            /* No alignment set here to allow children to fill width */
         }
         
         header { 
@@ -56,31 +56,37 @@
             background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
             border: 1px solid var(--glass-border); border-radius: 30px;
             display: flex; justify-content: center; align-items: center; 
-            cursor: pointer; position: relative; z-index: 10; /* Higher than panel */
+            cursor: pointer; position: relative; z-index: 20; 
             transition: all 0.3s var(--ease-out);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         
+        /* When open: square off bottom corners */
         header.open {
-            border-bottom-left-radius: 0; border-bottom-right-radius: 0;
-            border-bottom-color: rgba(255,255,255,0.05); 
-            background: #0f1219;
+            border-bottom-left-radius: 0; 
+            border-bottom-right-radius: 0;
+            border-bottom-color: transparent; 
+            background: #131722;
         }
 
         .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; transition: 0.3s; }
         header.open .brand { color: var(--accent-gold); }
         
-        /* The Panel that slides out */
+        /* The Panel */
         #about-panel {
-            width: 96%; background: #0f1219;
+            width: 100%; background: #131722; /* Matches open header exactly */
             border: 1px solid var(--glass-border); border-top: none;
             border-radius: 0 0 30px 30px;
             max-height: 0; opacity: 0; overflow: hidden;
-            padding: 0 20px; transition: all 0.4s var(--ease-out);
-            position: relative; z-index: 5; /* Lower than header */
-            margin-top: -5px; /* Slight overlap to prevent gaps */
+            padding: 0 25px; transition: all 0.4s var(--ease-out);
+            position: relative; z-index: 10; 
+            margin-top: -1px; /* Seamless join */
         }
-        #about-panel.open { max-height: 300px; opacity: 1; padding: 25px 20px 20px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        #about-panel.open { 
+            max-height: 300px; opacity: 1; 
+            padding: 20px 25px 25px 25px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        }
 
         .header-spacer { height: 110px; width: 100%; }
 
@@ -210,7 +216,7 @@
     </header>
     <div id="about-panel">
         <h3 style="color:#fff; font-size:1.5rem; margin-bottom:5px;">System Status</h3>
-        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v168.0 Full Experience</p>
+        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v169.0 Grand Repair</p>
         <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333;">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">
                 <span style="color:#888; font-size:0.8rem;">SERVER</span>
@@ -436,6 +442,7 @@
         },
 
         nav: function(id) {
+            // FIX: INSTANT SWITCHING, NO TIMERS
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             const btns = document.querySelectorAll('.nav-btn');
             if(id=='dash') btns[0].classList.add('active');
@@ -445,14 +452,18 @@
             if(id=='map') btns[4].classList.add('active');
             if(id=='crew') btns[5].classList.add('active');
 
+            // Force hide all views immediately
             document.querySelectorAll('.tab-view').forEach(t => {
                 t.classList.remove('active');
-                setTimeout(()=> t.style.display='none', 0);
+                t.style.display = 'none';
             });
             
+            // Show target
             const target = document.getElementById('view-'+id);
-            target.style.display = 'block';
-            setTimeout(() => target.classList.add('active'), 10);
+            if(target) {
+                target.style.display = 'block';
+                setTimeout(() => target.classList.add('active'), 20); // Small fade in
+            }
             
             if(id === 'map') this.initMap();
         },
@@ -551,9 +562,7 @@
             const r = DB.ROUTES[idx];
             this.temp = { ...r, cs: 'LO'+Math.floor(Math.random()*900+100) };
             
-            // WAITING TIME SIMULATION
             document.getElementById('flight-loader').classList.add('active');
-            
             setTimeout(() => {
                 document.getElementById('flight-loader').classList.remove('active');
                 
@@ -565,7 +574,7 @@
                 document.getElementById('br-time').innerText = r.t + 'H';
                 
                 document.getElementById('efb-modal').style.display = 'flex';
-            }, 1500); // 1.5s delay
+            }, 1500);
         },
 
         accept: function() {
@@ -636,11 +645,8 @@
         filterMap: function(type, el) {
             document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
-            
-            // Re-draw map layers based on type
-            // Note: Simplification for demo, clearing all layers and redrawing
             if(this.map) {
-                this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); // Keep tiles
+                this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); 
                 this.drawMapLines(this.map, type);
             }
         },
