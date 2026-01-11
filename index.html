@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v180</title>
+    <title>LOT Premium v181 Fixed</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -18,7 +18,7 @@
             --accent-gold: #c5a47e; 
             --accent-silver: #a0a0a0;
             --accent-bronze: #cd7f32;
-            --accent-mod: #3b82f6; /* Blue for Mods */
+            --accent-mod: #3b82f6; 
             --bg-deep: #050b14;
             --glass-panel: rgba(20, 25, 40, 0.9);
             --glass-border: rgba(255, 255, 255, 0.12);
@@ -52,49 +52,52 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         
         /* Icon adjustment */
-        i.ph { font-size: 1.4rem; vertical-align: middle; }
+        i.ph, i.ph-fill { font-size: 1.3rem; vertical-align: middle; }
 
-        /* === NEW LOGIN SCREEN === */
+        /* === NEW PREMIUM LOGIN === */
         .login-wrap {
-            position: fixed; inset: 0; z-index: 5000;
+            position: fixed; inset: 0; z-index: 9999;
             background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
             display: flex; align-items: center; justify-content: center;
         }
         .login-overlay {
-            position: absolute; inset: 0; background: rgba(5, 11, 20, 0.75); backdrop-filter: blur(10px);
+            position: absolute; inset: 0; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(15px);
         }
         .login-card {
             position: relative; z-index: 2; width: 85%; max-width: 380px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(20, 25, 35, 0.6); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 30px; padding: 40px 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             text-align: center;
-            animation: slideUp 0.6s var(--ease-out);
+            animation: slideUp 0.7s var(--ease-out);
         }
-        .login-logo {
-            font-size: 3rem; color: var(--accent-gold); margin-bottom: 10px;
+        .login-logo-icon {
+            font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 15px; display: inline-block;
+            filter: drop-shadow(0 0 15px rgba(197, 164, 126, 0.4));
         }
-        .login-title { font-size: 1.5rem; font-weight: 200; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
-        .login-sub { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 40px; }
+        .login-title { font-size: 1.6rem; font-weight: 200; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; color: #fff; }
+        .login-sub { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 40px; letter-spacing: 1px; font-weight: 500; }
         
-        .login-input-group { position: relative; margin-bottom: 20px; }
-        .login-input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.2rem; }
+        .login-input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .login-input-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 1.2rem; pointer-events: none; transition: 0.3s; }
         .login-input {
-            width: 100%; padding: 16px 16px 16px 45px;
+            width: 100%; padding: 18px 18px 18px 50px;
             background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; color: #fff; font-size: 1rem; outline: none;
-            transition: 0.3s; box-sizing: border-box;
+            border-radius: 16px; color: #fff; font-size: 1rem; outline: none;
+            transition: 0.3s; box-sizing: border-box; font-family: 'JetBrains Mono';
         }
         .login-input:focus { border-color: var(--accent-gold); background: rgba(0,0,0,0.5); }
+        .login-input:focus + i { color: var(--accent-gold); }
         
         .btn-login {
-            width: 100%; padding: 16px; margin-top: 20px;
-            background: var(--accent-gold); color: #000; font-weight: 700;
-            border: none; border-radius: 12px; font-size: 1rem; cursor: pointer;
-            transition: 0.3s;
+            width: 100%; padding: 18px; margin-top: 25px;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); 
+            color: #050b14; font-weight: 800; letter-spacing: 1px;
+            border: none; border-radius: 16px; font-size: 1rem; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2);
         }
-        .btn-login:active { transform: scale(0.96); }
+        .btn-login:active { transform: scale(0.97); }
 
         /* === HEADER === */
         #header-wrapper {
@@ -144,7 +147,7 @@
 
         .place-1 .pod-avatar { width: 70px; height: 70px; border-color: var(--accent-gold); background: radial-gradient(circle, #ffd700 0%, #b8860b 100%); color: #000; box-shadow: 0 0 20px rgba(197, 164, 126, 0.4); margin-bottom: -15px; }
         .place-1 .pod-block { height: 140px; background: linear-gradient(to top, rgba(197, 164, 126, 0.2), rgba(197, 164, 126, 0)); border-color: var(--accent-gold); }
-        .place-1 .crown { position: absolute; top: -35px; font-size: 2rem; color: gold; filter: drop-shadow(0 0 10px gold); animation: float 2s infinite ease-in-out; }
+        .place-1 .crown { position: absolute; top: -35px; font-size: 2rem; color: gold; filter: drop-shadow(0 0 10px gold); animation: float 2s infinite ease-in-out; z-index: 10; }
         
         .place-2 .pod-avatar { border-color: var(--accent-silver); }
         .place-2 .pod-block { height: 110px; border-color: var(--accent-silver); } 
@@ -172,7 +175,6 @@
         .st-active { background-color: var(--status-active); box-shadow: 0 0 5px var(--status-active); }
         .st-seasonal { background-color: var(--status-seasonal); box-shadow: 0 0 5px var(--status-seasonal); }
         .st-cancelled { background-color: var(--status-cancelled); }
-        
         .status-text { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         /* === DICE FAB === */
@@ -192,8 +194,7 @@
         .role-Leader { border-left-color: var(--accent-gold); background: linear-gradient(90deg, rgba(197, 164, 126, 0.1), transparent); }
         .role-Deputy { border-left-color: var(--accent-silver); }
         .role-Moderator { border-left-color: var(--accent-mod); background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent); }
-        
-        .role-icon { font-size: 1rem; margin-left: 5px; vertical-align: middle; }
+        .role-icon { margin-left: 5px; vertical-align: middle; }
         .ic-leader { color: var(--accent-gold); }
         .ic-deputy { color: var(--accent-silver); }
         .ic-mod { color: var(--accent-mod); }
@@ -207,13 +208,20 @@
         .nav-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; height: var(--nav-h); background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); border-radius: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: space-evenly; align-items: center; }
         .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; width: 50px; }
         .nav-btn.active { color: #fff; } 
-        .nav-btn.active i { transform: translateY(-5px); filter: grayscale(0) drop-shadow(0 0 5px rgba(255,255,255,0.5)); color: var(--accent-gold); }
-        .nav-btn i { font-size: 1.8rem; margin-bottom: 6px; display: block; filter: grayscale(1); transition: 0.3s; color: #fff; }
+        .nav-btn.active i { transform: translateY(-5px); color: var(--accent-gold); }
+        .nav-btn i { font-size: 1.8rem; margin-bottom: 6px; display: block; transition: 0.3s; color: #888; }
         .nav-lbl { font-size: 0.6rem; font-weight: 700; opacity: 0; transform: translateY(5px); transition: 0.3s; }
         .nav-btn.active .nav-lbl { opacity: 1; transform: translateY(0); }
         .tab-view { display: none; opacity: 0; transform: translateY(20px); transition: none; }
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
+
+        /* === MODALS === */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
+        .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
+        .sheet-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); animation: slideUp 0.4s var(--ease-out); color: #fff; }
+        .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         /* === BUTTONS & INPUTS === */
         .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
@@ -282,18 +290,18 @@
 <div id="login-modal" class="login-wrap">
     <div class="login-overlay"></div>
     <div class="login-card">
-        <i class="ph ph-airplane-tilt login-logo"></i>
+        <i class="ph ph-airplane-tilt login-logo-icon"></i>
         <div class="login-title">LOT Virtual</div>
         <div class="login-sub">Crew Operations Portal</div>
         
         <div class="login-input-group">
+            <input type="text" id="travel-id" class="login-input" placeholder="PILOT ID (LOT001)">
             <i class="ph ph-identification-card"></i>
-            <input type="text" id="travel-id" class="login-input" placeholder="Pilot ID (LOT001)">
         </div>
         
         <div class="login-input-group">
+            <input type="password" id="travel-pass" class="login-input" placeholder="ACCESS CODE">
             <i class="ph ph-lock-key"></i>
-            <input type="password" id="travel-pass" class="login-input" placeholder="Access Code">
         </div>
         
         <button class="btn-login" onclick="app.login()">AUTHENTICATE</button>
@@ -390,7 +398,7 @@
 
 </div>
 
-<div id="efb-modal" class="modal-sheet">
+<div id="efb-modal" class="modal-sheet" style="display: none;">
     <div class="sheet-body">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:15px; margin-bottom:15px;">
             <span class="mono" style="color:#888;">FLIGHT PLAN</span>
@@ -409,7 +417,7 @@
     </div>
 </div>
 
-<div id="landing-modal" class="modal-sheet">
+<div id="landing-modal" class="modal-sheet" style="display: none;">
     <div class="sheet-body">
         <h2 style="margin-top:0;">Arrival Confirmation</h2>
         <p style="color:#888; margin-bottom:20px;">Enter touchdown performance.</p>
@@ -418,7 +426,7 @@
     </div>
 </div>
 
-<div id="report-modal" class="modal-sheet">
+<div id="report-modal" class="modal-sheet" style="display: none;">
     <div class="sheet-body" style="padding:0; background:#000;">
         <div style="padding:40px 30px;">
             <div style="text-align:center; margin-bottom:20px;">
@@ -442,7 +450,7 @@
     </div>
 </div>
 
-<div id="news-modal" class="modal-sheet">
+<div id="news-modal" class="modal-sheet" style="display: none;">
     <div class="sheet-body" style="padding:0;">
         <div style="height:200px; background:var(--accent-gold); position:relative;">
             <button onclick="document.getElementById('news-modal').style.display='none'" style="position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.5); border:none; color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer;">✕</button>
@@ -458,7 +466,7 @@
     </div>
 </div>
 
-<div id="full-map-modal" class="modal-sheet" style="z-index:6000;">
+<div id="full-map-modal" class="modal-sheet" style="z-index:6000; display: none;">
     <div class="sheet-body sheet-full">
         <div id="map-full-wrap"></div>
         <button onclick="app.closeFullMap()" style="position:absolute; top:30px; left:30px; background:#000; color:#fff; padding:10px 20px; border-radius:30px; border:1px solid #333; z-index:9999;">✕ CLOSE</button>
@@ -547,7 +555,7 @@
                 this.dailyUI();
                 
                 try {
-                    const saved = JSON.parse(localStorage.getItem('lot_flight_v180'));
+                    const saved = JSON.parse(localStorage.getItem('lot_flight_v181'));
                     if(saved) { this.active = saved; this.timer(); }
                 } catch(e) {}
             } else {
@@ -774,7 +782,7 @@
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v180', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v181', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -798,7 +806,7 @@
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v180'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v181'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         requestLanding: function() { document.getElementById('landing-modal').style.display = 'flex'; },
@@ -818,7 +826,7 @@
             document.getElementById('rpt-rate').innerText = landingRate;
             document.getElementById('rpt-hash').innerText = hash;
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v180'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v181'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             document.getElementById('btn-upload').classList.remove('hidden');
