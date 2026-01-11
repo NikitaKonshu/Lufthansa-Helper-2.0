@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v175 Ultimate</title>
+    <title>LOT Premium v176 Logic Repair</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -460,7 +460,7 @@
                 this.renderCrew();
                 this.dailyUI();
                 try {
-                    const saved = JSON.parse(localStorage.getItem('lot_flight_v174'));
+                    const saved = JSON.parse(localStorage.getItem('lot_flight_v176'));
                     if(saved) { this.active = saved; this.timer(); }
                 } catch(e) {}
             } else {
@@ -614,7 +614,7 @@
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v174', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v176', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -650,7 +650,7 @@
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v174'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v176'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         requestLanding: function() {
@@ -662,7 +662,7 @@
             if(input > 0) input = -input;
             
             const landingRate = input + " fpm";
-            const blockOn = new Date().toISOString().split('T')[1].substring(0,8) + " Z"; // Added seconds
+            const blockOn = new Date().toISOString().split('T')[1].substring(0,8) + " Z"; 
             const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id;
             
             clearInterval(this.tmr);
@@ -676,22 +676,22 @@
             document.getElementById('rpt-hash').innerText = hash;
             
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v174'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v176'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             
-            // RESET BUTTONS for new report
-            document.getElementById('btn-upload').style.display = 'flex';
-            document.getElementById('btn-archive').style.display = 'none';
+            // RESET BUTTONS for new report (Use Class Manipulation now)
+            document.getElementById('btn-upload').classList.remove('hidden');
+            document.getElementById('btn-archive').classList.add('hidden');
             
             document.getElementById('report-modal').style.display = 'flex';
         },
         
         uploadReport: function() {
-             window.open('https://aeronation.net', '_blank');
-             // SWAP BUTTONS
-             document.getElementById('btn-upload').style.display = 'none';
-             document.getElementById('btn-archive').style.display = 'flex';
+             window.open('https://aeronation.ru', '_blank');
+             // SWAP BUTTONS using CLASS
+             document.getElementById('btn-upload').classList.add('hidden');
+             document.getElementById('btn-archive').classList.remove('hidden');
         },
         
         closeReport: function() {
