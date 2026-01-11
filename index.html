@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v174 Certified</title>
+    <title>LOT Premium v175 Ultimate</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -122,52 +122,60 @@
         .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
         .btn-primary:active { transform: scale(0.96); }
         .btn-sec { background: rgba(255,255,255,0.1); color: #fff; border:1px solid rgba(255,255,255,0.2); }
-        
-        /* Disabled State */
         .btn-disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
-        /* Active Pulse State */
         .btn-pulse { animation: goldPulse 1.5s infinite; }
         @keyframes goldPulse { 0% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(197, 164, 126, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0); } }
-
         .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; box-sizing: border-box; }
         
-        /* === SECURITY REPORT CARD === */
+        /* === HIGH SECURITY REPORT === */
         .report-paper { 
             position: relative; 
-            background: #151515; 
-            /* GUILLOCHE PATTERN SIMULATION */
+            background: #111;
+            /* High Contrast Guilloche Pattern */
             background-image: 
-                radial-gradient(circle at 100% 100%, transparent 20px, #151515 21px), 
-                radial-gradient(circle at 0% 0%, transparent 20px, #151515 21px),
-                repeating-linear-gradient(45deg, rgba(197, 164, 126, 0.05) 0px, rgba(197, 164, 126, 0.05) 1px, transparent 1px, transparent 10px),
-                repeating-linear-gradient(-45deg, rgba(197, 164, 126, 0.05) 0px, rgba(197, 164, 126, 0.05) 1px, transparent 1px, transparent 10px);
+                repeating-radial-gradient( circle at 0 0, transparent 0, #111 20px ),
+                repeating-linear-gradient( 45deg, rgba(197, 164, 126, 0.15) 0px, rgba(197, 164, 126, 0.15) 1px, transparent 1px, transparent 4px ),
+                repeating-linear-gradient( -45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 4px );
             padding: 25px; 
-            border-radius: 20px; 
-            border: 1px solid var(--accent-gold); 
-            overflow: hidden; 
+            border-radius: 16px; 
+            border: 2px solid var(--accent-gold);
             margin-bottom: 20px; 
-        }
-        
-        /* Micro-text border simulation */
-        .report-paper::after {
-            content: ''; position: absolute; left: 5px; right: 5px; top: 5px; bottom: 5px;
-            border: 1px dashed rgba(197, 164, 126, 0.3); pointer-events: none; border-radius: 15px;
+            overflow: hidden;
         }
 
-        .watermark-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 3.5rem; font-weight: 900; color: #fff;
-            mix-blend-mode: overlay; /* HOLOGRAPHIC BLEND */
-            opacity: 0.15; 
-            border: 8px solid rgba(255,255,255,0.1); padding: 10px 40px;
-            pointer-events: none; white-space: nowrap; z-index: 0;
-            text-transform: uppercase; letter-spacing: 5px;
+        /* Scan lines overlay */
+        .report-paper::before {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none; z-index: 2;
+        }
+
+        .hologram-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 3.5rem; font-weight: 900; 
+            /* Gradient Text (Gold/Silver/White) */
+            background: linear-gradient(135deg, #8f7250 0%, #fff 40%, #c5a47e 60%, #8f7250 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.6; z-index: 1;
+            border: 6px double rgba(197, 164, 126, 0.4); padding: 5px 30px;
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .rpt-row { position: relative; z-index: 3; display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 6px; }
+        .rpt-lbl { color: #aaa; font-size: 0.75rem; font-family: 'JetBrains Mono'; letter-spacing: 1px; }
+        .rpt-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono'; text-shadow: 0 1px 2px #000; }
+        
+        .microtext {
+            position: absolute; bottom: 3px; left: 0; width: 100%;
+            font-size: 0.4rem; color: rgba(197, 164, 126, 0.5); text-align: center;
+            font-family: 'JetBrains Mono'; letter-spacing: 1px; white-space: nowrap;
+            z-index: 3;
+            content: "OFFICIAL RECORD // LOT VIRTUAL GROUP // DO NOT ALTER // SECURE HASH";
         }
         
-        .rpt-row { position: relative; z-index: 1; display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .rpt-lbl { color: #888; font-size: 0.75rem; font-family: 'JetBrains Mono'; letter-spacing: 1px; }
-        .rpt-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono'; }
-        .rpt-hash { position:relative; z-index:1; font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #555; text-align: center; margin-top: 20px; word-break: break-all; border-top:1px solid #333; padding-top:10px; }
+        .rpt-hash { position:relative; z-index:3; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--accent-gold); text-align: center; margin-top: 15px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); }
 
         /* === GRID & CARDS === */
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
@@ -326,7 +334,7 @@
             </div>
             
             <div class="report-paper">
-                <div class="watermark-overlay">VERIFIED</div>
+                <div class="hologram-text">VERIFIED</div>
                 
                 <div class="rpt-row">
                     <span class="rpt-lbl">PILOT</span>
@@ -354,11 +362,11 @@
                 </div>
                 
                 <div class="rpt-hash" id="rpt-hash"></div>
+                <div class="microtext">OFFICIAL RECORD // LOT VIRTUAL GROUP // DO NOT ALTER // SECURE HASH // 2026 // OFFICIAL RECORD // LOT VIRTUAL GROUP</div>
             </div>
             
-            <a href="https://aeronation.net" target="_blank" class="btn-primary" style="background:#2563eb; color:#fff; margin-bottom:15px;">UPLOAD TO AERONATION</a>
-            
-            <button class="btn-primary btn-sec" onclick="app.closeReport()">ARCHIVE & CLOSE</button>
+            <button id="btn-upload" class="btn-primary" style="background:#2563eb; color:#fff; margin-bottom:15px;" onclick="app.uploadReport()">UPLOAD TO AERONATION</button>
+            <button id="btn-archive" class="btn-primary btn-sec hidden" onclick="app.closeReport()">ARCHIVE & CLOSE</button>
         </div>
     </div>
 </div>
@@ -615,7 +623,7 @@
             document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`;
             document.getElementById('af-ac').innerText = this.active.ac;
             
-            // Reset Button State on load
+            // Reset Button State
             const btn = document.getElementById('btn-land');
             btn.classList.add('btn-disabled');
             btn.classList.remove('btn-pulse');
@@ -651,11 +659,10 @@
         finishFlight: function() {
             let input = document.getElementById('landing-rate').value;
             if(!input) { alert("Please enter landing rate"); return; }
-            if(input > 0) input = -input; // Auto-correct to negative
+            if(input > 0) input = -input;
             
             const landingRate = input + " fpm";
-            const blockOn = new Date().toISOString().split('T')[1].substring(0,5) + " Z";
-            // Complex Hash
+            const blockOn = new Date().toISOString().split('T')[1].substring(0,8) + " Z"; // Added seconds
             const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id;
             
             clearInterval(this.tmr);
@@ -673,8 +680,20 @@
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             
+            // RESET BUTTONS for new report
+            document.getElementById('btn-upload').style.display = 'flex';
+            document.getElementById('btn-archive').style.display = 'none';
+            
             document.getElementById('report-modal').style.display = 'flex';
         },
+        
+        uploadReport: function() {
+             window.open('https://aeronation.net', '_blank');
+             // SWAP BUTTONS
+             document.getElementById('btn-upload').style.display = 'none';
+             document.getElementById('btn-archive').style.display = 'flex';
+        },
+        
         closeReport: function() {
             document.getElementById('report-modal').style.display = 'none';
         },
