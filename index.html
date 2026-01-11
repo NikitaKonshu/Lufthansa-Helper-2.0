@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v166 Stable Enhanced</title>
+    <title>LOT Premium v167 Fixed</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -11,7 +11,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        /* === CONFIG (v154 Base) === */
+        /* === CONFIG (Base v154 Style) === */
         :root {
             --accent-gold: #c5a47e; 
             --accent-gold-dark: #8f7250;
@@ -43,13 +43,12 @@
         .hidden { display: none !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* === HEADER (SEAMLESS WRAPPER) === */
+        /* === SEAMLESS HEADER === */
         #header-wrapper {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 600px; z-index: 3000;
             display: flex; flex-direction: column;
         }
-
         header { 
             width: 100%; height: 60px; 
             background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
@@ -62,26 +61,23 @@
         header.open {
             border-bottom-left-radius: 0; border-bottom-right-radius: 0;
             border-bottom-color: transparent; 
-            background: #0f1219; /* Solid color when open to merge */
+            background: #0f1219; 
         }
-
         .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; transition: 0.3s; }
         header.open .brand { color: var(--accent-gold); }
         
-        /* The Panel that slides out */
         #about-panel {
             width: 100%; background: #0f1219;
             border: 1px solid var(--glass-border); border-top: none;
             border-radius: 0 0 30px 30px;
             max-height: 0; opacity: 0; overflow: hidden;
             padding: 0 25px; transition: all 0.4s var(--ease-out);
-            position: relative; z-index: 1; margin-top: -1px; /* Overlap to hide seam */
+            position: relative; z-index: 1; margin-top: -1px;
         }
         #about-panel.open { max-height: 300px; opacity: 1; padding: 25px; padding-top: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-
         .header-spacer { height: 110px; width: 100%; }
 
-        /* === UI CARDS === */
+        /* === CARDS === */
         .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
         
         .anim-item, .ticket { 
@@ -103,7 +99,7 @@
         .ap { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
         .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
 
-        /* === NEW: BOUNCING FILTERS === */
+        /* === BOUNCING FILTERS === */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip {
             padding: 10px 18px; background: rgba(255,255,255,0.05);
@@ -113,7 +109,6 @@
         }
         .chip.selected { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); font-weight: 800; }
         .chip:active { transform: scale(0.95); }
-        
         @keyframes softPop { 
             0% { opacity: 0; transform: translateY(15px); } 
             60% { transform: translateY(-3px); } 
@@ -141,7 +136,7 @@
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
-        /* === STATUS PULSE === */
+        /* === PULSE STATUS === */
         .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); animation: pulse 2s infinite; display: inline-block; margin-right: 8px; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
 
@@ -169,15 +164,13 @@
         .btn-primary:active { transform: scale(0.96); }
         .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; }
         
-        /* === OFP GRID === */
+        /* === OFP === */
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .ofp-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
         .ofp-val { font-size: 1.1rem; color: var(--accent-gold); font-weight: 700; font-family: 'JetBrains Mono'; }
 
         #map-wrap { height: 400px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); }
-        
-        /* News Card Style */
         .news-card { border-left: 3px solid var(--accent-gold); padding-left: 20px; }
     </style>
 </head>
@@ -189,7 +182,7 @@
     </header>
     <div id="about-panel">
         <h3 style="color:#fff; font-size:1.5rem; margin-bottom:5px;">System Status</h3>
-        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v166.0 Stable Enhanced</p>
+        <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">v167.0 Fixed</p>
         <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333;">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">
                 <span style="color:#888; font-size:0.8rem;">SERVER</span>
@@ -367,20 +360,22 @@
             
             if(usr) {
                 this.user = usr;
+                // Force hide modal
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('nav').classList.remove('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 
                 this.nav('dash');
                 this.renderProfile();
-                this.renderRoutes('ALL');
                 this.renderRouteFilters();
-                this.renderFleet('ALL');
+                this.renderRoutes('ALL');
                 this.renderFleetFilters();
+                this.renderFleet('ALL');
                 this.renderNews();
                 this.renderCrew();
                 this.dailyUI();
                 
+                // Flight persistence check
                 try {
                     const saved = JSON.parse(localStorage.getItem('lot_flight_v154'));
                     if(saved) { this.active = saved; this.timer(); }
@@ -397,9 +392,9 @@
         },
 
         nav: function(id) {
+            // 1. Update Icons
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             const btns = document.querySelectorAll('.nav-btn');
-            // Hardcoded index for icons
             if(id=='dash') btns[0].classList.add('active');
             if(id=='routes') btns[1].classList.add('active');
             if(id=='fleet') btns[2].classList.add('active');
@@ -407,14 +402,19 @@
             if(id=='map') btns[4].classList.add('active');
             if(id=='crew') btns[5].classList.add('active');
 
+            // 2. Hide ALL Views Sync
             document.querySelectorAll('.tab-view').forEach(t => {
                 t.classList.remove('active');
-                setTimeout(()=> t.style.display='none', 0);
+                t.style.display = 'none'; // Force hide immediately
             });
             
+            // 3. Show Target
             const target = document.getElementById('view-'+id);
-            target.style.display = 'block';
-            setTimeout(() => target.classList.add('active'), 10);
+            if(target) {
+                target.style.display = 'block';
+                // Small delay to allow CSS to render block before adding active class (opacity)
+                setTimeout(() => target.classList.add('active'), 20);
+            }
             
             if(id === 'map') this.initMap();
         },
