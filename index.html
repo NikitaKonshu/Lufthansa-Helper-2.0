@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOT Premium v173 Manual</title>
+    <title>LOT Premium v174 Certified</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -15,7 +15,7 @@
         :root {
             --accent-gold: #c5a47e; 
             --bg-deep: #050b14;
-            --glass-panel: rgba(20, 25, 40, 0.85);
+            --glass-panel: rgba(20, 25, 40, 0.9);
             --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #ffffff;
             --text-sec: #94a3b8;
@@ -94,13 +94,12 @@
         .ap { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
         .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
 
-        /* === CHIPS === */
+        /* === CHIPS & NAV === */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #ddd; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px); }
         .chip.selected { background: var(--accent-gold); color: #000; font-weight: 800; border-color: var(--accent-gold); }
         @keyframes softPop { 0% { opacity: 0; transform: translateY(15px); } 60% { transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        /* === NAV === */
         .nav-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; height: var(--nav-h); background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); border-radius: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: space-evenly; align-items: center; }
         .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; width: 50px; }
         .nav-btn.active { color: #fff; } 
@@ -119,27 +118,58 @@
         .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; }
+        /* === BUTTONS & INPUTS === */
+        .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
         .btn-primary:active { transform: scale(0.96); }
         .btn-sec { background: rgba(255,255,255,0.1); color: #fff; border:1px solid rgba(255,255,255,0.2); }
+        
+        /* Disabled State */
+        .btn-disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+        /* Active Pulse State */
+        .btn-pulse { animation: goldPulse 1.5s infinite; }
+        @keyframes goldPulse { 0% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(197, 164, 126, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0); } }
+
         .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; box-sizing: border-box; }
         
-        /* === REPORT WATERMARK === */
-        .report-paper { position: relative; background: #1a1a1a; padding: 25px; border-radius: 20px; border: 1px solid #333; overflow: hidden; margin-bottom: 20px; }
+        /* === SECURITY REPORT CARD === */
+        .report-paper { 
+            position: relative; 
+            background: #151515; 
+            /* GUILLOCHE PATTERN SIMULATION */
+            background-image: 
+                radial-gradient(circle at 100% 100%, transparent 20px, #151515 21px), 
+                radial-gradient(circle at 0% 0%, transparent 20px, #151515 21px),
+                repeating-linear-gradient(45deg, rgba(197, 164, 126, 0.05) 0px, rgba(197, 164, 126, 0.05) 1px, transparent 1px, transparent 10px),
+                repeating-linear-gradient(-45deg, rgba(197, 164, 126, 0.05) 0px, rgba(197, 164, 126, 0.05) 1px, transparent 1px, transparent 10px);
+            padding: 25px; 
+            border-radius: 20px; 
+            border: 1px solid var(--accent-gold); 
+            overflow: hidden; 
+            margin-bottom: 20px; 
+        }
+        
+        /* Micro-text border simulation */
+        .report-paper::after {
+            content: ''; position: absolute; left: 5px; right: 5px; top: 5px; bottom: 5px;
+            border: 1px dashed rgba(197, 164, 126, 0.3); pointer-events: none; border-radius: 15px;
+        }
+
         .watermark-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 4rem; font-weight: 900; color: var(--accent-gold);
-            opacity: 0.3; /* 30% Visibility */
-            border: 8px solid var(--accent-gold); padding: 10px 40px;
+            font-size: 3.5rem; font-weight: 900; color: #fff;
+            mix-blend-mode: overlay; /* HOLOGRAPHIC BLEND */
+            opacity: 0.15; 
+            border: 8px solid rgba(255,255,255,0.1); padding: 10px 40px;
             pointer-events: none; white-space: nowrap; z-index: 0;
-            text-transform: uppercase;
+            text-transform: uppercase; letter-spacing: 5px;
         }
+        
         .rpt-row { position: relative; z-index: 1; display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .rpt-lbl { color: #888; font-size: 0.8rem; font-family: 'JetBrains Mono'; }
+        .rpt-lbl { color: #888; font-size: 0.75rem; font-family: 'JetBrains Mono'; letter-spacing: 1px; }
         .rpt-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono'; }
-        .rpt-hash { position:relative; z-index:1; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #666; text-align: center; margin-top: 20px; word-break: break-all; }
+        .rpt-hash { position:relative; z-index:1; font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #555; text-align: center; margin-top: 20px; word-break: break-all; border-top:1px solid #333; padding-top:10px; }
 
-        /* === GRID === */
+        /* === GRID & CARDS === */
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .ofp-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
@@ -148,7 +178,6 @@
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
         
-        /* News */
         .news-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; cursor: pointer; transition: background 0.2s; }
         .news-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px; color: #fff; }
         .news-time { font-size: 0.7rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 4px; display: block; }
@@ -216,7 +245,7 @@
             
             <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px;">
                 <button class="btn-primary btn-sec" onclick="app.cancel()">CANCEL</button>
-                <button class="btn-primary" onclick="app.requestLanding()">LAND & REPORT</button>
+                <button id="btn-land" class="btn-primary btn-disabled" onclick="app.requestLanding()">WAITING...</button>
             </div>
         </div>
     </div>
@@ -282,7 +311,7 @@
 <div id="landing-modal" class="modal-sheet">
     <div class="sheet-body">
         <h2 style="margin-top:0;">Arrival Confirmation</h2>
-        <p style="color:#888; margin-bottom:20px;">Please enter your touchdown performance data.</p>
+        <p style="color:#888; margin-bottom:20px;">Enter touchdown performance.</p>
         <input type="number" id="landing-rate" class="ios-input" placeholder="LANDING RATE (e.g. -145)">
         <button class="btn-primary" onclick="app.finishFlight()">SUBMIT REPORT</button>
     </div>
@@ -300,11 +329,11 @@
                 <div class="watermark-overlay">VERIFIED</div>
                 
                 <div class="rpt-row">
-                    <span class="rpt-lbl">PILOT IN COMMAND</span>
+                    <span class="rpt-lbl">PILOT</span>
                     <span class="rpt-val" id="rpt-pilot"></span>
                 </div>
                 <div class="rpt-row">
-                    <span class="rpt-lbl">FLIGHT</span>
+                    <span class="rpt-lbl">ROUTE</span>
                     <span class="rpt-val" id="rpt-route"></span>
                 </div>
                  <div class="rpt-row">
@@ -312,22 +341,24 @@
                     <span class="rpt-val" id="rpt-ac"></span>
                 </div>
                 <div class="rpt-row">
-                    <span class="rpt-lbl">BLOCK OFF (DEP)</span>
+                    <span class="rpt-lbl">BLOCK OFF</span>
                     <span class="rpt-val" id="rpt-off"></span>
                 </div>
                 <div class="rpt-row">
-                    <span class="rpt-lbl">BLOCK ON (ARR)</span>
+                    <span class="rpt-lbl">BLOCK ON</span>
                     <span class="rpt-val" id="rpt-on"></span>
                 </div>
                 <div class="rpt-row" style="border:none; margin-top:15px;">
-                    <span class="rpt-lbl">TOUCHDOWN RATE</span>
+                    <span class="rpt-lbl">LANDING RATE</span>
                     <span class="rpt-val" id="rpt-rate" style="color:var(--accent-gold); font-size:1.2rem;"></span>
                 </div>
                 
                 <div class="rpt-hash" id="rpt-hash"></div>
             </div>
             
-            <button class="btn-primary" onclick="app.closeReport()">ARCHIVE & CLOSE</button>
+            <a href="https://aeronation.net" target="_blank" class="btn-primary" style="background:#2563eb; color:#fff; margin-bottom:15px;">UPLOAD TO AERONATION</a>
+            
+            <button class="btn-primary btn-sec" onclick="app.closeReport()">ARCHIVE & CLOSE</button>
         </div>
     </div>
 </div>
@@ -410,7 +441,6 @@
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('nav').classList.remove('hidden');
                 document.getElementById('app').classList.remove('hidden');
-                
                 this.nav('dash');
                 this.renderProfile();
                 this.renderRouteFilters();
@@ -421,12 +451,10 @@
                 this.renderMapFilters();
                 this.renderCrew();
                 this.dailyUI();
-                
                 try {
-                    const saved = JSON.parse(localStorage.getItem('lot_flight_v173'));
+                    const saved = JSON.parse(localStorage.getItem('lot_flight_v174'));
                     if(saved) { this.active = saved; this.timer(); }
                 } catch(e) {}
-                
             } else {
                 document.getElementById('login-err').innerText = "INVALID ID OR PASS";
             }
@@ -451,13 +479,11 @@
                 t.classList.remove('active');
                 t.style.display = 'none';
             });
-            
             const target = document.getElementById('view-'+id);
             if(target) {
                 target.style.display = 'block';
                 setTimeout(() => target.classList.add('active'), 20);
             }
-            
             if(id === 'map') this.initMap();
         },
 
@@ -473,7 +499,6 @@
                 </div>
             `;
         },
-        
         renderRouteFilters: function() {
             const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
             this.renderChips(ops, 'routes-filter-c', 'routes');
@@ -486,14 +511,12 @@
              const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
              this.renderChips(ops, 'map-filter-c', 'map');
         },
-
         renderChips: function(arr, containerId, type) {
             const c = document.getElementById(containerId);
             c.innerHTML = arr.map((o, i) => 
                 `<div class="chip ${o=='ALL'?'selected':''}" style="animation: softPop 0.5s ease forwards; animation-delay: ${i*0.05}s;" onclick="app.filterTrigger(this, '${type}', '${o}')">${o}</div>`
             ).join('');
         },
-
         filterTrigger: function(el, type, val) {
             el.parentNode.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
@@ -501,7 +524,6 @@
             if(type === 'fleet') this.renderFleet(val);
             if(type === 'map') this.filterMap(val);
         },
-
         renderRoutes: function(filter) {
             const c = document.getElementById('routes-list'); c.innerHTML = '';
             const data = filter === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === filter);
@@ -509,7 +531,6 @@
                 c.innerHTML += `<div class="ticket anim-item" onclick="app.prep(${i})"><div class="ticket-l"><div class="al-tag">${r.al}</div><div class="route-path"><div><div class="ap">${r.d}</div><div class="ap-lbl">DEP</div></div><div style="color:#fff;">✈</div><div style="text-align:right;"><div class="ap">${r.a}</div><div class="ap-lbl">ARR</div></div></div><div style="font-size:0.8rem; color:var(--text-sec);">${r.ac}</div></div><div class="ticket-r"><div style="font-family:'JetBrains Mono'; font-weight:700; font-size:0.9rem;">${r.t}h</div></div></div>`;
             });
         },
-
         renderFleet: function(op) {
             const c = document.getElementById('fleet-list'); c.innerHTML = '';
             const data = op === 'ALL' ? DB.FLEET : DB.FLEET.filter(x => x.op === op);
@@ -517,7 +538,6 @@
                 c.innerHTML += `<div class="anim-item"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-weight:700;">${x.t}</span><span style="font-size:0.8rem; color:var(--accent-gold); font-weight:700;">${x.op}</span></div><div style="display:flex; gap:15px; font-size:0.8rem; color:#888;"><span>R: ${x.r}</span><span>S: ${x.spd}</span></div></div>`;
             });
         },
-        
         renderNews: function() {
             const c = document.getElementById('news-list');
             c.innerHTML = DB.NEWS.map(n => {
@@ -537,7 +557,6 @@
                 </div>
             `}).join('');
         },
-
         openNews: function(id) {
             const n = DB.NEWS.find(x => x.id === id);
             if(n) {
@@ -550,19 +569,16 @@
                 document.getElementById('news-modal').style.display = 'flex';
             }
         },
-        
         renderCrew: function() {
              const c = document.getElementById('crew-list'); c.innerHTML = '';
              DB.PILOTS.forEach(p => {
                  c.innerHTML += `<div class="anim-item" style="display:flex; align-items:center; gap:15px;"><div style="width:40px; height:40px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; color:#fff;">${p.name[0]}</div><div><div style="font-weight:700;">${p.name}</div><div style="font-size:0.8rem; color:#888;">${p.rank}</div></div></div>`;
              });
         },
-
         dailyUI: function() {
             const r = DB.ROUTES[this.dailyIdx];
             document.getElementById('daily-content').innerText = `${r.d} ➝ ${r.a}`;
         },
-
         prep: function(idx) {
             if(this.active) { alert("Flight in progress"); return; }
             const r = DB.ROUTES[idx];
@@ -582,30 +598,31 @@
                 document.getElementById('efb-modal').style.display = 'flex';
             }, 1500);
         },
-
         accept: function() {
             this.closeM();
-            // Start flight: Save start time
             this.active = { 
                 ...this.temp, 
                 startTs: Date.now(),
-                // Display time for Block Off
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
-                dur: 20000 // Only used for progress bar visual
+                dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v173', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v174', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
-
         timer: function() {
             document.getElementById('flight-card').classList.remove('hidden');
             document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`;
             document.getElementById('af-ac').innerText = this.active.ac;
             
+            // Reset Button State on load
+            const btn = document.getElementById('btn-land');
+            btn.classList.add('btn-disabled');
+            btn.classList.remove('btn-pulse');
+            btn.innerText = "WAITING...";
+            
             this.tmr = setInterval(() => {
                 const el = Date.now() - this.active.startTs;
-                // Just visual progress, flight doesn't end automatically
                 const pct = Math.min(el/this.active.dur, 1);
                 document.getElementById('af-bar').style.width = (pct*100)+'%';
                 
@@ -613,32 +630,36 @@
                 const m = Math.floor(secs/60);
                 const s = secs % 60;
                 document.getElementById('af-timer').innerText = `${m}:${s<10?'0'+s:s} ELAPSED`;
+
+                // UNLOCK BUTTON LOGIC
+                if (pct >= 1) {
+                    btn.classList.remove('btn-disabled');
+                    btn.classList.add('btn-pulse');
+                    btn.innerText = "LAND & REPORT";
+                }
             }, 1000);
         },
-
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v173'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v174'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
-        
         requestLanding: function() {
              document.getElementById('landing-modal').style.display = 'flex';
         },
-        
         finishFlight: function() {
-            const input = document.getElementById('landing-rate').value;
+            let input = document.getElementById('landing-rate').value;
             if(!input) { alert("Please enter landing rate"); return; }
+            if(input > 0) input = -input; // Auto-correct to negative
             
             const landingRate = input + " fpm";
             const blockOn = new Date().toISOString().split('T')[1].substring(0,5) + " Z";
-            // Simple Hash
-            const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString().substring(9);
+            // Complex Hash
+            const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id;
             
             clearInterval(this.tmr);
             
-            // Fill Report
             document.getElementById('rpt-pilot').innerText = this.user.name;
             document.getElementById('rpt-route').innerText = this.active.d + " ➝ " + this.active.a;
             document.getElementById('rpt-ac').innerText = this.active.ac;
@@ -647,20 +668,16 @@
             document.getElementById('rpt-rate').innerText = landingRate;
             document.getElementById('rpt-hash').innerText = hash;
             
-            // Clear Data
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v173'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v174'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             
-            // Show Report
             document.getElementById('report-modal').style.display = 'flex';
         },
-        
         closeReport: function() {
             document.getElementById('report-modal').style.display = 'none';
         },
-
         initMap: function() {
             setTimeout(() => {
                 if(!this.map) {
@@ -671,7 +688,6 @@
                 this.map.invalidateSize();
             }, 100);
         },
-        
         expandMap: function() {
             document.getElementById('full-map-modal').style.display = 'block';
             setTimeout(() => {
@@ -683,11 +699,9 @@
                 this.fullMap.invalidateSize();
             }, 100);
         },
-        
         closeFullMap: function() {
              document.getElementById('full-map-modal').style.display = 'none';
         },
-        
         filterMap: function(type, el) {
             if(el) {
                 document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected'));
@@ -698,7 +712,6 @@
                 this.drawMapLines(this.map, type);
             }
         },
-        
         drawMapLines: function(m, type) {
             const data = type === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === type);
             data.forEach(r => {
@@ -709,7 +722,6 @@
                 }
             });
         },
-
         closeM: function() { document.getElementById('efb-modal').style.display='none'; }
     };
     window.onload = () => app.init();
