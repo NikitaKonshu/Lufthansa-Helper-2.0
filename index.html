@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>LOT Premium v186 NoFlash</title>
+    <title>LOT Premium v188 Full</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
+        /* === GLOBAL VARS === */
         :root {
             --accent-gold: #c5a47e; 
             --accent-silver: #a0a0a0;
@@ -34,6 +35,7 @@
             --status-cancelled: #ef4444;
         }
 
+        /* === RESET & BASE === */
         html { background-color: var(--bg-deep); }
         
         body {
@@ -62,8 +64,6 @@
         #intro-screen.fade-out { opacity: 0; pointer-events: none; }
         
         .intro-container { position: relative; width: 300px; height: 150px; display: flex; align-items: center; justify-content: center; }
-        
-        /* The Arc Path */
         .intro-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         .intro-path {
             fill: none; stroke: url(#grad1); stroke-width: 3; stroke-linecap: round;
@@ -72,7 +72,6 @@
         }
         @keyframes drawPath { to { stroke-dashoffset: 0; } }
         
-        /* The Logo Text */
         .intro-logo-text {
             font-family: 'Inter', sans-serif; font-weight: 800; font-size: 2.2rem;
             color: transparent; background: linear-gradient(135deg, #fff 20%, #c5a47e 80%);
@@ -90,7 +89,7 @@
         @keyframes revealLogo { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes revealSub { to { opacity: 1; } }
 
-        /* === LOGIN SCREEN === */
+        /* === LOGIN SCREEN (Optimized for Mobile) === */
         .login-wrap {
             position: fixed; inset: 0; z-index: 9000;
             background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop') no-repeat center center;
@@ -99,16 +98,27 @@
             opacity: 0; transition: opacity 1s ease; pointer-events: none;
         }
         .login-wrap.visible { opacity: 1; pointer-events: all; }
-
         .login-overlay { position: absolute; inset: 0; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(15px); }
+        
         .login-card {
-            position: relative; z-index: 2; width: 85%; max-width: 380px;
+            position: relative; z-index: 2; width: 90%; max-width: 380px;
             background: rgba(20, 25, 35, 0.6); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 30px; padding: 40px 30px; text-align: center;
             box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             transform: translateY(20px); opacity: 0; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .login-wrap.visible .login-card { transform: translateY(0); opacity: 1; }
+
+        /* Mobile specific adjustments for Login */
+        @media (max-width: 480px) {
+            .login-card { padding: 30px 20px; width: 88%; border-radius: 24px; }
+            .login-logo-icon { font-size: 2.5rem !important; margin-bottom: 10px !important; }
+            .login-title { font-size: 1.3rem !important; letter-spacing: 2px; }
+            .login-sub { margin-bottom: 25px !important; font-size: 0.7rem; }
+            .login-input { padding: 14px 14px 14px 45px !important; font-size: 0.9rem; }
+            .login-input-group i { left: 15px; font-size: 1rem; }
+            .btn-login { padding: 14px; margin-top: 20px; font-size: 0.9rem; }
+        }
 
         .login-logo-icon { font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 15px; display: inline-block; filter: drop-shadow(0 0 15px rgba(197, 164, 126, 0.4)); }
         .login-title { font-size: 1.6rem; font-weight: 200; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; color: #fff; }
@@ -133,7 +143,7 @@
             transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2);
         }
 
-        /* HEADER (HIDDEN BY DEFAULT) */
+        /* === HEADER === */
         #header-wrapper {
             position: fixed; 
             top: max(20px, env(safe-area-inset-top)); 
@@ -160,13 +170,13 @@
         }
         #about-panel.open { max-height: 350px; opacity: 1; padding: 30px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
-        /* UI */
+        /* === UI ELEMENTS === */
         .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
         .anim-item, .ticket { background: var(--glass-panel); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); box-shadow: 0 15px 40px rgba(0,0,0,0.25); border-radius: var(--radius-lg); position: relative; margin-bottom: 20px; transition: transform 0.2s; }
         .anim-item { padding: 24px; }
         .anim-item:active { transform: scale(0.99); }
 
-        /* LEADERBOARD */
+        /* === LEADERBOARD === */
         .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 10px; height: 210px; margin-bottom: 30px; padding-top: 20px; }
         .pod-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 30%; position: relative; }
         .pod-avatar { width: 50px; height: 50px; border-radius: 50%; background: #333; border: 2px solid #555; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; margin-bottom: -12px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; }
@@ -191,7 +201,7 @@
         .r-name { font-weight: 600; font-size: 0.9rem; }
         .r-pts { font-family: 'JetBrains Mono'; color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
 
-        /* TICKETS */
+        /* === TICKETS === */
         .ticket { padding: 0 !important; display: flex; overflow: hidden; cursor: pointer; }
         .ticket.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         .ticket-l { flex: 1; padding: 22px; position: relative; }
@@ -207,7 +217,7 @@
         .st-cancelled { background-color: var(--status-cancelled); }
         .status-text { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* DICE FAB */
+        /* === DICE FAB === */
         .fab-dice {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 115px); 
@@ -221,7 +231,7 @@
         }
         .fab-dice:active { transform: scale(0.9) rotate(180deg); }
         
-        /* ROLES */
+        /* === ROLES === */
         .crew-card { display: flex; align-items: center; gap: 15px; border-left: 3px solid transparent; transition: 0.2s; }
         .role-Leader { border-left-color: var(--accent-gold); background: linear-gradient(90deg, rgba(197, 164, 126, 0.1), transparent); }
         .role-Deputy { border-left-color: var(--accent-silver); }
@@ -231,7 +241,7 @@
         .ic-deputy { color: var(--accent-silver); }
         .ic-mod { color: var(--accent-mod); }
 
-        /* NAV */
+        /* === NAV === */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #ddd; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px); }
         .chip.selected { background: var(--accent-gold); color: #000; font-weight: 800; border-color: var(--accent-gold); }
@@ -257,7 +267,7 @@
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
-        /* MODALS */
+        /* === MODALS === */
         .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
         .sheet-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); animation: slideUp 0.4s var(--ease-out); color: #fff; }
         .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
@@ -285,16 +295,30 @@
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
         .ofp-val { font-size: 1.1rem; color: var(--accent-gold); font-weight: 700; font-family: 'JetBrains Mono'; }
 
+        /* === MAP ENHANCEMENTS === */
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
         
-        /* News */
+        /* Expand Button */
+        .map-expand-btn { 
+            position: absolute; bottom: 20px; right: 20px; z-index: 1000; 
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); color: #fff; 
+            padding: 10px 16px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; 
+            border: 1px solid rgba(255,255,255,0.2); cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .map-expand-btn:active { transform: scale(0.95); background: var(--accent-gold); color: #000; }
+
+        /* Animated Dashed Lines for Leaflet */
+        .leaflet-interactive { stroke-dasharray: 10; animation: dashMove 30s linear infinite; }
+        @keyframes dashMove { to { stroke-dashoffset: -1000; } }
+        
+        /* === NEWS === */
         .news-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; cursor: pointer; transition: background 0.2s; }
         .news-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px; color: #fff; }
         .news-auth { font-size: 0.7rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 4px; display: block; }
-        .map-expand-btn { position: absolute; bottom: 15px; right: 15px; z-index: 1000; background: #000; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid #333; cursor: pointer; }
         
-        /* LOADER */
+        /* === LOADER === */
         #flight-loader { position: fixed; inset: 0; background: rgba(5, 11, 20, 0.98); backdrop-filter: blur(20px); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
         #flight-loader.active { display: flex; }
         .loader-spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-gold); border-radius: 50%; animation: spin 1s infinite linear; }
@@ -437,7 +461,7 @@
         <div class="filter-container" id="map-filter-c"></div>
         <div class="anim-item" style="padding:0; overflow:hidden;">
             <div id="map-wrap">
-                <button class="map-expand-btn" onclick="app.expandMap()"><i class="ph ph-arrows-out-simple"></i> EXPAND</button>
+                <button class="map-expand-btn" onclick="app.expandMap()"><i class="ph ph-arrows-out-simple"></i> EXPAND VIEW</button>
             </div>
         </div>
     </div>
@@ -527,7 +551,6 @@
 
 <script>
     const DB = {
-        // ROLES: Leader, Deputy, Moderator, Pilot
         PILOTS: [
             { id: "LOT001", pwd: "1234", name: "Capt. Mueller", rank: "Captain", base: "EDDF", role: "Leader" },
             { id: "LOT002", pwd: "1234", name: "F.O. Weber", rank: "First Officer", base: "EDDM", role: "Deputy" },
@@ -541,7 +564,6 @@
             { name: "F.O. Kowalski", pts: 1200 },
             { name: "Cadet Jones", pts: 850 }
         ],
-        // STATUS: ACTIVE, SEASONAL, CANCELLED
         ROUTES: [
             { al: "LOT", d: "EPWA", a: "KJFK", t: 9.0, ac: "B787-9", fuel: "75t", status: "ACTIVE" },
             { al: "LOT", d: "EDDF", a: "EGLL", t: 1.5, ac: "A320neo", fuel: "5.8t", status: "ACTIVE" },
@@ -619,7 +641,7 @@
                     this.dailyUI();
                     
                     try {
-                        const saved = JSON.parse(localStorage.getItem('lot_flight_v186'));
+                        const saved = JSON.parse(localStorage.getItem('lot_flight_v188'));
                         if(saved) { this.active = saved; this.timer(); }
                     } catch(e) {}
                 }, 1000);
@@ -833,7 +855,7 @@
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v186', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v188', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -857,7 +879,7 @@
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v186'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v188'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         requestLanding: function() { document.getElementById('landing-modal').style.display = 'flex'; },
@@ -877,7 +899,7 @@
             document.getElementById('rpt-rate').innerText = landingRate;
             document.getElementById('rpt-hash').innerText = hash;
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v186'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v188'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             document.getElementById('btn-upload').classList.remove('hidden');
@@ -898,7 +920,7 @@
         initMap: function() {
             setTimeout(() => {
                 if(!this.map) {
-                    this.map = L.map('map-wrap').setView([48, 15], 4);
+                    this.map = L.map('map-wrap', {zoomControl:false}).setView([48, 15], 4);
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.map);
                     this.drawMapLines(this.map, 'ALL');
                 }
@@ -909,7 +931,7 @@
             document.getElementById('full-map-modal').style.display = 'block';
             setTimeout(() => {
                 if(!this.fullMap) {
-                    this.fullMap = L.map('map-full-wrap').setView([48, 15], 4);
+                    this.fullMap = L.map('map-full-wrap', {zoomControl:false}).setView([48, 15], 4);
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.fullMap);
                     this.drawMapLines(this.fullMap, 'ALL');
                 }
@@ -926,8 +948,8 @@
             data.forEach(r => {
                 const c1 = DB.COORDS[r.d]; const c2 = DB.COORDS[r.a];
                 if(c1 && c2) {
-                    L.polyline([c1, c2], {color: '#c5a47e', weight: 1, opacity: 0.5}).addTo(m);
-                    L.circleMarker(c1, {color:'#c5a47e', radius:3}).addTo(m);
+                    L.polyline([c1, c2], {color: '#c5a47e', weight: 1.5, opacity: 0.8, className: 'animated-line'}).addTo(m);
+                    L.circleMarker(c1, {color:'#c5a47e', radius:3, fillOpacity:1}).addTo(m);
                 }
             });
         },
