@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>LOT Premium v185 Intro</title>
+    <title>LOT Premium v186 NoFlash</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -90,13 +90,13 @@
         @keyframes revealLogo { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes revealSub { to { opacity: 1; } }
 
-        /* === LOGIN (Hidden initially by z-index) === */
+        /* === LOGIN SCREEN === */
         .login-wrap {
             position: fixed; inset: 0; z-index: 9000;
             background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 1s ease; pointer-events: none; /* Block clicks until visible */
+            opacity: 0; transition: opacity 1s ease; pointer-events: none;
         }
         .login-wrap.visible { opacity: 1; pointer-events: all; }
 
@@ -133,7 +133,7 @@
             transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2);
         }
 
-        /* HEADER */
+        /* HEADER (HIDDEN BY DEFAULT) */
         #header-wrapper {
             position: fixed; 
             top: max(20px, env(safe-area-inset-top)); 
@@ -325,7 +325,7 @@
     <div style="color:var(--accent-gold); font-family:'JetBrains Mono'; margin-top:25px; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;">Connecting...</div>
 </div>
 
-<div id="header-wrapper">
+<div id="header-wrapper" class="hidden">
     <header id="main-header" onclick="app.toggleAbout()">
         <div class="brand">LOT Polish Airlines <i class="ph ph-caret-down"></i></div>
     </header>
@@ -600,8 +600,11 @@
                     document.getElementById('flight-loader').classList.remove('active');
                     document.getElementById('login-modal').classList.remove('visible'); // Fade out login
                     document.getElementById('login-modal').style.display = 'none'; // Remove
-                    document.getElementById('nav').classList.remove('hidden');
-                    document.getElementById('app').classList.remove('hidden');
+                    
+                    // REVEAL APP ELEMENTS
+                    document.getElementById('header-wrapper').classList.remove('hidden'); // Show Header
+                    document.getElementById('nav').classList.remove('hidden'); // Show Nav
+                    document.getElementById('app').classList.remove('hidden'); // Show App
                     this.nav('dash');
                     
                     this.renderLeaderboard();
@@ -616,7 +619,7 @@
                     this.dailyUI();
                     
                     try {
-                        const saved = JSON.parse(localStorage.getItem('lot_flight_v185'));
+                        const saved = JSON.parse(localStorage.getItem('lot_flight_v186'));
                         if(saved) { this.active = saved; this.timer(); }
                     } catch(e) {}
                 }, 1000);
@@ -830,7 +833,7 @@
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v185', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v186', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -854,7 +857,7 @@
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v185'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v186'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         requestLanding: function() { document.getElementById('landing-modal').style.display = 'flex'; },
@@ -874,7 +877,7 @@
             document.getElementById('rpt-rate').innerText = landingRate;
             document.getElementById('rpt-hash').innerText = hash;
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v185'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v186'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             document.getElementById('btn-upload').classList.remove('hidden');
