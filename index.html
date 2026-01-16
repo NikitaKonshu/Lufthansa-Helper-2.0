@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>LOT Premium v189</title>
+    <title>LOT Premium v191 Full</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -18,6 +18,8 @@
         :root {
             --accent-gold: #c5a47e; 
             --accent-silver: #a0a0a0;
+            --accent-bronze: #cd7f32;
+            --accent-mod: #3b82f6; 
             --bg-deep: #050b14;
             --glass-panel: rgba(20, 25, 40, 0.95);
             --glass-border: rgba(255, 255, 255, 0.12);
@@ -50,12 +52,12 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         i.ph, i.ph-fill { font-size: 1.3rem; vertical-align: middle; }
 
-        /* === INTRO === */
+        /* === CINEMATIC INTRO (Z-Index 30000 - Top Layer) === */
         #intro-screen {
-            position: fixed; inset: 0; z-index: 20000;
+            position: fixed; inset: 0; z-index: 30000;
             background: radial-gradient(circle at center, #1b2845 0%, #02040a 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 1; transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1; transition: opacity 0.8s ease;
         }
         #intro-screen.fade-out { opacity: 0; pointer-events: none; }
         
@@ -67,6 +69,7 @@
             animation: drawPath 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         @keyframes drawPath { to { stroke-dashoffset: 0; } }
+        
         .intro-logo-text {
             font-family: 'Inter', sans-serif; font-weight: 800; font-size: 2.2rem;
             color: transparent; background: linear-gradient(135deg, #fff 20%, #c5a47e 80%);
@@ -84,60 +87,127 @@
         @keyframes revealLogo { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes revealSub { to { opacity: 1; } }
 
-        /* === LOGIN SCREEN (MOBILE OPTIMIZED) === */
+        /* === LOGIN SCREEN (Z-Index 20000 - Middle Layer) === */
         .login-wrap {
-            position: fixed; inset: 0; z-index: 9000;
+            position: fixed; inset: 0; z-index: 20000;
             background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 1s ease; pointer-events: none;
+            opacity: 1; transition: opacity 0.8s ease; 
         }
-        .login-wrap.visible { opacity: 1; pointer-events: all; }
+        /* Completely hide login after auth */
+        .login-wrap.gone { opacity: 0; pointer-events: none; }
+
         .login-overlay { position: absolute; inset: 0; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(15px); }
         
         .login-card {
             position: relative; z-index: 2; 
-            width: 90%; max-width: 360px; /* Reduced max-width for cleaner look */
-            background: rgba(20, 25, 35, 0.7); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px; padding: 30px 25px; text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            transform: translateY(20px); opacity: 0; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 88%; max-width: 360px; /* Optimized width */
+            background: rgba(20, 25, 35, 0.75); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px; padding: 35px 25px; text-align: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            transform: translateY(20px); opacity: 0; 
+            /* Delay entrance slightly so it pops in while Intro fades */
+            animation: cardEntrance 1s ease forwards; animation-delay: 2.8s;
         }
-        .login-wrap.visible .login-card { transform: translateY(0); opacity: 1; }
+        @keyframes cardEntrance { to { transform: translateY(0); opacity: 1; } }
 
-        /* Mobile Specifics */
+        /* Mobile specific adjustments */
         @media (max-width: 480px) {
-            .login-card { padding: 25px 20px; width: 85%; }
-            .login-logo-icon { font-size: 2.5rem !important; margin-bottom: 10px !important; }
-            .login-title { font-size: 1.4rem !important; margin-bottom: 2px !important; }
-            .login-sub { font-size: 0.75rem !important; margin-bottom: 25px !important; }
-            .login-input { padding: 14px 14px 14px 40px !important; font-size: 0.9rem !important; margin-bottom: 0 !important; }
-            .login-input-group { margin-bottom: 12px !important; }
-            .login-input-group i { left: 14px !important; font-size: 1rem !important; }
-            .btn-login { padding: 14px !important; margin-top: 15px !important; font-size: 0.9rem !important; }
+            .login-card { padding: 30px 20px; width: 85%; }
+            .login-logo-icon { font-size: 3rem !important; margin-bottom: 10px !important; }
+            .login-title { font-size: 1.4rem !important; }
+            .login-sub { margin-bottom: 30px !important; }
+            .login-input { padding: 15px 15px 15px 45px !important; font-size: 0.95rem !important; }
+            .btn-login { padding: 15px !important; margin-top: 20px !important; }
         }
 
         .login-logo-icon { font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 15px; display: inline-block; filter: drop-shadow(0 0 15px rgba(197, 164, 126, 0.4)); }
         .login-title { font-size: 1.6rem; font-weight: 200; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; color: #fff; }
         .login-sub { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 40px; letter-spacing: 1px; font-weight: 500; }
-        .login-input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        
+        .login-input-group { position: relative; margin-bottom: 15px; text-align: left; }
         .login-input-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 1.2rem; pointer-events: none; transition: 0.3s; }
-        .login-input { width: 100%; padding: 18px 18px 18px 50px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box; font-family: 'JetBrains Mono'; }
+        .login-input {
+            width: 100%; padding: 18px 18px 18px 50px;
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; color: #fff; font-size: 1rem; outline: none;
+            transition: 0.3s; box-sizing: border-box; font-family: 'JetBrains Mono';
+        }
         .login-input:focus { border-color: var(--accent-gold); background: rgba(0,0,0,0.5); }
         .login-input:focus + i { color: var(--accent-gold); }
-        .btn-login { width: 100%; padding: 18px; margin-top: 25px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; letter-spacing: 1px; border: none; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2); }
-
-        /* HEADER */
-        #header-wrapper { position: fixed; top: max(20px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 3000; opacity: 1; transition: opacity 0.5s ease; }
-        #header-wrapper.hidden { opacity: 0; pointer-events: none; }
         
-        header { width: 100%; height: 60px; background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .btn-login {
+            width: 100%; padding: 18px; margin-top: 25px;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); 
+            color: #050b14; font-weight: 800; letter-spacing: 1px;
+            border: none; border-radius: 16px; font-size: 1rem; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2);
+        }
+
+        /* === HEADER (Z-Index 3000) === */
+        #header-wrapper {
+            position: fixed; 
+            top: max(20px, env(safe-area-inset-top)); 
+            left: 50%; 
+            /* Initially hidden above the viewport */
+            transform: translateX(-50%) translateY(-150%);
+            width: 92%; max-width: 450px; z-index: 3000; 
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: none; /* HARD HIDE to prevent glitches */
+        }
+        #header-wrapper.slide-in { display: block; }
+        #header-wrapper.slide-in-active { transform: translateX(-50%) translateY(0); }
+        
+        header { 
+            width: 100%; height: 60px; 
+            background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); border-radius: 24px; 
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
         .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
         .header-spacer { height: 110px; width: 100%; }
-        #about-panel { width: 100%; background: #131722; border: 1px solid var(--glass-border); border-top: none; border-radius: 0 0 24px 24px; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s var(--ease-out); position: relative; z-index: 10; box-sizing: border-box; }
+        
+        #about-panel {
+            width: 100%; background: #131722;
+            border: 1px solid var(--glass-border); border-top: none;
+            border-radius: 0 0 24px 24px;
+            max-height: 0; opacity: 0; overflow: hidden;
+            transition: all 0.4s var(--ease-out); position: relative; z-index: 10; 
+            box-sizing: border-box;
+        }
         #about-panel.open { max-height: 350px; opacity: 1; padding: 30px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
-        /* UI ELEMENTS */
+        /* === NAV DOCK === */
+        .nav-dock { 
+            position: fixed; 
+            bottom: calc(env(safe-area-inset-bottom) + 20px); 
+            left: 50%; 
+            /* Initially hidden below the viewport */
+            transform: translateX(-50%) translateY(150%); 
+            width: 90%; max-width: 500px; height: var(--nav-h); 
+            background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); 
+            border-radius: 35px; border: 1px solid var(--glass-border); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; 
+            display: flex; justify-content: space-evenly; align-items: center; 
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: none;
+        }
+        .nav-dock.slide-in { display: flex; }
+        .nav-dock.slide-in-active { transform: translateX(-50%) translateY(0); }
+
+        .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; width: 50px; }
+        .nav-btn.active { color: #fff; } 
+        .nav-btn.active i { transform: translateY(-5px); color: var(--accent-gold); }
+        .nav-btn i { font-size: 1.8rem; margin-bottom: 6px; display: block; transition: 0.3s; color: #fff; }
+        .nav-lbl { font-size: 0.6rem; font-weight: 700; opacity: 0; transform: translateY(5px); transition: 0.3s; }
+        .nav-btn.active .nav-lbl { opacity: 1; transform: translateY(0); }
+        .tab-view { display: none; opacity: 0; transform: translateY(20px); transition: none; }
+        .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
+        @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
+
+        /* === UI ELEMENTS === */
         .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
         .anim-item, .ticket { background: var(--glass-panel); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); box-shadow: 0 15px 40px rgba(0,0,0,0.25); border-radius: var(--radius-lg); position: relative; margin-bottom: 20px; transition: transform 0.2s; }
         .anim-item { padding: 24px; }
@@ -151,12 +221,17 @@
         .pod-rank { font-size: 1.5rem; font-weight: 900; opacity: 0.3; margin-bottom: 2px; line-height: 1; }
         .pod-pts { font-family: 'JetBrains Mono'; font-size: 0.7rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
         .pod-name { font-size: 0.75rem; color: #ccc; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 4px; font-weight: 600; }
+
         .place-1 .pod-avatar { width: 70px; height: 70px; border-color: var(--accent-gold); background: radial-gradient(circle, #ffd700 0%, #b8860b 100%); color: #000; box-shadow: 0 0 20px rgba(197, 164, 126, 0.4); margin-bottom: -15px; }
         .place-1 .pod-block { height: 140px; background: linear-gradient(to top, rgba(197, 164, 126, 0.2), rgba(197, 164, 126, 0)); border-color: var(--accent-gold); }
         .place-1 .crown { position: absolute; top: -35px; font-size: 2rem; color: gold; filter: drop-shadow(0 0 10px gold); animation: float 2s infinite ease-in-out; }
-        .place-2 .pod-avatar { border-color: var(--accent-silver); } .place-2 .pod-block { height: 110px; border-color: var(--accent-silver); } 
-        .place-3 .pod-avatar { border-color: var(--accent-bronze); } .place-3 .pod-block { height: 85px; border-color: var(--accent-bronze); }
+        
+        .place-2 .pod-avatar { border-color: var(--accent-silver); }
+        .place-2 .pod-block { height: 110px; border-color: var(--accent-silver); } 
+        .place-3 .pod-avatar { border-color: var(--accent-bronze); }
+        .place-3 .pod-block { height: 85px; border-color: var(--accent-bronze); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
         .rank-list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
         .r-left { display: flex; align-items: center; gap: 12px; }
         .r-idx { font-family: 'JetBrains Mono'; color: #666; font-size: 0.8rem; width: 20px; }
@@ -179,7 +254,17 @@
         .status-text { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         /* DICE FAB */
-        .fab-dice { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 115px); right: 20px; width: 56px; height: 56px; border-radius: 18px; background: var(--accent-gold); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 2500; cursor: pointer; border: none; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fab-dice {
+            position: fixed; 
+            bottom: calc(env(safe-area-inset-bottom) + 115px); 
+            right: 20px;
+            width: 56px; height: 56px; border-radius: 18px;
+            background: var(--accent-gold); color: #000;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            z-index: 2500; cursor: pointer; border: none;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         .fab-dice:active { transform: scale(0.9) rotate(180deg); }
         
         /* ROLES */
@@ -187,29 +272,23 @@
         .role-Leader { border-left-color: var(--accent-gold); background: linear-gradient(90deg, rgba(197, 164, 126, 0.1), transparent); }
         .role-Deputy { border-left-color: var(--accent-silver); }
         .role-Moderator { border-left-color: var(--accent-mod); background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent); }
+        .role-icon { margin-left: 5px; vertical-align: middle; }
+        .ic-leader { color: var(--accent-gold); }
+        .ic-deputy { color: var(--accent-silver); }
+        .ic-mod { color: var(--accent-mod); }
 
         /* NAV */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #ddd; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px); }
         .chip.selected { background: var(--accent-gold); color: #000; font-weight: 800; border-color: var(--accent-gold); }
         @keyframes softPop { 0% { opacity: 0; transform: translateY(15px); } 60% { transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
-        .nav-dock { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 20px); left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; height: var(--nav-h); background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); border-radius: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: space-evenly; align-items: center; }
-        .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; width: 50px; }
-        .nav-btn.active { color: #fff; } 
-        .nav-btn.active i { transform: translateY(-5px); color: var(--accent-gold); }
-        .nav-btn i { font-size: 1.8rem; margin-bottom: 6px; display: block; transition: 0.3s; color: #fff; }
-        .nav-lbl { font-size: 0.6rem; font-weight: 700; opacity: 0; transform: translateY(5px); transition: 0.3s; }
-        .nav-btn.active .nav-lbl { opacity: 1; transform: translateY(0); }
-        .tab-view { display: none; opacity: 0; transform: translateY(20px); transition: none; }
-        .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
-        @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
         /* MODALS */
         .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
         .sheet-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); animation: slideUp 0.4s var(--ease-out); color: #fff; }
         .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
+
         .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
         .btn-primary:active { transform: scale(0.96); }
         .btn-sec { background: rgba(255,255,255,0.1); color: #fff; border:1px solid rgba(255,255,255,0.2); }
@@ -231,7 +310,7 @@
         .ofp-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
         .ofp-val { font-size: 1.1rem; color: var(--accent-gold); font-weight: 700; font-family: 'JetBrains Mono'; }
-        
+
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
         .map-expand-btn { 
@@ -245,12 +324,14 @@
         
         /* STATIC MAP LINES (NO ANIMATION TO PREVENT LAG) */
         .leaflet-interactive { stroke-dasharray: 0; }
-
+        
+        /* News */
         .news-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; cursor: pointer; transition: background 0.2s; }
         .news-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px; color: #fff; }
         .news-auth { font-size: 0.7rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 4px; display: block; }
-        
-        #flight-loader { position: fixed; inset: 0; background: rgba(5, 11, 20, 0.98); backdrop-filter: blur(20px); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
+
+        /* LOADER */
+        #flight-loader { position: fixed; inset: 0; background: rgba(5, 11, 20, 0.98); backdrop-filter: blur(20px); z-index: 25000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         #flight-loader.active { display: flex; }
         .loader-spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-gold); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -280,7 +361,7 @@
     <div style="color:var(--accent-gold); font-family:'JetBrains Mono'; margin-top:25px; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;">Connecting...</div>
 </div>
 
-<div id="header-wrapper" class="hidden">
+<div id="header-wrapper">
     <header id="main-header" onclick="app.toggleAbout()">
         <div class="brand">LOT Polish Airlines <i class="ph ph-caret-down"></i></div>
     </header>
@@ -316,7 +397,7 @@
     </div>
 </div>
 
-<div class="nav-dock hidden" id="nav">
+<div class="nav-dock" id="nav">
     <button class="nav-btn active" onclick="app.nav('dash')"><i class="ph ph-house"></i><span class="nav-lbl">HOME</span></button>
     <button class="nav-btn" onclick="app.nav('routes')"><i class="ph ph-airplane-takeoff"></i><span class="nav-lbl">FLY</span></button>
     <button class="nav-btn" onclick="app.nav('fleet')"><i class="ph ph-airplane"></i><span class="nav-lbl">FLEET</span></button>
@@ -428,7 +509,6 @@
     <div class="sheet-body">
         <h2 style="margin-top:0; text-align:center;">Random Flight</h2>
         <p style="color:#888; margin-bottom:25px; text-align:center;">Set your preferences</p>
-        
         <select id="dice-al" class="ios-select" onchange="app.updateHubs()">
             <option value="ALL">Any Airline</option>
             <option value="LOT">LOT Polish Airlines</option>
@@ -436,17 +516,14 @@
             <option value="Swiss">Swiss</option>
             <option value="Austrian">Austrian</option>
         </select>
-        
         <select id="dice-hub" class="ios-select" disabled>
             <option value="ALL">Any Hub</option>
         </select>
-        
         <select id="dice-time" class="ios-select">
             <option value="ALL">Any Duration</option>
             <option value="SHORT">Short Haul (< 3h)</option>
             <option value="LONG">Long Haul (> 3h)</option>
         </select>
-        
         <button class="btn-primary" onclick="app.rollDice()">GENERATE ROUTE</button>
         <button class="btn-primary" style="background:transparent; border:1px solid #333; color:#fff; margin-top:10px;" onclick="document.getElementById('dice-modal').style.display='none'">CANCEL</button>
     </div>
@@ -558,19 +635,23 @@
     };
 
     const app = {
-        user: null, active: null, temp: null, map: null, fullMap: null, dailyIdx: 0, currentFilter: 'ALL',
+        user: null, 
+        active: null, 
+        temp: null, 
+        map: null, 
+        fullMap: null, 
+        dailyIdx: 0, 
+        currentFilter: 'ALL',
         
         init: function() {
             const hash = new Date().getDate();
             this.dailyIdx = hash % DB.ROUTES.length;
-            
-            // INTRO SEQUENCE
             setTimeout(() => {
                 document.getElementById('intro-screen').classList.add('fade-out');
+                // Allow login to stay visible behind intro until intro is gone
                 setTimeout(() => {
-                    document.getElementById('login-modal').classList.add('visible');
                     document.getElementById('intro-screen').style.display = 'none';
-                }, 1000);
+                }, 800);
             }, 3500);
         },
 
@@ -582,8 +663,7 @@
             if(usr) {
                 document.getElementById('flight-loader').classList.add('active');
                 
-                // PRE-WARM DATA
-                // We render everything while hidden behind the loader
+                // PRE-WARM: Render all content while loader is covering screen
                 this.user = usr;
                 this.renderLeaderboard();
                 this.renderProfile();
@@ -599,18 +679,33 @@
                 setTimeout(() => {
                     document.getElementById('flight-loader').classList.remove('active');
                     
-                    // Hide Login / Show App
-                    document.getElementById('login-modal').classList.remove('visible');
-                    document.getElementById('login-modal').style.display = 'none';
-                    document.getElementById('header-wrapper').classList.remove('hidden');
-                    document.getElementById('nav').classList.remove('hidden');
-                    document.getElementById('app').classList.remove('hidden');
+                    // 1. Hide Login Card
+                    document.getElementById('login-modal').classList.add('gone');
                     
+                    // 2. Trigger Slide-in Animations
+                    // We must change display:none to block first, then trigger reflow for animation
+                    const header = document.getElementById('header-wrapper');
+                    const nav = document.getElementById('nav');
+                    const appCon = document.getElementById('app');
+                    
+                    header.classList.add('slide-in');
+                    nav.classList.add('slide-in');
+                    appCon.classList.remove('hidden');
+                    
+                    // Slight timeout to ensure DOM update before CSS transition
+                    setTimeout(() => {
+                        header.classList.add('slide-in-active');
+                        nav.classList.add('slide-in-active');
+                    }, 50);
+
                     this.nav('dash');
                     
-                    try {
-                        const saved = JSON.parse(localStorage.getItem('lot_flight_v189'));
-                        if(saved) { this.active = saved; this.timer(); }
+                    try { 
+                        const saved = JSON.parse(localStorage.getItem('lot_flight_v190')); 
+                        if(saved) { 
+                            this.active = saved; 
+                            this.timer(); 
+                        } 
                     } catch(e) {}
                 }, 1000);
             } else {
@@ -618,30 +713,29 @@
             }
         },
         
-        // --- DICE LOGIC ---
-        openDice: function() {
-            document.getElementById('dice-modal').style.display = 'flex';
-            this.updateHubs();
+        openDice: function() { 
+            document.getElementById('dice-modal').style.display = 'flex'; 
+            this.updateHubs(); 
         },
+
         updateHubs: function() {
             const al = document.getElementById('dice-al').value;
             const hubSel = document.getElementById('dice-hub');
             hubSel.innerHTML = '<option value="ALL">Any Hub</option>';
-            
-            if(al !== 'ALL' && DB.HUBS[al]) {
-                hubSel.disabled = false;
-                DB.HUBS[al].forEach(h => {
-                    hubSel.innerHTML += `<option value="${h}">${h}</option>`;
-                });
-            } else {
-                hubSel.disabled = true;
+            if(al !== 'ALL' && DB.HUBS[al]) { 
+                hubSel.disabled = false; 
+                DB.HUBS[al].forEach(h => { 
+                    hubSel.innerHTML += `<option value="${h}">${h}</option>`; 
+                }); 
+            } else { 
+                hubSel.disabled = true; 
             }
         },
+
         rollDice: function() {
             const al = document.getElementById('dice-al').value;
             const hub = document.getElementById('dice-hub').value;
             const time = document.getElementById('dice-time').value;
-
             const candidates = DB.ROUTES.filter(r => {
                 if(r.status === 'CANCELLED') return false;
                 if(al !== 'ALL' && r.al !== al) return false;
@@ -650,15 +744,12 @@
                 if(time === 'LONG' && r.t < 3) return false;
                 return true;
             });
-
-            if(candidates.length === 0) {
-                alert("No routes found matching filters!");
-                return;
+            if(candidates.length === 0) { 
+                alert("No routes found matching filters!"); 
+                return; 
             }
-
             const route = candidates[Math.floor(Math.random() * candidates.length)];
             const idx = DB.ROUTES.findIndex(r => r === route);
-            
             document.getElementById('dice-modal').style.display = 'none';
             this.prep(idx);
         },
@@ -681,286 +772,280 @@
             document.getElementById('rank-list-c').innerHTML = listHTML;
         },
 
-        toggleAbout: function() {
-            document.getElementById('main-header').classList.toggle('open');
-            document.getElementById('about-panel').classList.toggle('open');
+        toggleAbout: function() { 
+            document.getElementById('main-header').classList.toggle('open'); 
+            document.getElementById('about-panel').classList.toggle('open'); 
         },
 
         nav: function(id) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             const btns = document.querySelectorAll('.nav-btn');
-            if(id=='dash') btns[0].classList.add('active');
-            if(id=='routes') btns[1].classList.add('active');
-            if(id=='fleet') btns[2].classList.add('active');
-            if(id=='news') btns[3].classList.add('active');
-            if(id=='map') btns[4].classList.add('active');
+            
+            if(id=='dash') btns[0].classList.add('active'); 
+            if(id=='routes') btns[1].classList.add('active'); 
+            if(id=='fleet') btns[2].classList.add('active'); 
+            if(id=='news') btns[3].classList.add('active'); 
+            if(id=='map') btns[4].classList.add('active'); 
             if(id=='crew') btns[5].classList.add('active');
-
-            document.querySelectorAll('.tab-view').forEach(t => {
-                t.classList.remove('active');
-                t.style.display = 'none';
+            
+            document.querySelectorAll('.tab-view').forEach(t => { 
+                t.classList.remove('active'); 
+                t.style.display = 'none'; 
             });
             const target = document.getElementById('view-'+id);
-            if(target) {
-                target.style.display = 'block';
-                setTimeout(() => target.classList.add('active'), 20);
+            if(target) { 
+                target.style.display = 'block'; 
+                setTimeout(() => target.classList.add('active'), 20); 
             }
             if(id === 'map') this.initMap();
         },
 
-        renderProfile: function() {
-            document.getElementById('profile-card').innerHTML = `
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <div style="width:70px; height:70px; border-radius:50%; background:var(--accent-gold); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#000;">${this.user.name[0]}</div>
-                    <div>
-                        <h2 style="font-weight:700; color:#fff;">${this.user.name}</h2>
-                        <p style="color:var(--text-sec); font-size:0.9rem;">${this.user.rank} • ${this.user.base}</p>
-                        <div style="font-size:0.8rem; color:var(--accent-gold); margin-top:5px; font-family:'JetBrains Mono';">${this.user.id}</div>
-                    </div>
-                </div>
-            `;
-        },
-        
-        renderRouteFilters: function() {
-            const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
-            this.renderChips(ops, 'routes-filter-c', 'routes');
-        },
-        renderChips: function(arr, containerId, type) {
-            const c = document.getElementById(containerId);
-            c.innerHTML = arr.map((o, i) => 
-                `<div class="chip ${o=='ALL'?'selected':''}" style="animation: softPop 0.5s ease forwards; animation-delay: ${i*0.05}s;" onclick="app.filterTrigger(this, '${type}', '${o}')">${o}</div>`
-            ).join('');
-        },
-        filterTrigger: function(el, type, val) {
-            el.parentNode.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            if(type === 'routes') { this.currentFilter = val; this.renderRoutes(val); }
-            if(type === 'fleet') this.renderFleet(val);
-            if(type === 'map') this.filterMap(val);
-        },
-        renderRoutes: function(filter) {
-            const c = document.getElementById('routes-list'); c.innerHTML = '';
-            const data = filter === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === filter);
-            data.forEach((r, i) => {
-                let stClass = 'st-active';
-                let isDisabled = '';
-                if(r.status === 'SEASONAL') stClass = 'st-seasonal';
-                if(r.status === 'CANCELLED') { stClass = 'st-cancelled'; isDisabled = 'disabled'; }
-
-                c.innerHTML += `
-                <div class="ticket anim-item ${isDisabled}" onclick="app.prep(${i})">
-                    <div class="ticket-l">
-                        <div style="display:flex; justify-content:space-between;">
-                            <div class="al-tag">${r.al}</div>
-                            <div style="display:flex; align-items:center;">
-                                <div class="status-dot ${stClass}"></div>
-                                <span class="status-text" style="color:#aaa;">${r.status}</span>
-                            </div>
-                        </div>
-                        <div class="route-path">
-                            <div><div class="ap">${r.d}</div><div class="ap-lbl">DEP</div></div>
-                            <div style="color:#fff;"><i class="ph ph-airplane"></i></div>
-                            <div style="text-align:right;"><div class="ap">${r.a}</div><div class="ap-lbl">ARR</div></div>
-                        </div>
-                        <div style="font-size:0.8rem; color:var(--text-sec);">${r.ac}</div>
-                    </div>
-                    <div class="ticket-r">
-                        <div style="font-family:'JetBrains Mono'; font-weight:700; font-size:0.9rem;">${r.t}h</div>
-                    </div>
-                </div>`;
-            });
-        },
-        
-        renderFleetFilters: function() {
-            const ops = ['ALL', ...new Set(DB.FLEET.map(f=>f.op))];
-            this.renderChips(ops, 'hangar-filter-c', 'fleet');
-        },
-        renderFleet: function(op) {
-            const c = document.getElementById('fleet-list'); c.innerHTML = '';
-            const data = op === 'ALL' ? DB.FLEET : DB.FLEET.filter(x => x.op === op);
-            data.forEach(x => {
-                c.innerHTML += `<div class="anim-item"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-weight:700;">${x.t}</span><span style="font-size:0.8rem; color:var(--accent-gold); font-weight:700;">${x.op}</span></div><div style="display:flex; gap:15px; font-size:0.8rem; color:#888;"><span>R: ${x.r}</span><span>S: ${x.spd}</span></div></div>`;
-            });
-        },
-        
-        renderNews: function() {
-            const c = document.getElementById('news-list');
-            c.innerHTML = DB.NEWS.map(n => `
-                <div class="anim-item news-card" onclick="app.openNews(${n.id})">
-                    <div style="display:flex; align-items:center;">
-                        <div class="news-icon"><i class="ph ${n.icon}"></i></div>
-                        <div>
-                            <span class="news-auth">${n.author}</span>
-                            <h3 style="margin:0; font-size:1.1rem; line-height:1.2;">${n.t}</h3>
-                        </div>
-                    </div>
-                    <div class="news-arrow"><i class="ph ph-caret-right"></i></div>
-                </div>
-            `).join('');
-        },
-        openNews: function(id) {
-            const n = DB.NEWS.find(x => x.id === id);
-            if(n) {
-                document.getElementById('nm-icon').className = "ph " + n.icon;
-                document.getElementById('nm-title').innerText = n.t;
-                document.getElementById('nm-date').innerText = "Published by " + n.author;
-                document.getElementById('nm-desc').innerText = n.d;
-                document.getElementById('news-modal').style.display = 'flex';
-            }
+        renderProfile: function() { 
+            document.getElementById('profile-card').innerHTML = `<div style="display:flex; align-items:center; gap:20px;"><div style="width:70px; height:70px; border-radius:50%; background:var(--accent-gold); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#000;">${this.user.name[0]}</div><div><h2 style="font-weight:700; color:#fff;">${this.user.name}</h2><p style="color:var(--text-sec); font-size:0.9rem;">${this.user.rank} • ${this.user.base}</p><div style="font-size:0.8rem; color:var(--accent-gold); margin-top:5px; font-family:'JetBrains Mono';">${this.user.id}</div></div></div>`; 
         },
 
-        renderCrew: function() {
-             const c = document.getElementById('crew-list'); c.innerHTML = '';
-             DB.PILOTS.forEach(p => {
-                 let icon = '';
-                 if(p.role === 'Leader') icon = '<i class="ph-fill ph-crown role-icon ic-leader"></i>';
-                 if(p.role === 'Deputy') icon = '<i class="ph-fill ph-star role-icon ic-deputy"></i>';
-                 if(p.role === 'Moderator') icon = '<i class="ph-fill ph-shield-check role-icon ic-mod"></i>';
-                 
-                 c.innerHTML += `
-                 <div class="anim-item crew-card role-${p.role}">
-                    <div style="width:40px; height:40px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; color:#fff;">${p.name[0]}</div>
-                    <div>
-                        <div style="font-weight:700;">${p.name} ${icon}</div>
-                        <div style="font-size:0.8rem; color:#888;">${p.rank}</div>
-                    </div>
-                 </div>`;
-             });
+        renderRouteFilters: function() { 
+            const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))]; 
+            this.renderChips(ops, 'routes-filter-c', 'routes'); 
         },
 
-        dailyUI: function() {
-            const r = DB.ROUTES[this.dailyIdx];
-            document.getElementById('daily-content').innerText = `${r.d} ➝ ${r.a}`;
+        renderChips: function(arr, containerId, type) { 
+            const c = document.getElementById(containerId); 
+            c.innerHTML = arr.map((o, i) => `<div class="chip ${o=='ALL'?'selected':''}" style="animation: softPop 0.5s ease forwards; animation-delay: ${i*0.05}s;" onclick="app.filterTrigger(this, '${type}', '${o}')">${o}</div>`).join(''); 
         },
-        prep: function(idx) {
-            if(this.active) { alert("Flight in progress"); return; }
-            const r = DB.ROUTES[idx];
-            if(r.status === 'CANCELLED') return;
+
+        filterTrigger: function(el, type, val) { 
+            el.parentNode.querySelectorAll('.chip').forEach(c => c.classList.remove('selected')); 
+            el.classList.add('selected'); 
+            if(type === 'routes') { this.currentFilter = val; this.renderRoutes(val); } 
+            if(type === 'fleet') this.renderFleet(val); 
+            if(type === 'map') this.filterMap(val); 
+        },
+
+        renderRoutes: function(filter) { 
+            const c = document.getElementById('routes-list'); 
+            c.innerHTML = ''; 
+            const data = filter === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === filter); 
+            data.forEach((r, i) => { 
+                let stClass = 'st-active'; 
+                let isDisabled = ''; 
+                if(r.status === 'SEASONAL') stClass = 'st-seasonal'; 
+                if(r.status === 'CANCELLED') { stClass = 'st-cancelled'; isDisabled = 'disabled'; } 
+                c.innerHTML += `<div class="ticket anim-item ${isDisabled}" onclick="app.prep(${i})"><div class="ticket-l"><div style="display:flex; justify-content:space-between;"><div class="al-tag">${r.al}</div><div style="display:flex; align-items:center;"><div class="status-dot ${stClass}"></div><span class="status-text" style="color:#aaa;">${r.status}</span></div></div><div class="route-path"><div><div class="ap">${r.d}</div><div class="ap-lbl">DEP</div></div><div style="color:#fff;"><i class="ph ph-airplane"></i></div><div style="text-align:right;"><div class="ap">${r.a}</div><div class="ap-lbl">ARR</div></div></div><div style="font-size:0.8rem; color:var(--text-sec);">${r.ac}</div></div><div class="ticket-r"><div style="font-family:'JetBrains Mono'; font-weight:700; font-size:0.9rem;">${r.t}h</div></div></div>`; 
+            }); 
+        },
+
+        renderFleetFilters: function() { 
+            const ops = ['ALL', ...new Set(DB.FLEET.map(f=>f.op))]; 
+            this.renderChips(ops, 'hangar-filter-c', 'fleet'); 
+        },
+
+        renderFleet: function(op) { 
+            const c = document.getElementById('fleet-list'); 
+            c.innerHTML = ''; 
+            const data = op === 'ALL' ? DB.FLEET : DB.FLEET.filter(x => x.op === op); 
+            data.forEach(x => { 
+                c.innerHTML += `<div class="anim-item"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-weight:700;">${x.t}</span><span style="font-size:0.8rem; color:var(--accent-gold); font-weight:700;">${x.op}</span></div><div style="display:flex; gap:15px; font-size:0.8rem; color:#888;"><span>R: ${x.r}</span><span>S: ${x.spd}</span></div></div>`; 
+            }); 
+        },
+
+        renderNews: function() { 
+            const c = document.getElementById('news-list'); 
+            c.innerHTML = DB.NEWS.map(n => `<div class="anim-item news-card" onclick="app.openNews(${n.id})"><div style="display:flex; align-items:center;"><div class="news-icon"><i class="ph ${n.icon}"></i></div><div><span class="news-auth">${n.author}</span><h3 style="margin:0; font-size:1.1rem; line-height:1.2;">${n.t}</h3></div></div><div class="news-arrow"><i class="ph ph-caret-right"></i></div></div>`).join(''); 
+        },
+
+        openNews: function(id) { 
+            const n = DB.NEWS.find(x => x.id === id); 
+            if(n) { 
+                document.getElementById('nm-icon').className = "ph " + n.icon; 
+                document.getElementById('nm-title').innerText = n.t; 
+                document.getElementById('nm-date').innerText = "Published by " + n.author; 
+                document.getElementById('nm-desc').innerText = n.d; 
+                document.getElementById('news-modal').style.display = 'flex'; 
+            } 
+        },
+
+        renderCrew: function() { 
+            const c = document.getElementById('crew-list'); 
+            c.innerHTML = ''; 
+            DB.PILOTS.forEach(p => { 
+                let icon = ''; 
+                if(p.role === 'Leader') icon = '<i class="ph-fill ph-crown role-icon ic-leader"></i>'; 
+                if(p.role === 'Deputy') icon = '<i class="ph-fill ph-star role-icon ic-deputy"></i>'; 
+                if(p.role === 'Moderator') icon = '<i class="ph-fill ph-shield-check role-icon ic-mod"></i>'; 
+                c.innerHTML += `<div class="anim-item crew-card role-${p.role}"><div style="width:40px; height:40px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; color:#fff;">${p.name[0]}</div><div><div style="font-weight:700;">${p.name} ${icon}</div><div style="font-size:0.8rem; color:#888;">${p.rank}</div></div></div>`; 
+            }); 
+        },
+
+        dailyUI: function() { 
+            const r = DB.ROUTES[this.dailyIdx]; 
+            document.getElementById('daily-content').innerText = `${r.d} ➝ ${r.a}`; 
+        },
+
+        prep: function(idx) { 
+            if(this.active) { alert("Flight in progress"); return; } 
+            const r = DB.ROUTES[idx]; 
+            if(r.status === 'CANCELLED') return; 
             
-            this.temp = { ...r, cs: 'LO'+Math.floor(Math.random()*900+100) };
+            this.temp = { ...r, cs: 'LO'+Math.floor(Math.random()*900+100) }; 
             
-            document.getElementById('flight-loader').classList.add('active');
-            setTimeout(() => {
-                document.getElementById('flight-loader').classList.remove('active');
-                
-                document.getElementById('br-cs').innerText = this.temp.cs;
-                document.getElementById('br-ac').innerText = r.ac;
-                document.getElementById('br-dep').innerText = r.d;
-                document.getElementById('br-arr').innerText = r.a;
-                document.getElementById('br-fuel').innerText = r.fuel;
-                document.getElementById('br-time').innerText = r.t + 'H';
-                
-                document.getElementById('efb-modal').style.display = 'flex';
-            }, 1000);
+            document.getElementById('flight-loader').classList.add('active'); 
+            setTimeout(() => { 
+                document.getElementById('flight-loader').classList.remove('active'); 
+                document.getElementById('br-cs').innerText = this.temp.cs; 
+                document.getElementById('br-ac').innerText = r.ac; 
+                document.getElementById('br-dep').innerText = r.d; 
+                document.getElementById('br-arr').innerText = r.a; 
+                document.getElementById('br-fuel').innerText = r.fuel; 
+                document.getElementById('br-time').innerText = r.t + 'H'; 
+                document.getElementById('efb-modal').style.display = 'flex'; 
+            }, 1000); 
         },
-        accept: function() {
-            this.closeM();
+
+        accept: function() { 
+            this.closeM(); 
             this.active = { 
                 ...this.temp, 
-                startTs: Date.now(),
-                blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
+                startTs: Date.now(), 
+                blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z", 
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v189', JSON.stringify(this.active)); } catch(e){}
-            this.nav('dash');
-            this.timer();
+            try { localStorage.setItem('lot_flight_v190', JSON.stringify(this.active)); } catch(e){} 
+            this.nav('dash'); 
+            this.timer(); 
         },
-        timer: function() {
-            document.getElementById('flight-card').classList.remove('hidden');
-            document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`;
-            document.getElementById('af-ac').innerText = this.active.ac;
-            const btn = document.getElementById('btn-land');
-            btn.classList.add('btn-disabled'); btn.classList.remove('btn-pulse'); btn.innerText = "WAITING...";
-            this.tmr = setInterval(() => {
-                const el = Date.now() - this.active.startTs;
-                const pct = Math.min(el/this.active.dur, 1);
-                document.getElementById('af-bar').style.width = (pct*100)+'%';
-                const secs = Math.floor(el/1000);
-                const m = Math.floor(secs/60);
-                const s = secs % 60;
-                document.getElementById('af-timer').innerText = `${m}:${s<10?'0'+s:s} ELAPSED`;
-                if (pct >= 1) { btn.classList.remove('btn-disabled'); btn.classList.add('btn-pulse'); btn.innerText = "LAND & REPORT"; }
-            }, 1000);
+
+        timer: function() { 
+            document.getElementById('flight-card').classList.remove('hidden'); 
+            document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`; 
+            document.getElementById('af-ac').innerText = this.active.ac; 
+            const btn = document.getElementById('btn-land'); 
+            btn.classList.add('btn-disabled'); 
+            btn.classList.remove('btn-pulse'); 
+            btn.innerText = "WAITING..."; 
+            
+            this.tmr = setInterval(() => { 
+                const el = Date.now() - this.active.startTs; 
+                const pct = Math.min(el/this.active.dur, 1); 
+                document.getElementById('af-bar').style.width = (pct*100)+'%'; 
+                const secs = Math.floor(el/1000); 
+                const m = Math.floor(secs/60); 
+                const s = secs % 60; 
+                document.getElementById('af-timer').innerText = `${m}:${s<10?'0'+s:s} ELAPSED`; 
+                if (pct >= 1) { 
+                    btn.classList.remove('btn-disabled'); 
+                    btn.classList.add('btn-pulse'); 
+                    btn.innerText = "LAND & REPORT"; 
+                } 
+            }, 1000); 
         },
-        cancel: function() {
-            clearInterval(this.tmr);
-            this.active = null;
-            try { localStorage.removeItem('lot_flight_v189'); } catch(e){}
-            document.getElementById('flight-card').classList.add('hidden');
+
+        cancel: function() { 
+            clearInterval(this.tmr); 
+            this.active = null; 
+            try { localStorage.removeItem('lot_flight_v190'); } catch(e){} 
+            document.getElementById('flight-card').classList.add('hidden'); 
         },
-        requestLanding: function() { document.getElementById('landing-modal').style.display = 'flex'; },
-        finishFlight: function() {
-            let input = document.getElementById('landing-rate').value;
-            if(!input) { alert("Please enter landing rate"); return; }
-            if(input > 0) input = -input;
-            const landingRate = input + " fpm";
+
+        requestLanding: function() { 
+            document.getElementById('landing-modal').style.display = 'flex'; 
+        },
+
+        finishFlight: function() { 
+            let input = document.getElementById('landing-rate').value; 
+            if(!input) { alert("Please enter landing rate"); return; } 
+            if(input > 0) input = -input; 
+            const landingRate = input + " fpm"; 
             const blockOn = new Date().toISOString().split('T')[1].substring(0,8) + " Z"; 
-            const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id;
-            clearInterval(this.tmr);
-            document.getElementById('rpt-pilot').innerText = this.user.name;
-            document.getElementById('rpt-route').innerText = this.active.d + " ➝ " + this.active.a;
-            document.getElementById('rpt-ac').innerText = this.active.ac;
-            document.getElementById('rpt-off').innerText = this.active.blockOff;
-            document.getElementById('rpt-on').innerText = blockOn;
-            document.getElementById('rpt-rate').innerText = landingRate;
-            document.getElementById('rpt-hash').innerText = hash;
-            this.active = null;
-            try { localStorage.removeItem('lot_flight_v189'); } catch(e){}
-            document.getElementById('landing-modal').style.display = 'none';
-            document.getElementById('flight-card').classList.add('hidden');
-            document.getElementById('btn-upload').classList.remove('hidden');
-            document.getElementById('btn-archive').classList.add('hidden');
-            document.getElementById('report-modal').style.display = 'flex';
+            const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id; 
+            
+            clearInterval(this.tmr); 
+            document.getElementById('rpt-pilot').innerText = this.user.name; 
+            document.getElementById('rpt-route').innerText = this.active.d + " ➝ " + this.active.a; 
+            document.getElementById('rpt-ac').innerText = this.active.ac; 
+            document.getElementById('rpt-off').innerText = this.active.blockOff; 
+            document.getElementById('rpt-on').innerText = blockOn; 
+            document.getElementById('rpt-rate').innerText = landingRate; 
+            document.getElementById('rpt-hash').innerText = hash; 
+            
+            this.active = null; 
+            try { localStorage.removeItem('lot_flight_v190'); } catch(e){} 
+            
+            document.getElementById('landing-modal').style.display = 'none'; 
+            document.getElementById('flight-card').classList.add('hidden'); 
+            document.getElementById('btn-upload').classList.remove('hidden'); 
+            document.getElementById('btn-archive').classList.add('hidden'); 
+            document.getElementById('report-modal').style.display = 'flex'; 
         },
-        uploadReport: function() {
-             window.open('https://panel.aeronation.ru/flight/upload', '_blank');
-             document.getElementById('btn-upload').classList.add('hidden');
-             document.getElementById('btn-archive').classList.remove('hidden');
+
+        uploadReport: function() { 
+            window.open('https://panel.aeronation.ru/flight/upload', '_blank'); 
+            document.getElementById('btn-upload').classList.add('hidden'); 
+            document.getElementById('btn-archive').classList.remove('hidden'); 
         },
-        closeReport: function() { document.getElementById('report-modal').style.display = 'none'; },
-        
-        renderMapFilters: function() {
-             const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))];
-             this.renderChips(ops, 'map-filter-c', 'map');
+
+        closeReport: function() { 
+            document.getElementById('report-modal').style.display = 'none'; 
         },
-        initMap: function() {
-            setTimeout(() => {
-                if(!this.map) {
-                    this.map = L.map('map-wrap', {zoomControl:false}).setView([48, 15], 4);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.map);
-                    this.drawMapLines(this.map, 'ALL');
-                }
-                this.map.invalidateSize();
-            }, 100);
+
+        renderMapFilters: function() { 
+            const ops = ['ALL', ...new Set(DB.ROUTES.map(r=>r.al))]; 
+            this.renderChips(ops, 'map-filter-c', 'map'); 
         },
-        expandMap: function() {
-            document.getElementById('full-map-modal').style.display = 'block';
-            setTimeout(() => {
-                if(!this.fullMap) {
-                    this.fullMap = L.map('map-full-wrap', {zoomControl:false}).setView([48, 15], 4);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.fullMap);
-                    this.drawMapLines(this.fullMap, 'ALL');
-                }
-                this.fullMap.invalidateSize();
-            }, 100);
+
+        initMap: function() { 
+            setTimeout(() => { 
+                if(!this.map) { 
+                    this.map = L.map('map-wrap', {zoomControl:false}).setView([48, 15], 4); 
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.map); 
+                    this.drawMapLines(this.map, 'ALL'); 
+                } 
+                this.map.invalidateSize(); 
+            }, 100); 
         },
-        closeFullMap: function() { document.getElementById('full-map-modal').style.display = 'none'; },
-        filterMap: function(type, el) {
-            if(el) { document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); }
-            if(this.map) { this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); this.drawMapLines(this.map, type); }
+
+        expandMap: function() { 
+            document.getElementById('full-map-modal').style.display = 'block'; 
+            setTimeout(() => { 
+                if(!this.fullMap) { 
+                    this.fullMap = L.map('map-full-wrap', {zoomControl:false}).setView([48, 15], 4); 
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.fullMap); 
+                    this.drawMapLines(this.fullMap, 'ALL'); 
+                } 
+                this.fullMap.invalidateSize(); 
+            }, 100); 
         },
-        drawMapLines: function(m, type) {
-            const data = type === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === type);
-            data.forEach(r => {
-                const c1 = DB.COORDS[r.d]; const c2 = DB.COORDS[r.a];
-                if(c1 && c2) {
-                    // REMOVED: className: 'animated-line' to improve performance
-                    L.polyline([c1, c2], {color: '#c5a47e', weight: 1.5, opacity: 0.8}).addTo(m);
-                    L.circleMarker(c1, {color:'#c5a47e', radius:3, fillOpacity:1}).addTo(m);
-                }
-            });
+
+        closeFullMap: function() { 
+            document.getElementById('full-map-modal').style.display = 'none'; 
         },
-        closeM: function() { document.getElementById('efb-modal').style.display='none'; }
+
+        filterMap: function(type, el) { 
+            if(el) { 
+                document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected')); 
+                el.classList.add('selected'); 
+            } 
+            if(this.map) { 
+                this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); 
+                this.drawMapLines(this.map, type); 
+            } 
+        },
+
+        drawMapLines: function(m, type) { 
+            const data = type === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === type); 
+            data.forEach(r => { 
+                const c1 = DB.COORDS[r.d]; 
+                const c2 = DB.COORDS[r.a]; 
+                if(c1 && c2) { 
+                    L.polyline([c1, c2], {color: '#c5a47e', weight: 1.5, opacity: 0.8}).addTo(m); 
+                    L.circleMarker(c1, {color:'#c5a47e', radius:3, fillOpacity:1}).addTo(m); 
+                } 
+            }); 
+        },
+
+        closeM: function() { 
+            document.getElementById('efb-modal').style.display='none'; 
+        }
     };
     window.onload = () => app.init();
 </script>
