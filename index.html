@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>LOT Premium v192</title>
+    <title>LOT Virtual Operations</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -121,7 +121,7 @@
         .login-input:focus + i { color: var(--accent-gold); }
         .btn-login { width: 100%; padding: 18px; margin-top: 25px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; letter-spacing: 1px; border: none; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2); }
 
-        /* === NEW HEADER LOGIC (Perfect Match) === */
+        /* === HEADER === */
         #header-wrapper {
             position: fixed; 
             top: max(20px, env(safe-area-inset-top)); 
@@ -134,7 +134,6 @@
         #header-wrapper.slide-in { display: block; }
         #header-wrapper.slide-in-active { transform: translateX(-50%) translateY(0); }
         
-        /* Container for stack */
         .header-stack { position: relative; width: 100%; }
         
         header { 
@@ -143,11 +142,10 @@
             border: 1px solid var(--glass-border); border-radius: 24px; 
             display: flex; justify-content: center; align-items: center; 
             cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            position: relative; z-index: 20; /* Above panel */
+            position: relative; z-index: 20;
             transition: border-radius 0.3s ease;
             box-sizing: border-box;
         }
-        /* Flatten bottom corners when open */
         header.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
         
         .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
@@ -161,7 +159,7 @@
             transition: all 0.4s var(--ease-out); 
             position: relative; z-index: 10; 
             box-sizing: border-box;
-            margin-top: -1px; /* Align perfectly with header border */
+            margin-top: -1px;
         }
         #about-panel.open { max-height: 350px; opacity: 1; padding: 30px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
@@ -198,7 +196,7 @@
         .anim-item { padding: 24px; }
         .anim-item:active { transform: scale(0.99); }
 
-        /* LEADERBOARD & LISTS */
+        /* LEADERBOARD */
         .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 10px; height: 210px; margin-bottom: 30px; padding-top: 20px; }
         .pod-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 30%; position: relative; }
         .pod-avatar { width: 50px; height: 50px; border-radius: 50%; background: #333; border: 2px solid #555; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; margin-bottom: -12px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; }
@@ -218,11 +216,10 @@
         .r-name { font-weight: 600; font-size: 0.9rem; }
         .r-pts { font-family: 'JetBrains Mono'; color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
         
-        /* === DICE (STICKY INSIDE LIST) === */
+        /* DICE STICKY */
         .fab-dice {
-            /* Changed to sticky so it scrolls with content but sticks to bottom of view */
             position: sticky;
-            bottom: 120px; /* Distance from bottom of screen */
+            bottom: 120px;
             float: right;
             margin-right: 10px;
             margin-top: 20px;
@@ -578,7 +575,6 @@
             { al: "Lufthansa", d: "EDDF", a: "VTAA", t: 10.5, ac: "A330-300", fuel: "90.0t", status: "ACTIVE" }
         ],
         FLEET: [
-            // Fuel updated with 'f'
             { t: "Boeing 787-9", op: "LOT", r: "14,800km", fuel: "5.4t/h" },
             { t: "Airbus A320neo", op: "LOT", r: "6,300km", fuel: "2.5t/h" },
             { t: "Airbus A330-300", op: "Swiss", r: "11,750km", fuel: "5.8t/h" },
@@ -648,7 +644,7 @@
 
                     this.nav('dash');
                     
-                    try { const saved = JSON.parse(localStorage.getItem('lot_flight_v192')); if(saved) { this.active = saved; this.timer(); } } catch(e) {}
+                    try { const saved = JSON.parse(localStorage.getItem('lot_flight_v200')); if(saved) { this.active = saved; this.timer(); } } catch(e) {}
                 }, 1000);
             } else {
                 document.getElementById('login-err').innerText = "INVALID ID OR PASS";
@@ -729,7 +725,6 @@
                 if(r.status === 'CANCELLED') { stClass = 'st-cancelled'; isDisabled = 'disabled'; } 
                 c.innerHTML += `<div class="ticket anim-item ${isDisabled}" onclick="app.prep(${i})"><div class="ticket-l"><div style="display:flex; justify-content:space-between;"><div class="al-tag">${r.al}</div><div style="display:flex; align-items:center;"><div class="status-dot ${stClass}"></div><span class="status-text" style="color:#aaa;">${r.status}</span></div></div><div class="route-path"><div><div class="ap">${r.d}</div><div class="ap-lbl">DEP</div></div><div style="color:#fff;"><i class="ph ph-airplane"></i></div><div style="text-align:right;"><div class="ap">${r.a}</div><div class="ap-lbl">ARR</div></div></div><div style="font-size:0.8rem; color:var(--text-sec);">${r.ac}</div></div><div class="ticket-r"><div style="font-family:'JetBrains Mono'; font-weight:700; font-size:0.9rem;">${r.t}h</div></div></div>`; 
             }); 
-            // Dice button is already in HTML, so we don't need to append it here.
         },
 
         renderFleetFilters: function() { const ops = ['ALL', ...new Set(DB.FLEET.map(f=>f.op))]; this.renderChips(ops, 'hangar-filter-c', 'fleet'); },
@@ -737,7 +732,6 @@
             const c = document.getElementById('fleet-list'); c.innerHTML = ''; 
             const data = op === 'ALL' ? DB.FLEET : DB.FLEET.filter(x => x.op === op); 
             data.forEach(x => { 
-                // Displaying Fuel with 'F:'
                 c.innerHTML += `<div class="anim-item"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-weight:700;">${x.t}</span><span style="font-size:0.8rem; color:var(--accent-gold); font-weight:700;">${x.op}</span></div><div style="display:flex; gap:15px; font-size:0.8rem; color:#888;"><span>R: ${x.r}</span><span>F: ${x.fuel}</span></div></div>`; 
             }); 
         },
@@ -748,12 +742,76 @@
         renderCrew: function() { const c = document.getElementById('crew-list'); c.innerHTML = ''; DB.PILOTS.forEach(p => { let icon = ''; if(p.role === 'Leader') icon = '<i class="ph-fill ph-crown role-icon ic-leader"></i>'; if(p.role === 'Deputy') icon = '<i class="ph-fill ph-star role-icon ic-deputy"></i>'; if(p.role === 'Moderator') icon = '<i class="ph-fill ph-shield-check role-icon ic-mod"></i>'; c.innerHTML += `<div class="anim-item crew-card role-${p.role}"><div style="width:40px; height:40px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; color:#fff;">${p.name[0]}</div><div><div style="font-weight:700;">${p.name} ${icon}</div><div style="font-size:0.8rem; color:#888;">${p.rank}</div></div></div>`; }); },
         
         dailyUI: function() { const r = DB.ROUTES[this.dailyIdx]; document.getElementById('daily-content').innerText = `${r.d} ➝ ${r.a}`; },
-        prep: function(idx) { if(this.active) { alert("Flight in progress"); return; } const r = DB.ROUTES[idx]; if(r.status === 'CANCELLED') return; this.temp = { ...r, cs: 'LO'+Math.floor(Math.random()*900+100) }; document.getElementById('flight-loader').classList.add('active'); setTimeout(() => { document.getElementById('flight-loader').classList.remove('active'); document.getElementById('br-cs').innerText = this.temp.cs; document.getElementById('br-ac').innerText = r.ac; document.getElementById('br-dep').innerText = r.d; document.getElementById('br-arr').innerText = r.a; document.getElementById('br-fuel').innerText = r.fuel; document.getElementById('br-time').innerText = r.t + 'H'; document.getElementById('efb-modal').style.display = 'flex'; }, 1000); },
-        accept: function() { this.closeM(); this.active = { ...this.temp, startTs: Date.now(), blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z", dur: 20000 }; try { localStorage.setItem('lot_flight_v192', JSON.stringify(this.active)); } catch(e){} this.nav('dash'); this.timer(); },
-        timer: function() { document.getElementById('flight-card').classList.remove('hidden'); document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`; document.getElementById('af-ac').innerText = this.active.ac; const btn = document.getElementById('btn-land'); btn.classList.add('btn-disabled'); btn.classList.remove('btn-pulse'); btn.innerText = "WAITING..."; this.tmr = setInterval(() => { const el = Date.now() - this.active.startTs; const pct = Math.min(el/this.active.dur, 1); document.getElementById('af-bar').style.width = (pct*100)+'%'; const secs = Math.floor(el/1000); const m = Math.floor(secs/60); const s = secs % 60; document.getElementById('af-timer').innerText = `${m}:${s<10?'0'+s:s} ELAPSED`; if (pct >= 1) { btn.classList.remove('btn-disabled'); btn.classList.add('btn-pulse'); btn.innerText = "LAND & REPORT"; } }, 1000); },
-        cancel: function() { clearInterval(this.tmr); this.active = null; try { localStorage.removeItem('lot_flight_v192'); } catch(e){} document.getElementById('flight-card').classList.add('hidden'); },
+        prep: function(idx) { 
+            if(this.active) { alert("Flight in progress"); return; } 
+            const r = DB.ROUTES[idx]; 
+            if(r.status === 'CANCELLED') return; 
+            this.temp = { ...r, cs: 'LO'+Math.floor(Math.random()*900+100) }; 
+            document.getElementById('flight-loader').classList.add('active'); 
+            setTimeout(() => { 
+                document.getElementById('flight-loader').classList.remove('active'); 
+                document.getElementById('br-cs').innerText = this.temp.cs; 
+                document.getElementById('br-ac').innerText = r.ac; 
+                document.getElementById('br-dep').innerText = r.d; 
+                document.getElementById('br-arr').innerText = r.a; 
+                document.getElementById('br-fuel').innerText = r.fuel; 
+                document.getElementById('br-time').innerText = r.t + 'H'; 
+                document.getElementById('efb-modal').style.display = 'flex'; 
+            }, 1000); 
+        },
+        
+        accept: function() { 
+            this.closeM(); 
+            // REAL FLIGHT DURATION: HOURS * 3600 * 1000
+            const realDuration = this.temp.t * 3600000;
+            this.active = { 
+                ...this.temp, 
+                startTs: Date.now(), 
+                blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z", 
+                dur: realDuration 
+            }; 
+            try { localStorage.setItem('lot_flight_v200', JSON.stringify(this.active)); } catch(e){} 
+            this.nav('dash'); 
+            this.timer(); 
+        },
+        
+        timer: function() { 
+            document.getElementById('flight-card').classList.remove('hidden'); 
+            document.getElementById('af-route').innerText = `${this.active.d} - ${this.active.a}`; 
+            document.getElementById('af-ac').innerText = this.active.ac; 
+            const btn = document.getElementById('btn-land'); 
+            btn.classList.add('btn-disabled'); 
+            btn.classList.remove('btn-pulse'); 
+            btn.innerText = "WAITING..."; 
+            
+            this.tmr = setInterval(() => { 
+                const el = Date.now() - this.active.startTs; 
+                const pct = Math.min(el/this.active.dur, 1); 
+                document.getElementById('af-bar').style.width = (pct*100)+'%'; 
+                
+                // Format Real Time HH:MM:SS
+                const totalSecs = Math.floor(el/1000);
+                const h = Math.floor(totalSecs / 3600);
+                const m = Math.floor((totalSecs % 3600) / 60);
+                const s = totalSecs % 60;
+                
+                const hh = h < 10 ? '0'+h : h;
+                const mm = m < 10 ? '0'+m : m;
+                const ss = s < 10 ? '0'+s : s;
+                
+                document.getElementById('af-timer').innerText = `${hh}:${mm}:${ss} ELAPSED`; 
+                
+                if (pct >= 1) { 
+                    btn.classList.remove('btn-disabled'); 
+                    btn.classList.add('btn-pulse'); 
+                    btn.innerText = "LAND & REPORT"; 
+                } 
+            }, 1000); 
+        },
+        
+        cancel: function() { clearInterval(this.tmr); this.active = null; try { localStorage.removeItem('lot_flight_v200'); } catch(e){} document.getElementById('flight-card').classList.add('hidden'); },
         requestLanding: function() { document.getElementById('landing-modal').style.display = 'flex'; },
-        finishFlight: function() { let input = document.getElementById('landing-rate').value; if(!input) { alert("Please enter landing rate"); return; } if(input > 0) input = -input; const landingRate = input + " fpm"; const blockOn = new Date().toISOString().split('T')[1].substring(0,8) + " Z"; const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id; clearInterval(this.tmr); document.getElementById('rpt-pilot').innerText = this.user.name; document.getElementById('rpt-route').innerText = this.active.d + " ➝ " + this.active.a; document.getElementById('rpt-ac').innerText = this.active.ac; document.getElementById('rpt-off').innerText = this.active.blockOff; document.getElementById('rpt-on').innerText = blockOn; document.getElementById('rpt-rate').innerText = landingRate; document.getElementById('rpt-hash').innerText = hash; this.active = null; try { localStorage.removeItem('lot_flight_v192'); } catch(e){} document.getElementById('landing-modal').style.display = 'none'; document.getElementById('flight-card').classList.add('hidden'); document.getElementById('btn-upload').classList.remove('hidden'); document.getElementById('btn-archive').classList.add('hidden'); document.getElementById('report-modal').style.display = 'flex'; },
+        finishFlight: function() { let input = document.getElementById('landing-rate').value; if(!input) { alert("Please enter landing rate"); return; } if(input > 0) input = -input; const landingRate = input + " fpm"; const blockOn = new Date().toISOString().split('T')[1].substring(0,8) + " Z"; const hash = "SIG-" + Math.random().toString(36).substring(2, 6).toUpperCase() + "-" + Date.now().toString() + "-" + this.user.id; clearInterval(this.tmr); document.getElementById('rpt-pilot').innerText = this.user.name; document.getElementById('rpt-route').innerText = this.active.d + " ➝ " + this.active.a; document.getElementById('rpt-ac').innerText = this.active.ac; document.getElementById('rpt-off').innerText = this.active.blockOff; document.getElementById('rpt-on').innerText = blockOn; document.getElementById('rpt-rate').innerText = landingRate; document.getElementById('rpt-hash').innerText = hash; this.active = null; try { localStorage.removeItem('lot_flight_v200'); } catch(e){} document.getElementById('landing-modal').style.display = 'none'; document.getElementById('flight-card').classList.add('hidden'); document.getElementById('btn-upload').classList.remove('hidden'); document.getElementById('btn-archive').classList.add('hidden'); document.getElementById('report-modal').style.display = 'flex'; },
         uploadReport: function() { window.open('https://panel.aeronation.ru/flight/upload', '_blank'); document.getElementById('btn-upload').classList.add('hidden'); document.getElementById('btn-archive').classList.remove('hidden'); },
         closeReport: function() { document.getElementById('report-modal').style.display = 'none'; },
         
@@ -784,19 +842,14 @@
             if(el) { document.querySelectorAll('#map-filter-c .chip').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); } 
             if(this.map) { this.map.eachLayer((layer) => { if(!layer._url) this.map.removeLayer(layer); }); this.drawMapLines(this.map, type); } 
         },
-        
-        // --- MAP INTERACTIVITY ---
         drawMapLines: function(m, type) { 
             const data = type === 'ALL' ? DB.ROUTES : DB.ROUTES.filter(r => r.al === type); 
             data.forEach(r => { 
                 const c1 = DB.COORDS[r.d]; const c2 = DB.COORDS[r.a]; 
                 if(c1 && c2) { 
-                    // BIND POPUP TO LINE
                     L.polyline([c1, c2], {color: '#c5a47e', weight: 1.5, opacity: 0.8})
                         .addTo(m)
                         .bindPopup(`<div style="color:#000; text-align:center;"><b>${r.d} ➝ ${r.a}</b><br><small>${r.al}</small></div>`);
-                    
-                    // BIND POPUP TO DOT
                     L.circleMarker(c1, {color:'#c5a47e', radius:3, fillOpacity:1})
                         .addTo(m)
                         .bindPopup(`<div style="color:#000;"><b>${r.d}</b></div>`);
