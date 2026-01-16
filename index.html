@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>LOT Premium v188 Full</title>
+    <title>LOT Premium v189</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -15,14 +15,11 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        /* === GLOBAL VARS === */
         :root {
             --accent-gold: #c5a47e; 
             --accent-silver: #a0a0a0;
-            --accent-bronze: #cd7f32;
-            --accent-mod: #3b82f6; 
             --bg-deep: #050b14;
-            --glass-panel: rgba(20, 25, 40, 0.9);
+            --glass-panel: rgba(20, 25, 40, 0.95);
             --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #ffffff;
             --text-sec: #94a3b8;
@@ -35,7 +32,6 @@
             --status-cancelled: #ef4444;
         }
 
-        /* === RESET & BASE === */
         html { background-color: var(--bg-deep); }
         
         body {
@@ -54,7 +50,7 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         i.ph, i.ph-fill { font-size: 1.3rem; vertical-align: middle; }
 
-        /* === CINEMATIC INTRO === */
+        /* === INTRO === */
         #intro-screen {
             position: fixed; inset: 0; z-index: 20000;
             background: radial-gradient(circle at center, #1b2845 0%, #02040a 100%);
@@ -71,7 +67,6 @@
             animation: drawPath 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         @keyframes drawPath { to { stroke-dashoffset: 0; } }
-        
         .intro-logo-text {
             font-family: 'Inter', sans-serif; font-weight: 800; font-size: 2.2rem;
             color: transparent; background: linear-gradient(135deg, #fff 20%, #c5a47e 80%);
@@ -89,7 +84,7 @@
         @keyframes revealLogo { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes revealSub { to { opacity: 1; } }
 
-        /* === LOGIN SCREEN (Optimized for Mobile) === */
+        /* === LOGIN SCREEN (MOBILE OPTIMIZED) === */
         .login-wrap {
             position: fixed; inset: 0; z-index: 9000;
             background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop') no-repeat center center;
@@ -101,82 +96,54 @@
         .login-overlay { position: absolute; inset: 0; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(15px); }
         
         .login-card {
-            position: relative; z-index: 2; width: 90%; max-width: 380px;
-            background: rgba(20, 25, 35, 0.6); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px; padding: 40px 30px; text-align: center;
+            position: relative; z-index: 2; 
+            width: 90%; max-width: 360px; /* Reduced max-width for cleaner look */
+            background: rgba(20, 25, 35, 0.7); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; padding: 30px 25px; text-align: center;
             box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             transform: translateY(20px); opacity: 0; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .login-wrap.visible .login-card { transform: translateY(0); opacity: 1; }
 
-        /* Mobile specific adjustments for Login */
+        /* Mobile Specifics */
         @media (max-width: 480px) {
-            .login-card { padding: 30px 20px; width: 88%; border-radius: 24px; }
+            .login-card { padding: 25px 20px; width: 85%; }
             .login-logo-icon { font-size: 2.5rem !important; margin-bottom: 10px !important; }
-            .login-title { font-size: 1.3rem !important; letter-spacing: 2px; }
-            .login-sub { margin-bottom: 25px !important; font-size: 0.7rem; }
-            .login-input { padding: 14px 14px 14px 45px !important; font-size: 0.9rem; }
-            .login-input-group i { left: 15px; font-size: 1rem; }
-            .btn-login { padding: 14px; margin-top: 20px; font-size: 0.9rem; }
+            .login-title { font-size: 1.4rem !important; margin-bottom: 2px !important; }
+            .login-sub { font-size: 0.75rem !important; margin-bottom: 25px !important; }
+            .login-input { padding: 14px 14px 14px 40px !important; font-size: 0.9rem !important; margin-bottom: 0 !important; }
+            .login-input-group { margin-bottom: 12px !important; }
+            .login-input-group i { left: 14px !important; font-size: 1rem !important; }
+            .btn-login { padding: 14px !important; margin-top: 15px !important; font-size: 0.9rem !important; }
         }
 
         .login-logo-icon { font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 15px; display: inline-block; filter: drop-shadow(0 0 15px rgba(197, 164, 126, 0.4)); }
         .login-title { font-size: 1.6rem; font-weight: 200; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; color: #fff; }
         .login-sub { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 40px; letter-spacing: 1px; font-weight: 500; }
-        
         .login-input-group { position: relative; margin-bottom: 20px; text-align: left; }
         .login-input-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 1.2rem; pointer-events: none; transition: 0.3s; }
-        .login-input {
-            width: 100%; padding: 18px 18px 18px 50px;
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px; color: #fff; font-size: 1rem; outline: none;
-            transition: 0.3s; box-sizing: border-box; font-family: 'JetBrains Mono';
-        }
+        .login-input { width: 100%; padding: 18px 18px 18px 50px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box; font-family: 'JetBrains Mono'; }
         .login-input:focus { border-color: var(--accent-gold); background: rgba(0,0,0,0.5); }
         .login-input:focus + i { color: var(--accent-gold); }
-        
-        .btn-login {
-            width: 100%; padding: 18px; margin-top: 25px;
-            background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); 
-            color: #050b14; font-weight: 800; letter-spacing: 1px;
-            border: none; border-radius: 16px; font-size: 1rem; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2);
-        }
+        .btn-login { width: 100%; padding: 18px; margin-top: 25px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; letter-spacing: 1px; border: none; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 164, 126, 0.2); }
 
-        /* === HEADER === */
-        #header-wrapper {
-            position: fixed; 
-            top: max(20px, env(safe-area-inset-top)); 
-            left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 450px; z-index: 3000;
-        }
-        header { 
-            width: 100%; height: 60px; 
-            background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); 
-            border: 1px solid var(--glass-border); border-radius: 24px; 
-            display: flex; justify-content: center; align-items: center; 
-            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+        /* HEADER */
+        #header-wrapper { position: fixed; top: max(20px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 3000; opacity: 1; transition: opacity 0.5s ease; }
+        #header-wrapper.hidden { opacity: 0; pointer-events: none; }
+        
+        header { width: 100%; height: 60px; background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
         .header-spacer { height: 110px; width: 100%; }
-        
-        #about-panel {
-            width: 100%; background: #131722;
-            border: 1px solid var(--glass-border); border-top: none;
-            border-radius: 0 0 24px 24px;
-            max-height: 0; opacity: 0; overflow: hidden;
-            transition: all 0.4s var(--ease-out); position: relative; z-index: 10; 
-            box-sizing: border-box;
-        }
+        #about-panel { width: 100%; background: #131722; border: 1px solid var(--glass-border); border-top: none; border-radius: 0 0 24px 24px; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s var(--ease-out); position: relative; z-index: 10; box-sizing: border-box; }
         #about-panel.open { max-height: 350px; opacity: 1; padding: 30px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
-        /* === UI ELEMENTS === */
+        /* UI ELEMENTS */
         .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
         .anim-item, .ticket { background: var(--glass-panel); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); box-shadow: 0 15px 40px rgba(0,0,0,0.25); border-radius: var(--radius-lg); position: relative; margin-bottom: 20px; transition: transform 0.2s; }
         .anim-item { padding: 24px; }
         .anim-item:active { transform: scale(0.99); }
 
-        /* === LEADERBOARD === */
+        /* LEADERBOARD */
         .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 10px; height: 210px; margin-bottom: 30px; padding-top: 20px; }
         .pod-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 30%; position: relative; }
         .pod-avatar { width: 50px; height: 50px; border-radius: 50%; background: #333; border: 2px solid #555; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; margin-bottom: -12px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; }
@@ -184,24 +151,19 @@
         .pod-rank { font-size: 1.5rem; font-weight: 900; opacity: 0.3; margin-bottom: 2px; line-height: 1; }
         .pod-pts { font-family: 'JetBrains Mono'; font-size: 0.7rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
         .pod-name { font-size: 0.75rem; color: #ccc; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 4px; font-weight: 600; }
-
         .place-1 .pod-avatar { width: 70px; height: 70px; border-color: var(--accent-gold); background: radial-gradient(circle, #ffd700 0%, #b8860b 100%); color: #000; box-shadow: 0 0 20px rgba(197, 164, 126, 0.4); margin-bottom: -15px; }
         .place-1 .pod-block { height: 140px; background: linear-gradient(to top, rgba(197, 164, 126, 0.2), rgba(197, 164, 126, 0)); border-color: var(--accent-gold); }
         .place-1 .crown { position: absolute; top: -35px; font-size: 2rem; color: gold; filter: drop-shadow(0 0 10px gold); animation: float 2s infinite ease-in-out; }
-        
-        .place-2 .pod-avatar { border-color: var(--accent-silver); }
-        .place-2 .pod-block { height: 110px; border-color: var(--accent-silver); } 
-        .place-3 .pod-avatar { border-color: var(--accent-bronze); }
-        .place-3 .pod-block { height: 85px; border-color: var(--accent-bronze); }
+        .place-2 .pod-avatar { border-color: var(--accent-silver); } .place-2 .pod-block { height: 110px; border-color: var(--accent-silver); } 
+        .place-3 .pod-avatar { border-color: var(--accent-bronze); } .place-3 .pod-block { height: 85px; border-color: var(--accent-bronze); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
         .rank-list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
         .r-left { display: flex; align-items: center; gap: 12px; }
         .r-idx { font-family: 'JetBrains Mono'; color: #666; font-size: 0.8rem; width: 20px; }
         .r-name { font-weight: 600; font-size: 0.9rem; }
         .r-pts { font-family: 'JetBrains Mono'; color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
 
-        /* === TICKETS === */
+        /* TICKETS */
         .ticket { padding: 0 !important; display: flex; overflow: hidden; cursor: pointer; }
         .ticket.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         .ticket-l { flex: 1; padding: 22px; position: relative; }
@@ -210,53 +172,28 @@
         .route-path { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
         .ap { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
         .ap-lbl { font-size: 0.65rem; color: var(--text-sec); font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
-
         .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
         .st-active { background-color: var(--status-active); box-shadow: 0 0 5px var(--status-active); }
         .st-seasonal { background-color: var(--status-seasonal); box-shadow: 0 0 5px var(--status-seasonal); }
         .st-cancelled { background-color: var(--status-cancelled); }
         .status-text { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* === DICE FAB === */
-        .fab-dice {
-            position: fixed; 
-            bottom: calc(env(safe-area-inset-bottom) + 115px); 
-            right: 20px;
-            width: 56px; height: 56px; border-radius: 18px;
-            background: var(--accent-gold); color: #000;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            z-index: 2500; cursor: pointer; border: none;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        /* DICE FAB */
+        .fab-dice { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 115px); right: 20px; width: 56px; height: 56px; border-radius: 18px; background: var(--accent-gold); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 2500; cursor: pointer; border: none; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .fab-dice:active { transform: scale(0.9) rotate(180deg); }
         
-        /* === ROLES === */
+        /* ROLES */
         .crew-card { display: flex; align-items: center; gap: 15px; border-left: 3px solid transparent; transition: 0.2s; }
         .role-Leader { border-left-color: var(--accent-gold); background: linear-gradient(90deg, rgba(197, 164, 126, 0.1), transparent); }
         .role-Deputy { border-left-color: var(--accent-silver); }
         .role-Moderator { border-left-color: var(--accent-mod); background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent); }
-        .role-icon { margin-left: 5px; vertical-align: middle; }
-        .ic-leader { color: var(--accent-gold); }
-        .ic-deputy { color: var(--accent-silver); }
-        .ic-mod { color: var(--accent-mod); }
 
-        /* === NAV === */
+        /* NAV */
         .filter-container { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
         .chip { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; color: #ddd; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; opacity: 0; transform: translateY(15px); }
         .chip.selected { background: var(--accent-gold); color: #000; font-weight: 800; border-color: var(--accent-gold); }
         @keyframes softPop { 0% { opacity: 0; transform: translateY(15px); } 60% { transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
-
-        .nav-dock { 
-            position: fixed; 
-            bottom: calc(env(safe-area-inset-bottom) + 20px); 
-            left: 50%; transform: translateX(-50%); 
-            width: 90%; max-width: 500px; height: var(--nav-h); 
-            background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); 
-            border-radius: 35px; border: 1px solid var(--glass-border); 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; 
-            display: flex; justify-content: space-evenly; align-items: center; 
-        }
+        .nav-dock { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 20px); left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; height: var(--nav-h); background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(30px); border-radius: 35px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: space-evenly; align-items: center; }
         .nav-btn { background: none; border: none; color: #556677; display: flex; flex-direction: column; align-items: center; transition: 0.3s; width: 50px; }
         .nav-btn.active { color: #fff; } 
         .nav-btn.active i { transform: translateY(-5px); color: var(--accent-gold); }
@@ -267,20 +204,21 @@
         .tab-view.active { display: block; animation: tabEntrance 0.5s var(--ease-out) forwards; }
         @keyframes tabEntrance { to { opacity: 1; transform: translateY(0); } }
 
-        /* === MODALS === */
+        /* MODALS */
         .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
         .sheet-body { width: 100%; max-width: 600px; background: #111620; border-radius: 36px 36px 0 0; padding: 40px 30px; max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -20px 60px rgba(0,0,0,0.7); animation: slideUp 0.4s var(--ease-out); color: #fff; }
         .sheet-full { height: 100%; border-radius: 0; max-width: 100%; padding: 0; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
+        
         .btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--accent-gold) 0%, #8f7250 100%); color: #050b14; font-weight: 800; font-size: 1rem; border-radius: 18px; border:none; transition: 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
         .btn-primary:active { transform: scale(0.96); }
         .btn-sec { background: rgba(255,255,255,0.1); color: #fff; border:1px solid rgba(255,255,255,0.2); }
         .btn-disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
         .btn-pulse { animation: goldPulse 1.5s infinite; }
         @keyframes goldPulse { 0% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(197, 164, 126, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0); } }
-        .ios-input { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; box-sizing: border-box; }
-        
+        .ios-input, .ios-select { width: 100%; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; margin-bottom: 16px; font-size: 1.1rem; color: #fff; text-align: center; font-weight: 500; outline: none; box-sizing: border-box; -webkit-appearance: none; }
+        .ios-select { text-align-last: center; }
+
         .report-paper { position: relative; background: #111; background-image: repeating-radial-gradient( circle at 0 0, transparent 0, #111 20px ), repeating-linear-gradient( 45deg, rgba(197, 164, 126, 0.15) 0px, rgba(197, 164, 126, 0.15) 1px, transparent 1px, transparent 4px ); padding: 25px; border-radius: 16px; border: 2px solid var(--accent-gold); margin-bottom: 20px; overflow: hidden; }
         .report-paper::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 2; }
         .hologram-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg); font-size: 3.5rem; font-weight: 900; background: linear-gradient(135deg, #8f7250 0%, #fff 40%, #c5a47e 60%, #8f7250 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0.6; z-index: 1; border: 6px double rgba(197, 164, 126, 0.4); padding: 5px 30px; text-transform: uppercase; letter-spacing: 4px; }
@@ -289,17 +227,13 @@
         .rpt-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono'; text-shadow: 0 1px 2px #000; }
         .microtext { position: absolute; bottom: 3px; left: 0; width: 100%; font-size: 0.4rem; color: rgba(197, 164, 126, 0.5); text-align: center; font-family: 'JetBrains Mono'; letter-spacing: 1px; white-space: nowrap; z-index: 3; content: "OFFICIAL RECORD // LOT VIRTUAL GROUP // DO NOT ALTER // SECURE HASH"; }
         .rpt-hash { position:relative; z-index:3; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--accent-gold); text-align: center; margin-top: 15px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); }
-
         .ofp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .ofp-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .ofp-lbl { font-size: 0.7rem; color: #666; font-weight: 600; font-family: 'JetBrains Mono'; display: block; margin-bottom: 5px; letter-spacing: 1px; }
         .ofp-val { font-size: 1.1rem; color: var(--accent-gold); font-weight: 700; font-family: 'JetBrains Mono'; }
-
-        /* === MAP ENHANCEMENTS === */
+        
         #map-wrap { height: 350px; border-radius: 20px; overflow: hidden; border:1px solid rgba(255,255,255,0.1); position: relative; }
         #map-full-wrap { height: 100%; width: 100%; }
-        
-        /* Expand Button */
         .map-expand-btn { 
             position: absolute; bottom: 20px; right: 20px; z-index: 1000; 
             background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); color: #fff; 
@@ -308,17 +242,14 @@
             transition: 0.2s;
         }
         .map-expand-btn:active { transform: scale(0.95); background: var(--accent-gold); color: #000; }
-
-        /* Animated Dashed Lines for Leaflet */
-        .leaflet-interactive { stroke-dasharray: 10; animation: dashMove 30s linear infinite; }
-        @keyframes dashMove { to { stroke-dashoffset: -1000; } }
         
-        /* === NEWS === */
+        /* STATIC MAP LINES (NO ANIMATION TO PREVENT LAG) */
+        .leaflet-interactive { stroke-dasharray: 0; }
+
         .news-card { display: flex; align-items: center; justify-content: space-between; padding: 20px; cursor: pointer; transition: background 0.2s; }
         .news-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px; color: #fff; }
         .news-auth { font-size: 0.7rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 4px; display: block; }
         
-        /* === LOADER === */
         #flight-loader { position: fixed; inset: 0; background: rgba(5, 11, 20, 0.98); backdrop-filter: blur(20px); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
         #flight-loader.active { display: flex; }
         .loader-spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-gold); border-radius: 50%; animation: spin 1s infinite linear; }
@@ -408,15 +339,6 @@
             <div id="rank-list-c"></div>
         </div>
 
-        <div class="anim-item" id="profile-card"></div>
-        
-        <div class="anim-item">
-            <h3 style="font-size:1.5rem; color:#fff; font-weight:300;">Daily Roster</h3>
-            <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:25px; font-family:'JetBrains Mono'; margin-top:5px;">UTC /// 08:00 ZULU</p>
-            <div id="daily-content" style="font-size:1.8rem; font-weight:800; margin-bottom:25px; color:#fff;">Loading...</div>
-            <button class="btn-primary" onclick="app.prep(app.dailyIdx)">INITIATE BRIEFING</button>
-        </div>
-        
         <div id="flight-card" class="anim-item hidden" style="border: 1px solid var(--accent-gold);">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <span style="font-weight:900; color:var(--accent-gold); font-size:0.8rem; letter-spacing:1px;">FLIGHT IN PROGRESS</span>
@@ -432,6 +354,15 @@
                 <button id="btn-land" class="btn-primary btn-disabled" onclick="app.requestLanding()">WAITING...</button>
             </div>
         </div>
+
+        <div class="anim-item" id="profile-card"></div>
+        
+        <div class="anim-item">
+            <h3 style="font-size:1.5rem; color:#fff; font-weight:300;">Daily Roster</h3>
+            <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:25px; font-family:'JetBrains Mono'; margin-top:5px;">UTC /// 08:00 ZULU</p>
+            <div id="daily-content" style="font-size:1.8rem; font-weight:800; margin-bottom:25px; color:#fff;">Loading...</div>
+            <button class="btn-primary" onclick="app.prep(app.dailyIdx)">INITIATE BRIEFING</button>
+        </div>
     </div>
 
     <div id="view-routes" class="tab-view">
@@ -439,7 +370,7 @@
         <h2 style="font-weight:200; font-size:2rem; margin-bottom:20px;">Departures</h2>
         <div class="filter-container" id="routes-filter-c"></div>
         <div id="routes-list"></div>
-        <button class="fab-dice" onclick="app.randomRoute()"><i class="ph ph-dice-five"></i></button>
+        <button class="fab-dice" onclick="app.openDice()"><i class="ph ph-dice-five"></i></button>
     </div>
 
     <div id="view-fleet" class="tab-view">
@@ -490,6 +421,34 @@
         </div>
         <button class="btn-primary" style="margin-top:20px;" onclick="app.accept()">ACCEPT & SIGN</button>
         <button class="btn-primary" style="background:transparent; border:1px solid #333; color:#fff; margin-top:10px;" onclick="app.closeM()">CLOSE</button>
+    </div>
+</div>
+
+<div id="dice-modal" class="modal-sheet" style="display: none;">
+    <div class="sheet-body">
+        <h2 style="margin-top:0; text-align:center;">Random Flight</h2>
+        <p style="color:#888; margin-bottom:25px; text-align:center;">Set your preferences</p>
+        
+        <select id="dice-al" class="ios-select" onchange="app.updateHubs()">
+            <option value="ALL">Any Airline</option>
+            <option value="LOT">LOT Polish Airlines</option>
+            <option value="Lufthansa">Lufthansa</option>
+            <option value="Swiss">Swiss</option>
+            <option value="Austrian">Austrian</option>
+        </select>
+        
+        <select id="dice-hub" class="ios-select" disabled>
+            <option value="ALL">Any Hub</option>
+        </select>
+        
+        <select id="dice-time" class="ios-select">
+            <option value="ALL">Any Duration</option>
+            <option value="SHORT">Short Haul (< 3h)</option>
+            <option value="LONG">Long Haul (> 3h)</option>
+        </select>
+        
+        <button class="btn-primary" onclick="app.rollDice()">GENERATE ROUTE</button>
+        <button class="btn-primary" style="background:transparent; border:1px solid #333; color:#fff; margin-top:10px;" onclick="document.getElementById('dice-modal').style.display='none'">CANCEL</button>
     </div>
 </div>
 
@@ -589,6 +548,12 @@
              "EPWA":[52.16,20.96], "KJFK":[40.64,-73.77], "EDDF":[50.03,8.56], "EGLL":[51.47,-0.45], 
              "LSZH":[47.45,8.55], "LOWW":[48.11,16.56], "VTBS":[13.69,100.75], "EDDL":[51.28,6.76], 
              "LEPA":[39.55,2.73], "CUN":[21.04,-86.87], "VTAA":[45.67,11.53]
+        },
+        HUBS: {
+            "LOT": ["EPWA", "LHBP"],
+            "Lufthansa": ["EDDF", "EDDM"],
+            "Swiss": ["LSZH"],
+            "Austrian": ["LOWW"]
         }
     };
 
@@ -617,37 +582,85 @@
             if(usr) {
                 document.getElementById('flight-loader').classList.add('active');
                 
+                // PRE-WARM DATA
+                // We render everything while hidden behind the loader
+                this.user = usr;
+                this.renderLeaderboard();
+                this.renderProfile();
+                this.renderRouteFilters();
+                this.renderRoutes('ALL');
+                this.renderFleetFilters();
+                this.renderFleet('ALL');
+                this.renderNews();
+                this.renderMapFilters();
+                this.renderCrew();
+                this.dailyUI();
+
                 setTimeout(() => {
-                    this.user = usr;
                     document.getElementById('flight-loader').classList.remove('active');
-                    document.getElementById('login-modal').classList.remove('visible'); // Fade out login
-                    document.getElementById('login-modal').style.display = 'none'; // Remove
                     
-                    // REVEAL APP ELEMENTS
-                    document.getElementById('header-wrapper').classList.remove('hidden'); // Show Header
-                    document.getElementById('nav').classList.remove('hidden'); // Show Nav
-                    document.getElementById('app').classList.remove('hidden'); // Show App
+                    // Hide Login / Show App
+                    document.getElementById('login-modal').classList.remove('visible');
+                    document.getElementById('login-modal').style.display = 'none';
+                    document.getElementById('header-wrapper').classList.remove('hidden');
+                    document.getElementById('nav').classList.remove('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    
                     this.nav('dash');
                     
-                    this.renderLeaderboard();
-                    this.renderProfile();
-                    this.renderRouteFilters();
-                    this.renderRoutes('ALL');
-                    this.renderFleetFilters();
-                    this.renderFleet('ALL');
-                    this.renderNews();
-                    this.renderMapFilters();
-                    this.renderCrew();
-                    this.dailyUI();
-                    
                     try {
-                        const saved = JSON.parse(localStorage.getItem('lot_flight_v188'));
+                        const saved = JSON.parse(localStorage.getItem('lot_flight_v189'));
                         if(saved) { this.active = saved; this.timer(); }
                     } catch(e) {}
                 }, 1000);
             } else {
                 document.getElementById('login-err').innerText = "INVALID ID OR PASS";
             }
+        },
+        
+        // --- DICE LOGIC ---
+        openDice: function() {
+            document.getElementById('dice-modal').style.display = 'flex';
+            this.updateHubs();
+        },
+        updateHubs: function() {
+            const al = document.getElementById('dice-al').value;
+            const hubSel = document.getElementById('dice-hub');
+            hubSel.innerHTML = '<option value="ALL">Any Hub</option>';
+            
+            if(al !== 'ALL' && DB.HUBS[al]) {
+                hubSel.disabled = false;
+                DB.HUBS[al].forEach(h => {
+                    hubSel.innerHTML += `<option value="${h}">${h}</option>`;
+                });
+            } else {
+                hubSel.disabled = true;
+            }
+        },
+        rollDice: function() {
+            const al = document.getElementById('dice-al').value;
+            const hub = document.getElementById('dice-hub').value;
+            const time = document.getElementById('dice-time').value;
+
+            const candidates = DB.ROUTES.filter(r => {
+                if(r.status === 'CANCELLED') return false;
+                if(al !== 'ALL' && r.al !== al) return false;
+                if(hub !== 'ALL' && r.d !== hub) return false;
+                if(time === 'SHORT' && r.t >= 3) return false;
+                if(time === 'LONG' && r.t < 3) return false;
+                return true;
+            });
+
+            if(candidates.length === 0) {
+                alert("No routes found matching filters!");
+                return;
+            }
+
+            const route = candidates[Math.floor(Math.random() * candidates.length)];
+            const idx = DB.ROUTES.findIndex(r => r === route);
+            
+            document.getElementById('dice-modal').style.display = 'none';
+            this.prep(idx);
         },
         
         renderLeaderboard: function() {
@@ -758,13 +771,6 @@
             });
         },
         
-        randomRoute: function() {
-            const available = DB.ROUTES.filter(r => (this.currentFilter === 'ALL' || r.al === this.currentFilter) && r.status !== 'CANCELLED');
-            if(available.length === 0) return;
-            const route = available[Math.floor(Math.random() * available.length)];
-            this.prep(DB.ROUTES.findIndex(r => r === route));
-        },
-
         renderFleetFilters: function() {
             const ops = ['ALL', ...new Set(DB.FLEET.map(f=>f.op))];
             this.renderChips(ops, 'hangar-filter-c', 'fleet');
@@ -855,7 +861,7 @@
                 blockOff: new Date().toISOString().split('T')[1].substring(0,5) + " Z",
                 dur: 20000 
             }; 
-            try { localStorage.setItem('lot_flight_v188', JSON.stringify(this.active)); } catch(e){}
+            try { localStorage.setItem('lot_flight_v189', JSON.stringify(this.active)); } catch(e){}
             this.nav('dash');
             this.timer();
         },
@@ -879,7 +885,7 @@
         cancel: function() {
             clearInterval(this.tmr);
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v188'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v189'); } catch(e){}
             document.getElementById('flight-card').classList.add('hidden');
         },
         requestLanding: function() { document.getElementById('landing-modal').style.display = 'flex'; },
@@ -899,7 +905,7 @@
             document.getElementById('rpt-rate').innerText = landingRate;
             document.getElementById('rpt-hash').innerText = hash;
             this.active = null;
-            try { localStorage.removeItem('lot_flight_v188'); } catch(e){}
+            try { localStorage.removeItem('lot_flight_v189'); } catch(e){}
             document.getElementById('landing-modal').style.display = 'none';
             document.getElementById('flight-card').classList.add('hidden');
             document.getElementById('btn-upload').classList.remove('hidden');
@@ -948,7 +954,8 @@
             data.forEach(r => {
                 const c1 = DB.COORDS[r.d]; const c2 = DB.COORDS[r.a];
                 if(c1 && c2) {
-                    L.polyline([c1, c2], {color: '#c5a47e', weight: 1.5, opacity: 0.8, className: 'animated-line'}).addTo(m);
+                    // REMOVED: className: 'animated-line' to improve performance
+                    L.polyline([c1, c2], {color: '#c5a47e', weight: 1.5, opacity: 0.8}).addTo(m);
                     L.circleMarker(c1, {color:'#c5a47e', radius:3, fillOpacity:1}).addTo(m);
                 }
             });
